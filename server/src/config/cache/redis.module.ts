@@ -14,8 +14,8 @@ export const RedisOptions: CacheModuleAsyncOptions = {
         host: config.get('REDIS_HOST'),
         port: config.get('REDIS_PORT'),
       },
+      ttl: 10 * 1000, // miliseconds
     });
-
     return {
       store: () => store,
     };

@@ -16,4 +16,9 @@ export class UsersController {
   async findAll(@Req() req: Request): Promise<UserDto[]> {
     return await this.usersService.findAll();
   }
+
+  @Get('write-to-file')
+  async writeToFile(): Promise<void> {
+    await this.usersService.findAllAndWriteToFile();
+  }
 }

@@ -30,6 +30,7 @@ const POSTGRES_DATABASE = process.env.POSTGRES_DATABASE;
 // redis
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_TTL = +process.env.REDIS_TTL || 60 * 60 * 1000; // miliseconds
 
 // rate limiting
 const THROTTLE_TTL = +process.env.RATE_LIMIT_TTL || 60;
@@ -56,6 +57,7 @@ export {
   POSTGRES_DATABASE,
   REDIS_HOST,
   REDIS_PORT,
+  REDIS_TTL,
   THROTTLE_TTL,
   THROTTLE_LIMIT,
   CLOUDINARY_CLOUD_NAME,
