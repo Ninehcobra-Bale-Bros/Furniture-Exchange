@@ -1,21 +1,27 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigServiceExt } from './config/config.service';
 import { Logger } from '@nestjs/common';
-import swaggerConfig from './common/sawgger.config';
 import helmet from 'helmet';
 import * as compression from 'compression';
-import { GlobalExceptionsFilter } from './common/exception-filter/http-exception.filter';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import swaggerConfig from './config/swagger';
+import { MyLogger } from './config/logger';
+import { ConfigService } from '@nestjs/config';
+import { EnvVariables } from './environments/env.interface';
+import { GlobalHttpExceptionFilter } from './common/filters/http-exception.filter';
+import { JwtExpirationExceptionFilter } from './common/filters/jwt-expiration.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     abortOnError: false,
+    logger: new MyLogger(),
   });
-  const logger = new Logger('Application');
-  const configService = app.get(ConfigServiceExt);
-  const PORT = configService.get('PORT', { infer: true });
-  const CLIENT_URL = configService.get('CLIENT_URL', { infer: true });
+
+  const config = app.get(ConfigService<EnvVariables>);
+
+  const PORT = config.get('PORT');
+  const CLIENT_URL = config.get('CLIENT_URL');
 
   // Enable CORS
   app.enableCors({
@@ -23,8 +29,14 @@ async function bootstrap() {
   });
 
   // Global Exception filter
-  app.useGlobalFilters(new GlobalExceptionsFilter(app.get(HttpAdapterHost)));
-  // app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new GlobalHttpExceptionFilter(app.get(HttpAdapterHost))); // Catch all HttpException
+  app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost))); // Catch all exceptions include internal server error
+  app.useGlobalFilters(
+    new JwtExpirationExceptionFilter(app.get(HttpAdapterHost)),
+  ); // Catch TokenExpiredError
+
+  // Global interceptor (sample)
+  // app.useGlobalInterceptors(new TimeExecutionInterceptor());
 
   // Set security headers
   // prevent common security vulnerabilities by setting HTTP headers appropriately
@@ -40,7 +52,7 @@ async function bootstrap() {
   swaggerConfig(app);
 
   await app.listen(`${PORT || '3000'}`);
-  logger.debug(`Server is running on port ${PORT}`);
+  Logger.debug(`Server is running on port ${PORT}`);
 }
 
 bootstrap();

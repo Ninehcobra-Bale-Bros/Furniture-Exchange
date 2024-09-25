@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Clone") {
+            steps {
+                git branch: "setup/CICD",
+                    url: "https://github.com/Ninehcobra-Bale-Bros/Furniture-Exchange.git"
+            }
+        }
+    }
+}

@@ -1,25 +1,79 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigServiceExt } from 'src/config/config.service';
-import { LoggerService } from 'src/logger/logger.service';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { UserDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { RedisService } from 'src/config/cache/redis.service';
+import { writeFile } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly configService: ConfigServiceExt,
-    private readonly loggerService: LoggerService,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly redis: RedisService, // Inject RedisService
   ) {}
 
-  findAll() {
-    const PORT = this.configService.get('PORT', { infer: true });
-    const NODE_ENV = this.configService.get('NODE_ENV', { infer: true });
+  async findAll(): Promise<UserDto[]> {
+    return await this.userRepository
+      .find()
+      .then((users) => users.map((user) => UserDto.fromEntity(user)));
+  }
 
-    this.loggerService.verbose('TEST LOGGING AT USERS SERVICE');
+  async findOneByEmail(email: string): Promise<UserDto> {
+    const user = await this.userRepository.findOneBy({ email });
 
-    console.log(PORT);
-    console.log(NODE_ENV);
+    return user;
+  }
 
-    throw new HttpException('test', HttpStatus.FORBIDDEN);
+  async create(dto: CreateUserDto): Promise<UserDto> {
+    const newUser = await this.userRepository.save(UserDto.toEntity(dto));
 
-    return `This action returns all users`;
+    return UserDto.fromEntity(newUser);
+  }
+
+  async updateEmailVerificationStatus(email: string): Promise<UserDto> {
+    const user = await this.userRepository.findOneBy({ email: email });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    user.emailVerified = true;
+
+    return await this.userRepository.save(user).then((u) => {
+      return UserDto.fromEntity(u);
+    });
+  }
+
+  async findAllAndWriteToFile(): Promise<void> {
+    const users = await this.findAll(); // This calls your findAll method
+
+    const formattedData = `
+    export const DATA = ${JSON.stringify(users, null, 2).replace(
+      /\"([^(\")"]+)\":/g,
+      '$1:',
+    )};
+
+    export default DATA;
+    `;
+
+    // Define the file path and name
+    const filePath = path.resolve('db/seeds/users/user.data.ts');
+
+    // Write the formatted data to the file
+    writeFile(filePath, formattedData, 'utf8', (err) => {
+      if (err) {
+        throw new Error(`Error writing to file: ${err.message}`);
+      }
+
+      console.log('Users data file has been created!');
+    });
   }
 }
