@@ -6,6 +6,8 @@ pipeline {
             steps {
                 git branch: "setup/cicd-backend",
                     url: "https://github.com/Ninehcobra-Bale-Bros/Furniture-Exchange.git"
+
+                sh "ls -la ${WORKSPACE}"
             }
         }
 
