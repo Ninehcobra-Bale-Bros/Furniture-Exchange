@@ -21,7 +21,7 @@ pipeline {
 
         stage("Run docker compose") {
             steps {
-                sh " docker compose --env-file ./.env.development down -v"
+                sh " docker compose --env-file ${WORKSPACE}/server/.env.development down -v"
 
                 sh " docker compose --env-file ${WORKSPACE}/server/.env.development up -d"
             }
