@@ -24,6 +24,8 @@ pipeline {
                 sh "docker compose -f ${WORKSPACE}/server/compose.yaml --env-file ${WORKSPACE}/server/.env.development down -v"
 
                 sh "docker compose -f ${WORKSPACE}/server/compose.yaml --env-file ${WORKSPACE}/server/.env.development up -d"
+
+                sh "docker ps -a"
             }
         }
     }
