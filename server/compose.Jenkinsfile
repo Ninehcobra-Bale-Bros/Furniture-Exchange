@@ -21,9 +21,9 @@ pipeline {
 
         stage("Run docker compose") {
             steps {
-                sh "docker compose -f ${WORKSPACE}/compose.yaml --env-file ${WORKSPACE}/server/.env.development down -v"
+                sh "docker compose -f ${WORKSPACE}/server/compose.yaml --env-file ${WORKSPACE}/server/.env.development down -v"
 
-                sh "docker compose -f ${WORKSPACE}/compose.yaml --env-file ${WORKSPACE}/server/.env.development up -d"
+                sh "docker compose -f ${WORKSPACE}/server/compose.yaml --env-file ${WORKSPACE}/server/.env.development up -d"
             }
         }
     }
