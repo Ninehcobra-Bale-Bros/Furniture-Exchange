@@ -7,7 +7,7 @@ pipeline {
                 git branch: "setup/cicd-backend",
                     url: "https://github.com/Ninehcobra-Bale-Bros/Furniture-Exchange.git"
 
-                sh "ls -la ${WORKSPACE}"
+                sh "ls -la ${WORKSPACE}/server"
             }
         }
 
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh " docker compose --env-file ./.env.development down -v"
 
-                sh " docker compose --env-file ./.env.development up -d"
+                sh " docker compose --env-file ${WORKSPACE}/server/.env.development up -d"
             }
         }
     }
