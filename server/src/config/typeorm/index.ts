@@ -3,16 +3,18 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { EnvVariables } from 'src/environments/env.interface';
 import { DataSourceOptions } from 'typeorm';
+import { SeederOptions } from 'typeorm-extension';
 
-export const dataSourceOptions: DataSourceOptions = {
+export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
   host: 'localhost',
   port: 5432,
   username: 'bale',
   password: 'bale',
   database: 'FurnitureExchange',
-  entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['dist/db/migrations/*{.ts,.js}'],
+  entities: ['dist/**/*.entity{.js,.ts}'],
+  migrations: ['dist/db/migrations/*{.js,.ts}'],
+  seeds: ['dist/db/seeds/**/*{.js,.ts}'],
   synchronize: false, // Ensure this is set to false in production
 };
 

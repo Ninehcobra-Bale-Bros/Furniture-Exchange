@@ -2,8 +2,8 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { RedisStore } from 'cache-manager-redis-store';
+import { CACHE_CONSTANTS } from 'src/common/constants/cache.constant';
 
-const TTL_OTP = 500000;
 @Injectable()
 export class RedisService {
   private readonly redisStore!: RedisStore;
@@ -13,7 +13,9 @@ export class RedisService {
   }
 
   public async setOTP(key: string, value: any): Promise<any> {
-    return await this.redisService.set(key, value, TTL_OTP);
+    return await this.redisService.set(key, value, {
+      ttl: CACHE_CONSTANTS.OTP_TTL,
+    } as any);
   }
 
   public async getOTP(key: string): Promise<any> {

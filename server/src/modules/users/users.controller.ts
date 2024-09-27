@@ -23,6 +23,10 @@ import { Request } from 'express';
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+  @Get('write-to-file')
+  async writeToFile(): Promise<void> {
+    await this.usersService.findAllAndWriteToFile();
+  }
 
   @Get()
   async findAll(@Req() req: Request): Promise<UserDto[]> {
