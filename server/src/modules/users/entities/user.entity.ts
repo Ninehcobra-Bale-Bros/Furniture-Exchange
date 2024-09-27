@@ -11,4 +11,12 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255 })
   password: string;
+
+  // @Column({
+  //   type: 'enum',
+  //   enum: SexEnum,
+  //   enumName: 'user_sex_enum', // enum name in db (must if you need to )
+  //   nullable: false,
+  // })
+  // sex!: SexEnum;
 }
