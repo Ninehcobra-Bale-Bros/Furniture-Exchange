@@ -23,7 +23,9 @@ services:
     # - postgres-data:/var/lib/postgresql/data
 
   backend:
-    image: baledev/furniture-backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile.development
     container_name: furniture-backend
     ports:
       - ${PORT}:${PORT}
