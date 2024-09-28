@@ -23,10 +23,10 @@ async function bootstrap() {
   const PORT = config.get('PORT');
   const CLIENT_URL = config.get('CLIENT_URL');
 
+  console.log('CLIENT_URL', CLIENT_URL);
+
   // Enable CORS
-  app.enableCors({
-    origin: CLIENT_URL,
-  });
+  app.enableCors();
 
   // Global Exception filter
   app.useGlobalFilters(new GlobalHttpExceptionFilter(app.get(HttpAdapterHost))); // Catch all HttpException
