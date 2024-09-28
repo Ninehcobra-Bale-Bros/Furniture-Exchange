@@ -1,11 +1,10 @@
-import { User } from 'src/modules/users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
 import categories from './categories.json';
 import { Category } from 'src/modules/categories/entities/category.entity';
 
-export default class UserSeeder implements Seeder {
+export default class CategorySeeder implements Seeder {
   async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
