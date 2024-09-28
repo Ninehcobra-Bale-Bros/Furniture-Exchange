@@ -12,23 +12,26 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { RedisService } from 'src/config/cache/redis.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UserRepository } from './repository/user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository, // Inject Repository
     private readonly redis: RedisService, // Inject RedisService
   ) {}
 
   async findAll(): Promise<UserDto[]> {
     return await this.userRepository
-      .find()
+      .findAll()
       .then((users) => users.map((user) => UserDto.fromEntity(user)));
   }
 
   async findOneByEmail(email: string): Promise<UserDto> {
     const user = await this.userRepository.findOneBy({
-      email: email,
+      where: {
+        email: email,
+      },
     });
 
     return user;
@@ -41,7 +44,11 @@ export class UsersService {
   }
 
   async updateEmailVerificationStatus(email: string): Promise<UserDto> {
-    const user = await this.userRepository.findOneBy({ email: email });
+    const user = await this.userRepository.findOneBy({
+      where: {
+        email: email,
+      },
+    });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

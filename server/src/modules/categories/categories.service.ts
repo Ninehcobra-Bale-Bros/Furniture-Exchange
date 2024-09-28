@@ -4,23 +4,18 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from './entities/category.entity';
-import { Repository } from 'typeorm';
 import { CategoryDto } from './dto/category.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CategoryRepository } from './repository/category.repository';
 
 @Injectable()
 export class CategoriesService {
-  constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
-  ) {}
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async create(dto: CreateCategoryDto) {
     if (dto.parent_id) {
-      const parentCategory = await this.categoryRepository.findOne({
+      const parentCategory = await this.categoryRepository.findOneBy({
         where: { id: dto.parent_id },
       });
 
@@ -37,7 +32,7 @@ export class CategoriesService {
   }
 
   async findAll() {
-    const categories = await this.categoryRepository.find({
+    const categories = await this.categoryRepository.findAll({
       relations: ['parent_id'],
     });
 
@@ -45,7 +40,7 @@ export class CategoriesService {
   }
 
   async writeToFile() {
-    const categories = await this.categoryRepository.find({
+    const categories = await this.categoryRepository.findAll({
       relations: ['parent_id'],
     });
 

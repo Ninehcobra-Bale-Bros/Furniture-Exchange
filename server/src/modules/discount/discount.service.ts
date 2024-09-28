@@ -1,8 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateDiscountDto } from './dto/create-discount.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Discount } from './entities/discount.entity';
-import { Repository } from 'typeorm';
 import { DiscountDto } from './dto/discount.dto';
 import * as fs from 'fs';
 import * as path from 'path';
