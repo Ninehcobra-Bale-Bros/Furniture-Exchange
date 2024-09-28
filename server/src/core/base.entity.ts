@@ -1,7 +1,6 @@
 import { CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn()
   id!: string | number;
 
   @CreateDateColumn({
@@ -9,4 +8,10 @@ export abstract class BaseEntity {
     default: () => 'CURRENT_TIMESTAMP',
   })
   created_at!: Date;
+
+  @CreateDateColumn({
+    type: 'timestamptz',
+    default: null,
+  })
+  deleted_at!: Date;
 }

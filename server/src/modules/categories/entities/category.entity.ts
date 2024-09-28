@@ -9,7 +9,7 @@ import {
 
 @Entity()
 export class Category extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn('identity')
   id!: number & { __brand: 'categoryId' };
 
   @ManyToOne(() => Category, (category) => category.id, {

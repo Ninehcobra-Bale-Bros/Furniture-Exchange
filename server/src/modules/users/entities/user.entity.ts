@@ -31,7 +31,7 @@ export class User extends BaseEntity {
   @Column({
     type: 'enum',
     enum: SexEnum,
-    enumName: 'user_sex_enum',
+    enumName: 'sex',
     nullable: false,
   })
   sex!: SexEnum;
@@ -51,7 +51,7 @@ export class User extends BaseEntity {
   @Column({
     type: 'enum',
     enum: RoleEnum,
-    enumName: 'user_role_enum',
+    enumName: 'role',
     default: RoleEnum.BUYER,
   })
   role!: RoleEnum;

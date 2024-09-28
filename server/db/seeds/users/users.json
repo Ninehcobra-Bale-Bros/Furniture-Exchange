@@ -1,19 +1,8 @@
 [
   {
-    "id": 1,
-    "email": "lov3rinve146@",
-    "password": "$2b$10$B4Q/RcckkjAsfZRNBdc6EeUmqG0yasCSJ8YfjE9GOdtFuclQbkogm",
-    "firstName": "John",
-    "lastName": "Doe",
-    "phoneNumber": "0123456789",
-    "role": "buyer",
-    "emailVerified": false,
-    "sex": "male"
-  },
-  {
-    "id": 2,
+    "id": "85eb4cd4-6aa6-4dc7-93ff-cd57e0b216b3",
     "email": "lov3rinve146@gmail.com",
-    "password": "$2b$10$U7ThNop3Chqu8cjohdK4T.mMBU0oUe9HO/2C5k9pRQ9IkQYKng0PK",
+    "password": "$2b$10$V4q3HfdWuhA6nhzsFql/BOsdh/NtjRJ6kZgW6wFcQD1OH8Yp6HIDu",
     "firstName": "John",
     "lastName": "Doe",
     "phoneNumber": "0123456789",

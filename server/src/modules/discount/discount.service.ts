@@ -6,13 +6,11 @@ import { Repository } from 'typeorm';
 import { DiscountDto } from './dto/discount.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { DiscountRepository } from './repository/discount.repository';
 
 @Injectable()
 export class DiscountService {
-  constructor(
-    @InjectRepository(Discount)
-    private discountRepository: Repository<Discount>,
-  ) {}
+  constructor(private readonly discountRepository: DiscountRepository) {}
 
   async create(dto: CreateDiscountDto) {
     const newCategory = await this.discountRepository.save(
@@ -23,13 +21,13 @@ export class DiscountService {
   }
 
   async findAll() {
-    const discounts = await this.discountRepository.find();
+    const discounts = await this.discountRepository.findAll();
 
     return discounts.map((discount) => DiscountDto.fromEntity(discount));
   }
 
   async writeToFile() {
-    const discounts = await this.discountRepository.find();
+    const discounts = await this.discountRepository.findAll();
 
     const filePath = path.resolve('db/seeds/discounts/discounts.json');
 
