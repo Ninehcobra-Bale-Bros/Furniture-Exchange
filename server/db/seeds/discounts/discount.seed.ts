@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
 import discounts from './discounts.json';
-import { Discount } from 'src/modules/discount/entities/discount.entity';
+import { Discount } from 'src/modules/discounts/entities/discount.entity';
 
 export default class DiscountSeeder implements Seeder {
   async run(

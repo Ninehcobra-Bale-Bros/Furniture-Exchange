@@ -15,7 +15,7 @@ import { MailModule } from './config/mail/mail.module';
 import { CloudinaryModule } from './config/upload/cloudinary.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { DiscountModule } from './modules/discount/discount.module';
+import { DiscountModule } from './modules/discounts/discounts.module';
 
 @Module({
   imports: [

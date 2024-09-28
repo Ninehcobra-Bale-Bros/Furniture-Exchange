@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { DiscountService } from './discount.service';
+import { DiscountService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { ApiTags } from '@nestjs/swagger';
 
