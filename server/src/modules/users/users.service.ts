@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RedisService } from 'src/config/cache/redis.service';
-import { writeFile } from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 
 @Injectable()
@@ -52,28 +52,20 @@ export class UsersService {
     });
   }
 
-  async findAllAndWriteToFile(): Promise<void> {
+  async findAllAndWriteToFile() {
     const users = await this.findAll(); // This calls your findAll method
 
-    const formattedData = `
-    export const DATA = ${JSON.stringify(users, null, 2).replace(
-      /\"([^(\")"]+)\":/g,
-      '$1:',
-    )};
-
-    export default DATA;
-    `;
-
     // Define the file path and name
-    const filePath = path.resolve('db/seeds/users/user.data.ts');
+    const filePath = path.resolve('db/seeds/users/users.json');
 
     // Write the formatted data to the file
-    writeFile(filePath, formattedData, 'utf8', (err) => {
-      if (err) {
-        throw new Error(`Error writing to file: ${err.message}`);
-      }
 
-      console.log('Users data file has been created!');
+    fs.writeFile(filePath, JSON.stringify(users), (err) => {
+      if (err) {
+        throw new BadRequestException(`Error writing to file: ${err.message}`);
+      }
     });
+
+    return 'Write to file successfully';
   }
 }

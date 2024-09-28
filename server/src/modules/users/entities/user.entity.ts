@@ -28,7 +28,12 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false })
   lastName!: string;
 
-  @Column({ type: 'enum', enum: SexEnum, nullable: false })
+  @Column({
+    type: 'enum',
+    enum: SexEnum,
+    enumName: 'user_sex_enum',
+    nullable: false,
+  })
   sex!: SexEnum;
 
   @Column({ type: 'varchar', nullable: true })
@@ -43,7 +48,12 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   addressLine2: string;
 
-  @Column({ type: 'enum', enum: RoleEnum, default: RoleEnum.BUYER })
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+    enumName: 'user_role_enum',
+    default: RoleEnum.BUYER,
+  })
   role!: RoleEnum;
 
   @CreateDateColumn({

@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
 import { User } from '../entities/user.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
@@ -7,7 +7,7 @@ export class UserDto implements Readonly<UserDto> {
   @IsUUID()
   id: string;
 
-  @IsString()
+  @IsEmail()
   email: string;
 
   @IsBoolean()

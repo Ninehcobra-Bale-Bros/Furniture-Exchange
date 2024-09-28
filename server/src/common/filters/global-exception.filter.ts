@@ -1,51 +1,62 @@
 import {
   ArgumentsHost,
   Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { Request, Response } from 'express';
-import { BaseGlobalExceptionFilter } from './base-exception.filter';
+import { TokenExpiredError } from 'jsonwebtoken';
 
-// Catch all exceptions include internal server error
 @Catch()
-export class GlobalExceptionFilter extends BaseGlobalExceptionFilter {
-  constructor(httpAdapterHost: HttpAdapterHost) {
-    super(httpAdapterHost);
-  }
+export class GlobalExceptionFilter implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-  catch(exception: any, host: ArgumentsHost): void {
+  catch(exception: any, host: ArgumentsHost) {
+    const { httpAdapter } = this.httpAdapterHost;
+
     const ctx = host.switchToHttp();
 
-    const title = 'Internal Server Error';
+    const title = this.getTitle(exception);
 
-    const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    const httpStatus = this.getHttpStatus(exception);
 
     const isDevelopment = process.env.NODE_ENV === 'development' ? true : false;
 
-    this.buildResponse(exception, ctx, title, httpStatus, isDevelopment);
+    const responseBody = {
+      title: title,
+      statusCode: httpStatus,
+      timestamp: new Date().toISOString(),
+      method: ctx.getRequest().method,
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      message: exception.message,
+      ...(isDevelopment ? { trace: exception.stack } : {}),
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+  }
+
+  private getTitle(exception: any) {
+    if (exception instanceof HttpException) {
+      return exception.message;
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return 'Token expired';
+    }
+
+    return 'Internal server error';
+  }
+
+  private getHttpStatus(exception: any) {
+    if (exception instanceof HttpException) {
+      return exception.getStatus();
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return HttpStatus.UNAUTHORIZED;
+    }
+
+    return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 }
-
-// const ctx = host.switchToHttp();
-
-// const httpStatus =
-//   exception instanceof HttpException
-//     ? exception.getStatus()
-//     : HttpStatus.INTERNAL_SERVER_ERROR;
-// const title =
-//   exception instanceof HttpException ? 'Error' : 'Internal Server Error';
-
-// const isProduction = process.env.NODE_ENV === 'production';
-
-// const responseBody = {
-//   title: title,
-//   statusCode: httpStatus,
-//   timestamp: new Date().toISOString(),
-//   path: httpAdapter.getRequestUrl(ctx.getRequest()),
-//   message: exception.message,
-//   ...(isProduction ? {} : { trace: exception.stack }),
-// };
-
-// httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UploadApiErrorResponse, UploadApiResponse, v2 } from 'cloudinary';
 import { EnvVariables } from 'src/environments/env.interface';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 import toStream = require('buffer-to-stream');
 

@@ -3,14 +3,12 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from '@nestjs/common';
 import helmet from 'helmet';
-import * as compression from 'compression';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import compression from 'compression';
 import swaggerConfig from './config/swagger';
 import { MyLogger } from './config/logger';
 import { ConfigService } from '@nestjs/config';
 import { EnvVariables } from './environments/env.interface';
-import { GlobalHttpExceptionFilter } from './common/filters/http-exception.filter';
-import { JwtExpirationExceptionFilter } from './common/filters/jwt-expiration.filter';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -29,11 +27,7 @@ async function bootstrap() {
   });
 
   // Global Exception filter
-  app.useGlobalFilters(new GlobalHttpExceptionFilter(app.get(HttpAdapterHost))); // Catch all HttpException
-  app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost))); // Catch all exceptions include internal server error
-  app.useGlobalFilters(
-    new JwtExpirationExceptionFilter(app.get(HttpAdapterHost)),
-  ); // Catch TokenExpiredError
+  app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost)));
 
   // Global interceptor (sample)
   // app.useGlobalInterceptors(new TimeExecutionInterceptor());
