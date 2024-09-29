@@ -33,16 +33,14 @@ export class CategoriesService {
 
   async findAll() {
     const categories = await this.categoryRepository.findAll({
-      relations: ['parent_id'],
+      relations: ['parent'],
     });
 
     return categories.map((category) => CategoryDto.fromEntity(category));
   }
 
   async writeToFile() {
-    const categories = await this.categoryRepository.findAll({
-      relations: ['parent_id'],
-    });
+    const categories = await this.categoryRepository.findAll();
 
     const filePath = path.resolve('db/seeds/categories/categories.json');
 

@@ -9,6 +9,8 @@ export class CategoryDto implements Readonly<CategoryDto> {
 
   parent_id!: number | null;
 
+  parent?: Category;
+
   name!: string;
 
   description!: string;
@@ -22,6 +24,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
 
     category.id = dto.id;
     category.parent_id = dto.parent_id;
+    category.parent = dto.parent;
     category.name = dto.name;
     category.description = dto.description;
     category.created_at = dto.created_at;
@@ -34,6 +37,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
     return this.from({
       id: entity.id,
       parent_id: entity.parent_id,
+      parent: entity.parent,
       name: entity.name,
       description: entity.description,
       created_at: entity.created_at,
@@ -47,8 +51,6 @@ export class CategoryDto implements Readonly<CategoryDto> {
     category.parent_id = dto.parent_id || null;
     category.name = dto.name;
     category.description = dto.description;
-
-    console.log(category);
 
     return category;
   }

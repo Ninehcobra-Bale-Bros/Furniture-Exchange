@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/core/base.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,11 +13,18 @@ export class Category extends BaseEntity {
   @PrimaryGeneratedColumn('identity')
   id!: number & { __brand: 'categoryId' };
 
+  @Column({ type: 'int', nullable: true, update: true })
+  parent_id!: number & { __brand: 'categoryId' };
+
   @ManyToOne(() => Category, (category) => category.id, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  parent_id: number | (null & { __brand: 'categoryId' });
+  @JoinColumn({
+    name: 'parent_id',
+    referencedColumnName: 'id',
+  })
+  parent!: Category | null;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name!: string;
