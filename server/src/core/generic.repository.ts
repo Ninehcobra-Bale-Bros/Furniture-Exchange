@@ -10,6 +10,7 @@ export class GenericRepository<T extends BaseEntity>
     return await this.repository.find({
       ...options,
       where: {
+        ...options.where,
         deleted_at: null,
       },
     });
@@ -19,6 +20,7 @@ export class GenericRepository<T extends BaseEntity>
     return await this.repository.findOne({
       ...options,
       where: {
+        ...options.where,
         deleted_at: null,
       },
     });
