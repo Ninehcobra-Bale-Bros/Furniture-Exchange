@@ -10,6 +10,11 @@ export class DiscountService {
   constructor(private readonly discountRepository: DiscountRepository) {}
 
   async create(dto: CreateDiscountDto) {
+    dto = {
+      ...dto,
+      discount_percent: dto.discount_percent / 100,
+    };
+
     const newCategory = await this.discountRepository.save(
       DiscountDto.toEntity(dto),
     );

@@ -1,7 +1,7 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import compression from 'compression';
 import swaggerConfig from './config/swagger';
@@ -22,15 +22,24 @@ async function bootstrap() {
   const CLIENT_URL = config.get('CLIENT_URL');
 
   // Enable CORS
-  app.enableCors({
-    origin: CLIENT_URL,
-  });
+  // app.enableCors({
+  //   origin: CLIENT_URL,
+  // });
+  app.enableCors();
 
   // Global Exception filter
   app.useGlobalFilters(new GlobalExceptionFilter(app.get(HttpAdapterHost)));
 
   // Global interceptor (sample)
   // app.useGlobalInterceptors(new TimeExecutionInterceptor());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      // whitelist: true,
+      transform: true,
+      // transformOptions: { enableImplicitConversion: true },
+      // forbidNonWhitelisted: true,
+    }),
+  );
 
   // Set security headers
   // prevent common security vulnerabilities by setting HTTP headers appropriately

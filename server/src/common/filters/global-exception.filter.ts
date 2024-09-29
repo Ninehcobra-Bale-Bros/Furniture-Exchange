@@ -6,6 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ValidationError } from 'class-validator';
 import { TokenExpiredError } from 'jsonwebtoken';
 
 @Catch()
@@ -21,15 +22,27 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const httpStatus = this.getHttpStatus(exception);
 
+    const typeError = this.getTypeError(exception);
+
+    const isValidationError = Array.isArray(exception.getResponse()['message']);
+
     const isDevelopment = process.env.NODE_ENV === 'development' ? true : false;
 
     const responseBody = {
       title: title,
+      type: typeError,
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       method: ctx.getRequest().method,
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message: exception.message,
+      ...(isValidationError
+        ? {
+            validation_errors: this.formatValidationErrors(
+              exception.getResponse()['message'],
+            ),
+          }
+        : {}),
       ...(isDevelopment ? { trace: exception.stack } : {}),
     };
 
@@ -38,6 +51,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   private getTitle(exception: any) {
     if (exception instanceof HttpException) {
+      const response = exception.getResponse();
+
+      if (Array.isArray(response['message'])) {
+        return 'Validation error';
+      }
+
       return exception.message;
     }
 
@@ -58,5 +77,39 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  private getTypeError(exception: any) {
+    if (exception instanceof HttpException) {
+      const response = exception.getResponse();
+
+      if (Array.isArray(response['message'])) {
+        return 'ValidationError';
+      }
+
+      return 'HttpException';
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return 'TokenError';
+    }
+
+    return 'InternalServerError';
+  }
+
+  private formatValidationErrors(
+    validationErrors: ValidationError[],
+  ): object[] {
+    console.log(validationErrors);
+
+    // Custom logic to format validation errors
+    return validationErrors.map((error: ValidationError) => {
+      const field = error.toString().split(' ')[0];
+
+      return {
+        field: field,
+        constraints: error,
+      };
+    });
   }
 }

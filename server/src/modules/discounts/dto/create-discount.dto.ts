@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { DiscountDto } from './discount.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
-import { IsString, Max, Min } from 'class-validator';
+import { Exclude, Transform } from 'class-transformer';
+import { IsNumber, IsString, Max, Min } from 'class-validator';
 
 export class CreateDiscountDto extends PartialType(DiscountDto) {
   @ApiProperty({
@@ -29,6 +29,8 @@ export class CreateDiscountDto extends PartialType(DiscountDto) {
     description: 'Minimum price',
     example: '50000000',
   })
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value))
   min_price!: number;
 
   @ApiProperty({
@@ -39,6 +41,8 @@ export class CreateDiscountDto extends PartialType(DiscountDto) {
   })
   @Min(0)
   @Max(100)
+  @IsNumber()
+  @Transform(({ value }) => parseFloat(value))
   discount_percent!: number;
 
   @Exclude()
