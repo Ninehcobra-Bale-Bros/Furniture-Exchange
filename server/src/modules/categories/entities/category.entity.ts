@@ -13,7 +13,7 @@ export class Category extends BaseEntity {
   @PrimaryGeneratedColumn('identity')
   id!: number & { __brand: 'categoryId' };
 
-  @Column({ type: 'int', nullable: true, update: true })
+  @Column({ type: 'int', nullable: true })
   parent_id!: number & { __brand: 'categoryId' };
 
   @ManyToOne(() => Category, (category) => category.id, {
@@ -31,6 +31,9 @@ export class Category extends BaseEntity {
 
   @Column({ type: 'text', nullable: false })
   description!: string; // Changed to 'text' for more flexibility
+
+  @Column({ type: 'int', nullable: false, default: 0 })
+  order!: number;
 
   @UpdateDateColumn({
     type: 'timestamptz',

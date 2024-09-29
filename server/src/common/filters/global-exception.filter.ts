@@ -24,7 +24,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const typeError = this.getTypeError(exception);
 
-    const isValidationError = Array.isArray(exception.getResponse()['message']);
+    let isValidationError = false;
+
+    try {
+      isValidationError = Array.isArray(exception.getResponse()['message']);
+    } catch (error) {
+      console.log(error);
+
+      isValidationError = false;
+    }
 
     const isDevelopment = process.env.NODE_ENV === 'development' ? true : false;
 

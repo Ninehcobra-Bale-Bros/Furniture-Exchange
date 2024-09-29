@@ -15,6 +15,8 @@ export class CategoryDto implements Readonly<CategoryDto> {
 
   description!: string;
 
+  order: number;
+
   created_at!: Date;
 
   updated_at!: Date;
@@ -27,6 +29,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
     category.parent = dto.parent;
     category.name = dto.name;
     category.description = dto.description;
+    category.order = dto.order;
     category.created_at = dto.created_at;
     category.updated_at = dto.updated_at;
 
@@ -40,6 +43,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
       parent: entity.parent,
       name: entity.name,
       description: entity.description,
+      order: entity.order,
       created_at: entity.created_at,
       updated_at: entity.updated_at,
     });
@@ -51,6 +55,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
     category.parent_id = dto.parent_id || null;
     category.name = dto.name;
     category.description = dto.description;
+    category.order = dto.order;
 
     return category;
   }

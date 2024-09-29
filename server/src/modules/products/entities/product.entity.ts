@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { BaseEntity } from 'src/core/base.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
@@ -6,6 +7,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -16,22 +18,36 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn('identity')
   id!: number & { __brand: 'productId' };
 
-  @ManyToOne(() => User, (user) => user.id)
-  seller_id!: string;
+  @Column({ type: 'uuid', nullable: false })
+  seller_id!: UUID & { __brand: 'userId' };
+
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @JoinColumn({
+    name: 'seller_id',
+    referencedColumnName: 'id',
+  })
+  seller!: User;
+
+  @Column({ type: 'int', nullable: false })
+  category_id!: number & { __brand: 'categoryId' };
 
   @ManyToOne(() => Category, (category) => category.id, {
     onDelete: 'CASCADE',
   })
-  category_id!: string;
+  @JoinColumn({
+    name: 'category_id',
+    referencedColumnName: 'id',
+  })
+  category!: Category;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'text', nullable: false })
   description!: string;
 
   @Column({ type: 'text', nullable: false })
-  images!: string[];
+  image_urls!: string[];
 
   @Column({ type: 'text', nullable: false })
   image_ids!: string[];

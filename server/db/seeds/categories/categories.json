@@ -6,6 +6,7 @@
     "parent_id": null,
     "name": "Bàn",
     "description": "",
+    "order": 1,
     "updated_at": "2024-09-28T16:05:38.595Z"
   },
   {
@@ -15,6 +16,7 @@
     "parent_id": null,
     "name": "Ghế",
     "description": "",
+    "order": 2,
     "updated_at": "2024-09-28T16:05:57.347Z"
   },
   {
@@ -24,6 +26,7 @@
     "parent_id": null,
     "name": "Tủ",
     "description": "",
+    "order": 3,
     "updated_at": "2024-09-28T16:06:07.162Z"
   },
   {
@@ -33,6 +36,7 @@
     "parent_id": null,
     "name": "Kệ",
     "description": "",
+    "order": 4,
     "updated_at": "2024-09-28T16:06:35.622Z"
   },
   {
@@ -42,6 +46,7 @@
     "parent_id": null,
     "name": "Giường",
     "description": "",
+    "order": 5,
     "updated_at": "2024-09-28T16:06:42.934Z"
   },
   {
@@ -51,6 +56,7 @@
     "parent_id": 4,
     "name": "Kệ nhà bếp",
     "description": "Kệ dùng để chứa bát đĩa, nồi niêu, hoặc gia vị, thường được đặt trong không gian nhà bếp để tối ưu hóa việc lưu trữ.",
+    "order": 3,
     "updated_at": "2024-09-28T16:28:05.934Z"
   },
   {
@@ -60,6 +66,7 @@
     "parent_id": 5,
     "name": "Giường đơn",
     "description": "Giường có kích thước nhỏ, thường dành cho một người sử dụng, thích hợp cho phòng ngủ cá nhân hoặc trẻ em.",
+    "order": 1,
     "updated_at": "2024-09-28T16:28:59.503Z"
   },
   {
@@ -69,6 +76,7 @@
     "parent_id": 5,
     "name": "Giường gỗ",
     "description": "loại giường được chế tác từ gỗ tự nhiên hoặc gỗ công nghiệp, mang lại vẻ đẹp ấm áp và gần gũi với thiên nhiên.",
+    "order": 3,
     "updated_at": "2024-09-28T16:29:49.848Z"
   },
   {
@@ -78,6 +86,7 @@
     "parent_id": 5,
     "name": "Giường đôi",
     "description": "Giường có kích thước lớn hơn, dành cho hai người, phổ biến trong phòng ngủ chính hoặc phòng ngủ khách.",
+    "order": 2,
     "updated_at": "2024-09-28T16:30:19.172Z"
   },
   {
@@ -87,6 +96,7 @@
     "parent_id": 1,
     "name": "Bàn làm việc",
     "description": "Bàn có kích thước lớn hoặc trung bình, dùng cho việc làm việc, học tập. Thường có ngăn kéo hoặc giá đỡ để chứa tài liệu và đồ dùng văn phòng.",
+    "order": 1,
     "updated_at": "2024-09-28T16:20:32.235Z"
   },
   {
@@ -96,6 +106,7 @@
     "parent_id": 1,
     "name": "Bàn ăn",
     "description": "Bàn dùng trong phòng ăn, thường có kích thước lớn để phục vụ cho nhiều người. Có thể là bàn hình chữ nhật, tròn, hoặc oval.",
+    "order": 2,
     "updated_at": "2024-09-28T16:20:54.045Z"
   },
   {
@@ -105,6 +116,7 @@
     "parent_id": 1,
     "name": "Bàn học",
     "description": "Bàn dành cho học sinh, có kích thước phù hợp để chứa sách vở, dụng cụ học tập và thiết kế để tạo không gian học tập thoải mái.",
+    "order": 3,
     "updated_at": "2024-09-28T16:21:20.055Z"
   },
   {
@@ -114,6 +126,7 @@
     "parent_id": 1,
     "name": "Bàn trang điểm",
     "description": "Bàn nhỏ kèm gương và các ngăn kéo để sắp xếp mỹ phẩm, đồ trang sức, và các vật dụng cá nhân.",
+    "order": 4,
     "updated_at": "2024-09-28T16:21:34.119Z"
   },
   {
@@ -123,6 +136,7 @@
     "parent_id": 2,
     "name": "Ghế Sofa",
     "description": "Ghế dài dành cho nhiều người ngồi, thường được sử dụng trong phòng khách. Có nhiều loại như sofa băng, sofa góc, hoặc sofa giường.",
+    "order": 1,
     "updated_at": "2024-09-28T16:22:41.013Z"
   },
   {
@@ -132,6 +146,7 @@
     "parent_id": 2,
     "name": "Ghế văn phòng",
     "description": "Ghế xoay, có thể điều chỉnh độ cao và độ nghiêng, thường được dùng trong văn phòng hoặc phòng làm việc tại nhà.",
+    "order": 2,
     "updated_at": "2024-09-28T16:22:57.779Z"
   },
   {
@@ -141,6 +156,7 @@
     "parent_id": 2,
     "name": "Ghế gỗ",
     "description": "loại ghế được chế tác hoàn toàn hoặc phần lớn từ gỗ tự nhiên hoặc gỗ công nghiệp.",
+    "order": 3,
     "updated_at": "2024-09-28T16:23:55.815Z"
   },
   {
@@ -150,6 +166,7 @@
     "parent_id": 3,
     "name": "Tủ bếp",
     "description": "Tủ được sử dụng trong nhà bếp để lưu trữ bát đĩa, đồ gia dụng, hoặc thực phẩm khô. Có thể là tủ treo hoặc tủ đứng.",
+    "order": 1,
     "updated_at": "2024-09-28T16:25:57.384Z"
   },
   {
@@ -159,6 +176,7 @@
     "parent_id": 3,
     "name": "Tủ quần áo",
     "description": "Tủ lớn có ngăn và thanh treo quần áo, thường được dùng trong phòng ngủ để chứa quần áo và phụ kiện.",
+    "order": 2,
     "updated_at": "2024-09-28T16:26:11.382Z"
   },
   {
@@ -168,6 +186,7 @@
     "parent_id": 3,
     "name": "Tủ tài liệu",
     "description": "Tủ chứa tài liệu trong văn phòng hoặc phòng làm việc, có nhiều ngăn kéo để sắp xếp giấy tờ và hồ sơ.",
+    "order": 3,
     "updated_at": "2024-09-28T16:26:49.097Z"
   },
   {
@@ -177,6 +196,7 @@
     "parent_id": 4,
     "name": "Kệ sách",
     "description": "Kệ đứng hoặc treo tường để trưng bày và lưu trữ sách, thường được đặt trong phòng khách hoặc phòng làm việc.",
+    "order": 1,
     "updated_at": "2024-09-28T16:27:32.746Z"
   },
   {
@@ -186,6 +206,17 @@
     "parent_id": 4,
     "name": "Kệ trang trí",
     "description": "Kệ dùng để trưng bày các vật dụng trang trí, ảnh, hoặc đồ lưu niệm. Có nhiều loại kệ đứng hoặc gắn tường.",
+    "order": 2,
     "updated_at": "2024-09-28T16:27:47.786Z"
+  },
+  {
+    "created_at": "2024-09-29T08:00:23.170Z",
+    "deleted_at": null,
+    "id": 22,
+    "parent_id": 1,
+    "name": "Bàn gỗ",
+    "description": "Bàn được làm từ gỗ tự nhiên hoặc gỗ công nghiệp",
+    "order": 5,
+    "updated_at": "2024-09-29T08:00:23.170Z"
   }
 ]
