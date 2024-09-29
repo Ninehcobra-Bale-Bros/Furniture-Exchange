@@ -17,6 +17,7 @@ export class ProductDto implements Readonly<ProductDto> {
   province!: string;
   status!: StatusEnum;
   state!: StateEnum;
+  expired_at!: Date;
 
   public static from(dto: Partial<ProductDto>) {
     const it = new ProductDto();
@@ -35,6 +36,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.province = dto.province;
     it.status = dto.status;
     it.state = dto.state;
+    it.expired_at = dto.expired_at;
 
     return it;
   }
@@ -55,6 +57,7 @@ export class ProductDto implements Readonly<ProductDto> {
       province: entity.province,
       status: entity.status,
       state: entity.state,
+      expired_at: entity.expired_at,
     });
   }
 
@@ -74,6 +77,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.province = dto.province;
     it.status = dto.status;
     it.state = dto.state;
+    it.expired_at = dto.expired_at;
 
     return it;
   }

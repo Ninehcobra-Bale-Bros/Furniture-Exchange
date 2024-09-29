@@ -62,17 +62,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       const response = exception.getResponse();
 
       if (Array.isArray(response['message'])) {
-        return 'Validation error';
+        return 'ValidationError';
       }
 
-      return exception.message;
+      return exception.name;
     }
 
     if (exception instanceof TokenExpiredError) {
-      return 'Token expired';
+      return 'TokenExpired';
     }
 
-    return 'Internal server error';
+    return 'InternalServerError';
   }
 
   private getHttpStatus(exception: any) {

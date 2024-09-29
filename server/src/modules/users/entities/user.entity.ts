@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { BaseEntity } from 'src/core/base.entity';
@@ -11,7 +12,7 @@ import {
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: string & { __brand: 'userId' };
+  id!: UUID & { __brand: 'userId' };
 
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   email!: string;

@@ -9,5 +9,6 @@ import { DiscountRepository } from './repository/discount.repository';
   imports: [TypeOrmModule.forFeature([Discount])],
   controllers: [DiscountController],
   providers: [DiscountService, DiscountRepository],
+  exports: [DiscountService],
 })
 export class DiscountModule {}

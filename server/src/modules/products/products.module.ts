@@ -4,9 +4,15 @@ import { ProductsController } from './products.controller';
 import { Product } from './entities/product.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductRepository } from './repository/product.repository';
+import { DiscountModule } from '../discounts/discounts.module';
+import { CloudinaryModule } from 'src/config/upload/cloudinary.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product])],
+  imports: [
+    TypeOrmModule.forFeature([Product]),
+    DiscountModule,
+    CloudinaryModule,
+  ],
   controllers: [ProductsController],
   providers: [ProductsService, ProductRepository],
 })

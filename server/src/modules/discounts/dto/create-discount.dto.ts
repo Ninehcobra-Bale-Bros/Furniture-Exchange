@@ -27,7 +27,7 @@ export class CreateDiscountDto extends PartialType(DiscountDto) {
     required: true,
     type: 'string',
     description: 'Minimum price',
-    example: '50000000',
+    example: '0',
   })
   @Transform(({ value }) => parseFloat(value))
   min_price!: number;

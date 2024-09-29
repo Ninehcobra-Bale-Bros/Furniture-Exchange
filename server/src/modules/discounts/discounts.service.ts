@@ -15,11 +15,20 @@ export class DiscountService {
       discount_percent: dto.discount_percent / 100,
     };
 
-    const newCategory = await this.discountRepository.save(
+    const newDiscount = await this.discountRepository.save(
       DiscountDto.toEntity(dto),
     );
 
-    return DiscountDto.fromEntity(newCategory);
+    return DiscountDto.fromEntity(newDiscount);
+  }
+
+  async findCompatibleDiscountByPrice(price: number) {
+    const discount =
+      await this.discountRepository.findCompatibleDiscountByPrice(price);
+
+    console.log(discount);
+
+    return DiscountDto.fromEntity(discount);
   }
 
   async findAll() {

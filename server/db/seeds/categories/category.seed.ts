@@ -19,6 +19,11 @@ export default class CategorySeeder implements Seeder {
       await categoryRepository.insert(category as unknown as Category);
     }
 
+    // Reset the sequence after seeding
+    await dataSource.query(
+      `SELECT setval('category_id_seq', (SELECT MAX(id) FROM category));`,
+    );
+
     const end = new Date();
     const duration = (end.getTime() - now.getTime()) / 1000;
 

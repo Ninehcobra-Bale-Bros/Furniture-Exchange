@@ -19,6 +19,10 @@ export default class DiscountSeeder implements Seeder {
       await discountRepository.insert(discount as unknown as Discount);
     }
 
+    await dataSource.query(
+      `SELECT setval('discount_id_seq', (SELECT MAX(id) FROM discount));`,
+    );
+
     const end = new Date();
     const duration = (end.getTime() - now.getTime()) / 1000;
 
