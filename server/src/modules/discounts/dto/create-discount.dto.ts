@@ -29,9 +29,17 @@ export class CreateDiscountDto extends PartialType(DiscountDto) {
     description: 'Minimum price',
     example: '50000000',
   })
-  @IsNumber()
   @Transform(({ value }) => parseFloat(value))
   min_price!: number;
+
+  @ApiProperty({
+    required: false,
+    type: 'string',
+    description: 'Minimum price',
+    example: '50000000',
+  })
+  @Transform(({ value }) => parseFloat(value))
+  max_price?: number;
 
   @ApiProperty({
     required: true,
@@ -44,6 +52,15 @@ export class CreateDiscountDto extends PartialType(DiscountDto) {
   @IsNumber()
   @Transform(({ value }) => parseFloat(value))
   discount_percent!: number;
+
+  @ApiProperty({
+    required: true,
+    type: 'string',
+    description: 'order of discount',
+    example: '1',
+  })
+  @Transform(({ value }) => Number(value))
+  order!: number;
 
   @Exclude()
   id: number & { __brand: 'discountId' };

@@ -15,6 +15,12 @@ export class Discount extends BaseEntity {
   @Column({ type: 'bigint', nullable: false })
   min_price!: number;
 
+  @Column({ type: 'bigint', nullable: true })
+  max_price!: number;
+
   @Column({ type: 'float', nullable: false })
   discount_percent!: number;
+
+  @Column({ type: 'int', default: 0 })
+  order!: number;
 }
