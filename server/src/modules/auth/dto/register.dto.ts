@@ -28,7 +28,7 @@ export class RegisterDto extends PartialType(User) {
     description: 'First name',
     example: 'John',
   })
-  firstName: string;
+  first_name: string;
 
   @ApiProperty({
     required: true,
@@ -36,7 +36,7 @@ export class RegisterDto extends PartialType(User) {
     description: 'Last name',
     example: 'Doe',
   })
-  lastName: string;
+  last_name: string;
 
   @ApiProperty({
     required: false,
@@ -45,7 +45,7 @@ export class RegisterDto extends PartialType(User) {
     example: '0123456789',
   })
   @IsPhoneNumber('VN')
-  phoneNumber: string;
+  phone_number: string;
 
   @ApiProperty({
     required: true,

@@ -4,9 +4,6 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RedisService } from 'src/config/cache/redis.service';
@@ -54,7 +51,7 @@ export class UsersService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    user.emailVerified = true;
+    user.email_verified = true;
 
     return await this.userRepository.save(user).then((u) => {
       return UserDto.fromEntity(u);

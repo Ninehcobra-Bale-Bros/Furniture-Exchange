@@ -17,16 +17,16 @@ export class User extends BaseEntity {
   email!: string;
 
   @Column({ type: 'boolean', default: false })
-  emailVerified!: boolean;
+  email_verified!: boolean;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   password!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  firstName!: string;
+  first_name!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  lastName!: string;
+  last_name!: string;
 
   @Column({
     type: 'enum',
@@ -40,13 +40,13 @@ export class User extends BaseEntity {
   image: string;
 
   @Column({ type: 'varchar', length: 10, nullable: false })
-  phoneNumber: string;
+  phone_number: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  addressLine1: string;
+  address_line1: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  addressLine2: string;
+  address_line2: string;
 
   @Column({
     type: 'enum',

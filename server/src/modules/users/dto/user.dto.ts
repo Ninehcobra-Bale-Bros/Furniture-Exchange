@@ -11,19 +11,19 @@ export class UserDto implements Readonly<UserDto> {
   email: string;
 
   @IsBoolean()
-  emailVerified: boolean;
+  email_verified: boolean;
 
   @IsString()
   password: string;
 
   @IsString()
-  firstName: string;
+  first_name: string;
 
   @IsString()
-  lastName: string;
+  last_name: string;
 
   @IsString()
-  phoneNumber: string;
+  phone_number: string;
 
   @IsEnum(SexEnum)
   sex: SexEnum;
@@ -31,18 +31,29 @@ export class UserDto implements Readonly<UserDto> {
   @IsEnum(RoleEnum)
   role: RoleEnum;
 
+  @IsString()
+  image: string;
+
+  @IsString()
+  address_line1: string;
+
+  @IsString()
+  address_line2: string;
+
   public static from(dto: Partial<UserDto>) {
     const user = new UserDto();
 
     user.id = dto.id;
     user.email = dto.email;
     user.password = dto.password;
-    user.firstName = dto.firstName;
-    user.lastName = dto.lastName;
-    user.phoneNumber = dto.phoneNumber;
-    user.role = dto.role;
-    user.emailVerified = dto.emailVerified;
+    user.first_name = dto.first_name;
+    user.last_name = dto.last_name;
+    user.image = dto.image;
+    user.phone_number = dto.phone_number;
     user.sex = dto.sex;
+    user.role = dto.role;
+    user.address_line1 = dto.address_line1;
+    user.address_line2 = dto.address_line2;
 
     return user;
   }
@@ -51,13 +62,15 @@ export class UserDto implements Readonly<UserDto> {
     return this.from({
       id: entity.id,
       email: entity.email,
-      firstName: entity.firstName,
-      lastName: entity.lastName,
-      phoneNumber: entity.phoneNumber,
-      role: entity.role,
       password: entity.password,
-      emailVerified: entity.emailVerified,
+      first_name: entity.first_name,
+      last_name: entity.last_name,
+      image: entity.image,
+      phone_number: entity.phone_number,
       sex: entity.sex,
+      role: entity.role,
+      address_line1: entity.address_line1,
+      address_line2: entity.address_line2,
     });
   }
 
@@ -65,13 +78,15 @@ export class UserDto implements Readonly<UserDto> {
     const user = new User();
 
     user.email = dto.email;
-    user.phoneNumber = dto.phoneNumber;
     user.password = dto.password;
-    user.firstName = dto.firstName;
-    user.lastName = dto.lastName;
-    user.role = dto.role ?? RoleEnum.BUYER;
-    user.emailVerified = dto.emailVerified ?? false;
+    user.first_name = dto.first_name;
+    user.last_name = dto.last_name;
+    user.image = dto.image;
+    user.phone_number = dto.phone_number;
     user.sex = dto.sex;
+    user.role = dto.role ?? RoleEnum.BUYER;
+    user.address_line1 = dto.address_line1;
+    user.address_line2 = dto.address_line2;
 
     return user;
   }
