@@ -1,6 +1,13 @@
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { IGenericRepository } from './generic.interface';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 export class GenericRepository<T extends BaseEntity>
   implements IGenericRepository<T>
@@ -24,6 +31,25 @@ export class GenericRepository<T extends BaseEntity>
         deleted_at: null,
       },
     });
+  }
+
+  async findOneByAndUpdate(
+    options: FindOneOptions<T>,
+    partialEntity: QueryDeepPartialEntity<T>,
+  ): Promise<UpdateResult> {
+    const foundOne = await this.repository.findOne({
+      ...options,
+      where: {
+        ...options.where,
+        deleted_at: null,
+      },
+    });
+
+    if (!foundOne) {
+      return null;
+    }
+
+    return await this.repository.update(foundOne.id, partialEntity);
   }
 
   async save(entity: T): Promise<T> {

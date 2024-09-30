@@ -6,20 +6,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CategoryDto implements Readonly<CategoryDto> {
   id!: number;
-
   parent_id!: number | null;
-
   parent?: Category;
-
   name!: string;
-
   description!: string;
-
+  image_url!: string;
+  image_id!: string;
   order: number;
-
-  created_at!: Date;
-
-  updated_at!: Date;
 
   public static from(dto: Partial<CategoryDto>) {
     const category = new CategoryDto();
@@ -29,9 +22,9 @@ export class CategoryDto implements Readonly<CategoryDto> {
     category.parent = dto.parent;
     category.name = dto.name;
     category.description = dto.description;
+    category.image_url = dto.image_url;
+    category.image_id = dto.image_id;
     category.order = dto.order;
-    category.created_at = dto.created_at;
-    category.updated_at = dto.updated_at;
 
     return category;
   }
@@ -43,9 +36,9 @@ export class CategoryDto implements Readonly<CategoryDto> {
       parent: entity.parent,
       name: entity.name,
       description: entity.description,
+      image_url: entity.image_url,
+      image_id: entity.image_id,
       order: entity.order,
-      created_at: entity.created_at,
-      updated_at: entity.updated_at,
     });
   }
 

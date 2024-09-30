@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { BaseEntity } from 'src/core/base.entity';
 import {
   Column,
@@ -31,6 +32,12 @@ export class Category extends BaseEntity {
 
   @Column({ type: 'text', nullable: false })
   description!: string; // Changed to 'text' for more flexibility
+
+  @Column({ type: 'varchar', nullable: false, default: '' })
+  image_url!: string;
+
+  @Column({ type: 'varchar', nullable: false, default: '' })
+  image_id!: string;
 
   @Column({ type: 'int', nullable: false, default: 0 })
   order!: number;

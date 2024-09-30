@@ -26,8 +26,6 @@ export class DiscountService {
     const discount =
       await this.discountRepository.findCompatibleDiscountByPrice(price);
 
-    console.log(discount);
-
     return DiscountDto.fromEntity(discount);
   }
 

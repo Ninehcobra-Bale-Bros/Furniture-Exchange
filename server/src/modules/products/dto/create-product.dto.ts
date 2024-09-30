@@ -39,12 +39,19 @@ export class CreateProductDto extends PartialType(ProductDto) {
     required: false,
     description: 'Product image urls',
   })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',');
+    }
+    return value;
+  })
   image_urls?: string[];
 
   @ApiProperty({
     type: 'array',
     items: {
       format: 'binary',
+      type: 'string',
     },
     required: false,
     description: 'Product image files',

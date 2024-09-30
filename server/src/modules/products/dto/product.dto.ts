@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -37,6 +38,8 @@ export class ProductDto implements Readonly<ProductDto> {
     it.status = dto.status;
     it.state = dto.state;
     it.expired_at = dto.expired_at;
+
+    console.log('it', it);
 
     return it;
   }

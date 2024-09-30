@@ -37,8 +37,6 @@ export class CloudinaryService {
           const uploadDuration = (endTime - startTime) / 1000; // Convert to seconds
 
           console.log(`Cloudinary upload duration: ${uploadDuration}s`);
-
-          console.log('Cloudinary upload result:', result);
           resolve(result);
         },
       );
@@ -74,13 +72,10 @@ export class CloudinaryService {
             return reject(err);
           }
 
-          // End timing
           const endTime = Date.now();
-          const uploadDuration = (endTime - startTime) / 1000; // Convert to seconds
+          const uploadDuration = (endTime - startTime) / 1000;
 
           console.log(`Cloudinary upload duration: ${uploadDuration}s`);
-
-          console.log('Cloudinary upload result:', result);
           resolve(result);
         },
       );

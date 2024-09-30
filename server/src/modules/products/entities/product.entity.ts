@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { BaseEntity } from 'src/core/base.entity';
@@ -47,12 +48,25 @@ export class Product extends BaseEntity {
   description!: string;
 
   @Column({ type: 'text', nullable: false })
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_urls!: string[];
 
   @Column({ type: 'text', nullable: false })
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_ids!: string[];
 
   @Column({ type: 'bigint', nullable: false })
+  @Transform(({ value }) => Number(value))
   price!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
