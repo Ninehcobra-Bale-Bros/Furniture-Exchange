@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import products from './products.json';
 import { Product } from 'src/modules/products/entities/product.entity';
 
-export default class UserSeeder implements Seeder {
+export default class ProductSeeder implements Seeder {
   async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
@@ -20,7 +20,7 @@ export default class UserSeeder implements Seeder {
     }
 
     await dataSource.query(
-      `SELECT setval('discount_id_seq', (SELECT MAX(id) FROM discount));`,
+      `SELECT setval('product_id_seq', (SELECT MAX(id) FROM product));`,
     );
 
     const end = new Date();
