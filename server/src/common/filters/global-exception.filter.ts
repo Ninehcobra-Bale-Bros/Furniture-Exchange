@@ -1,51 +1,121 @@
 import {
   ArgumentsHost,
   Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { Request, Response } from 'express';
-import { BaseGlobalExceptionFilter } from './base-exception.filter';
+import { ValidationError } from 'class-validator';
+import { TokenExpiredError } from 'jsonwebtoken';
 
-// Catch all exceptions include internal server error
 @Catch()
-export class GlobalExceptionFilter extends BaseGlobalExceptionFilter {
-  constructor(httpAdapterHost: HttpAdapterHost) {
-    super(httpAdapterHost);
-  }
+export class GlobalExceptionFilter implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-  catch(exception: any, host: ArgumentsHost): void {
+  catch(exception: any, host: ArgumentsHost) {
+    const { httpAdapter } = this.httpAdapterHost;
+
     const ctx = host.switchToHttp();
 
-    const title = 'Internal Server Error';
+    const title = this.getTitle(exception);
 
-    const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    const httpStatus = this.getHttpStatus(exception);
+
+    const typeError = this.getTypeError(exception);
+
+    let isValidationError = false;
+
+    try {
+      isValidationError = Array.isArray(exception?.getResponse()['message']);
+    } catch (error) {
+      isValidationError = false;
+    }
 
     const isDevelopment = process.env.NODE_ENV === 'development' ? true : false;
 
-    this.buildResponse(exception, ctx, title, httpStatus, isDevelopment);
+    const responseBody = {
+      title: title,
+      type: typeError,
+      statusCode: httpStatus,
+      timestamp: new Date().toISOString(),
+      method: ctx.getRequest().method,
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      message: exception.message,
+      ...(isValidationError
+        ? {
+            validation_errors: this.formatValidationErrors(
+              exception.getResponse()['message'],
+            ),
+          }
+        : {}),
+      ...(isDevelopment ? { trace: exception.stack } : {}),
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+  }
+
+  private getTitle(exception: any) {
+    if (exception instanceof HttpException) {
+      const response = exception?.getResponse();
+
+      if (response && Array.isArray(response['message'])) {
+        return 'ValidationError';
+      }
+
+      return exception.name;
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return 'TokenExpired';
+    }
+
+    return 'InternalServerError';
+  }
+
+  private getHttpStatus(exception: any) {
+    if (exception instanceof HttpException) {
+      return exception.getStatus();
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return HttpStatus.UNAUTHORIZED;
+    }
+
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  private getTypeError(exception: any) {
+    if (exception instanceof HttpException) {
+      const response = exception?.getResponse();
+
+      if (response && Array.isArray(response['message'])) {
+        return 'ValidationError';
+      }
+
+      return 'HttpException';
+    }
+
+    if (exception instanceof TokenExpiredError) {
+      return 'TokenError';
+    }
+
+    return 'InternalServerError';
+  }
+
+  private formatValidationErrors(
+    validationErrors: ValidationError[],
+  ): object[] {
+    console.log(validationErrors);
+
+    // Custom logic to format validation errors
+    return validationErrors.map((error: ValidationError) => {
+      const field = error.toString().split(' ')[0];
+
+      return {
+        field: field,
+        constraints: error,
+      };
+    });
   }
 }
-
-// const ctx = host.switchToHttp();
-
-// const httpStatus =
-//   exception instanceof HttpException
-//     ? exception.getStatus()
-//     : HttpStatus.INTERNAL_SERVER_ERROR;
-// const title =
-//   exception instanceof HttpException ? 'Error' : 'Internal Server Error';
-
-// const isProduction = process.env.NODE_ENV === 'production';
-
-// const responseBody = {
-//   title: title,
-//   statusCode: httpStatus,
-//   timestamp: new Date().toISOString(),
-//   path: httpAdapter.getRequestUrl(ctx.getRequest()),
-//   message: exception.message,
-//   ...(isProduction ? {} : { trace: exception.stack }),
-// };
-
-// httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

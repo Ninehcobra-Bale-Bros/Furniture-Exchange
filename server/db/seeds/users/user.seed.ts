@@ -2,7 +2,7 @@ import { User } from 'src/modules/users/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
-import DATA from './user.data';
+import users from './users.json';
 
 export default class UserSeeder implements Seeder {
   async run(
@@ -15,13 +15,13 @@ export default class UserSeeder implements Seeder {
 
     Logger.warn('Seeding users...');
 
-    for (const user of DATA) {
-      await userRepository.insert(user as User);
+    for (const user of users) {
+      await userRepository.insert(user as unknown as User);
     }
 
     const end = new Date();
     const duration = (end.getTime() - now.getTime()) / 1000;
 
-    Logger.fatal(`Seeding users completed - Duration: ${duration} seconds`);
+    Logger.fatal(`Seeding completed - Duration: ${duration} seconds`);
   }
 }

@@ -22,7 +22,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
-  @Post('upload/single')
+  @Post('single')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -63,7 +63,7 @@ export class CloudinaryController {
     });
   }
 
-  @Post('upload/multiple')
+  @Post('multiple')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -123,7 +123,7 @@ export class CloudinaryController {
     return urls;
   }
 
-  @Post('upload/url')
+  @Post('url')
   @ApiBody({
     schema: {
       type: 'object',
@@ -140,7 +140,7 @@ export class CloudinaryController {
     });
   }
 
-  @Post('upload/urls')
+  @Post('urls')
   @ApiBody({
     schema: {
       type: 'object',

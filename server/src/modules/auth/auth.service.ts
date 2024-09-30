@@ -37,9 +37,9 @@ export class AuthService {
     const newUser = await this.userService.create({
       email: dto.email,
       password: hashedPassword,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      phoneNumber: dto.phoneNumber,
+      first_name: dto.first_name,
+      last_name: dto.last_name,
+      phone_number: dto.phone_number,
       sex: dto.sex,
     });
 
@@ -53,8 +53,8 @@ export class AuthService {
     const url = await this.sendEmailVerification(
       newUser.email,
       otp,
-      newUser.firstName,
-      newUser.lastName,
+      newUser.first_name,
+      newUser.last_name,
     );
 
     return {
@@ -81,14 +81,14 @@ export class AuthService {
 
     // Check if user's email is verified or not
     // If not verified => send email verification link
-    if (!user.emailVerified) {
+    if (!user.email_verified) {
       const otp = utils.generateOTP(5);
 
       const url = await this.sendEmailVerification(
         user.email,
         otp,
-        user.firstName,
-        user.lastName,
+        user.first_name,
+        user.last_name,
       );
 
       // Return only url to verify email

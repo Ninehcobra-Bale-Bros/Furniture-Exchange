@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import CategorySeeder from 'db/seeds/categories/category.seed';
+import DiscountSeeder from 'db/seeds/discounts/discount.seed';
+import ProductSeeder from 'db/seeds/products/product.seed';
+import UserSeeder from 'db/seeds/users/user.seed';
 import { EnvVariables } from 'src/environments/env.interface';
+import { Discount } from 'src/modules/discounts/entities/discount.entity';
 import { DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 
@@ -14,7 +19,7 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   database: 'FurnitureExchange',
   entities: ['dist/**/*.entity{.js,.ts}'],
   migrations: ['dist/db/migrations/*{.js,.ts}'],
-  seeds: ['dist/db/seeds/**/*{.js,.ts}'],
+  seeds: [UserSeeder, DiscountSeeder, CategorySeeder, ProductSeeder],
   synchronize: false, // Ensure this is set to false in production
 };
 
@@ -48,7 +53,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
       migrations: ['dist/db/migrations/*{.ts,.js}'],
       autoLoadEntities: true,
       // synchronize: this.config.get('NODE_ENV') === 'development' ? true : false,
-      synchronize: false,
+      synchronize: true,
     };
   }
 }

@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { BaseEntity } from 'src/core/base.entity';
@@ -11,27 +12,27 @@ import {
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: string & { __brand: 'userId' };
+  id!: UUID & { __brand: 'userId' };
 
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   email!: string;
 
   @Column({ type: 'boolean', default: false })
-  emailVerified!: boolean;
+  email_verified!: boolean;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   password!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  firstName!: string;
+  first_name!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
-  lastName!: string;
+  last_name!: string;
 
   @Column({
     type: 'enum',
     enum: SexEnum,
-    enumName: 'user_sex_enum',
+    enumName: 'sex',
     nullable: false,
   })
   sex!: SexEnum;
@@ -40,18 +41,18 @@ export class User extends BaseEntity {
   image: string;
 
   @Column({ type: 'varchar', length: 10, nullable: false })
-  phoneNumber: string;
+  phone_number: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  addressLine1: string;
+  address_line1: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  addressLine2: string;
+  address_line2: string;
 
   @Column({
     type: 'enum',
     enum: RoleEnum,
-    enumName: 'user_role_enum',
+    enumName: 'role',
     default: RoleEnum.BUYER,
   })
   role!: RoleEnum;

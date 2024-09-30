@@ -1,0 +1,44 @@
+[
+  {
+    "id": "20949d0d-736c-4802-a3e5-3d3db401c1ad",
+    "email": "buyer@gmail.com",
+    "email_verified": true,
+    "password": "$2b$10$dXSxLawKHqAh/8iq1a3D7OqTYA82GqIvZR5/hoNRMBcOCBhKmm/XO",
+    "first_name": "ADMIN",
+    "last_name": "USER",
+    "image": null,
+    "phone_number": "0123456789",
+    "sex": "male",
+    "role": "buyer",
+    "address_line1": null,
+    "address_line2": null
+  },
+  {
+    "id": "7bf27eea-ede2-418f-ad32-8c75115b075d",
+    "email": "admin@gmail.com",
+    "email_verified": true,
+    "password": "$2b$10$TPu52qD8baLazot1PtxBYepUcdLTsJo/.nIBEsjYrAkmXokq5pBQm",
+    "first_name": "ADMIN",
+    "last_name": "USER",
+    "image": null,
+    "phone_number": "0123456789",
+    "sex": "male",
+    "role": "admin",
+    "address_line1": null,
+    "address_line2": null
+  },
+  {
+    "id": "d8334efe-45cc-455a-92c1-1f34a65cc942",
+    "email": "seller@gmail.com",
+    "email_verified": true,
+    "password": "$2b$10$lAKtGCUQWv3S2K8xZayrmukUcQLQKLejqkZFyXiIZkruUVxlgH75W",
+    "first_name": "ADMIN",
+    "last_name": "USER",
+    "image": null,
+    "phone_number": "0123456789",
+    "sex": "male",
+    "role": "seller",
+    "address_line1": null,
+    "address_line2": null
+  }
+]

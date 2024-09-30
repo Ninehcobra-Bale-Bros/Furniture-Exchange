@@ -13,6 +13,9 @@ import { RedisService } from './config/cache/redis.service';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './config/mail/mail.module';
 import { CloudinaryModule } from './config/upload/cloudinary.module';
+import { ProductsModule } from './modules/products/products.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { DiscountModule } from './modules/discounts/discounts.module';
 
 @Module({
   imports: [
@@ -36,6 +39,12 @@ import { CloudinaryModule } from './config/upload/cloudinary.module';
 
     // cache module for caching data in redis
     RedisModule,
+
+    ProductsModule,
+
+    CategoriesModule,
+
+    DiscountModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UploadApiErrorResponse, UploadApiResponse, v2 } from 'cloudinary';
 import { EnvVariables } from 'src/environments/env.interface';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 import toStream = require('buffer-to-stream');
 
@@ -37,8 +37,6 @@ export class CloudinaryService {
           const uploadDuration = (endTime - startTime) / 1000; // Convert to seconds
 
           console.log(`Cloudinary upload duration: ${uploadDuration}s`);
-
-          console.log('Cloudinary upload result:', result);
           resolve(result);
         },
       );
@@ -53,7 +51,7 @@ export class CloudinaryService {
     const isValidUrl = await this.isValidUrlImage(url);
 
     if (!isValidUrl) {
-      throw new BadRequestException('Invalid image URL:' + url);
+      throw new BadRequestException(`URL ${url} không hợp lệ!`);
     }
 
     return new Promise((resolve, reject) => {
@@ -74,13 +72,10 @@ export class CloudinaryService {
             return reject(err);
           }
 
-          // End timing
           const endTime = Date.now();
-          const uploadDuration = (endTime - startTime) / 1000; // Convert to seconds
+          const uploadDuration = (endTime - startTime) / 1000;
 
           console.log(`Cloudinary upload duration: ${uploadDuration}s`);
-
-          console.log('Cloudinary upload result:', result);
           resolve(result);
         },
       );
@@ -148,9 +143,11 @@ export class CloudinaryService {
   }
 
   private async isValidUrlImage(url: string): Promise<boolean> {
-    const response = await fetch(url, { method: 'HEAD' });
+    let response = null;
 
-    if (!response.ok) {
+    try {
+      response = await fetch(url, { method: 'HEAD' });
+    } catch (error) {
       return false;
     }
 

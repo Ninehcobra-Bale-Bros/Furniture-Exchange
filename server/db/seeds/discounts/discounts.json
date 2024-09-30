@@ -1,0 +1,57 @@
+[
+  {
+    "created_at": "2024-09-29T06:52:14.476Z",
+    "deleted_at": null,
+    "id": 1,
+    "name": "Giá trị lớn hơn 50.000.000 đồng giảm 1%",
+    "description": "Chiết khấu cho các sản phẩm có giá trị trên 50.000.000 đồng",
+    "min_price": "50000000",
+    "max_price": null,
+    "discount_percent": 0.012,
+    "order": 1
+  },
+  {
+    "created_at": "2024-09-29T06:53:38.325Z",
+    "deleted_at": null,
+    "id": 2,
+    "name": "Giá trị 30.000.000 - 50.000.00 đồng chiết khấu 1.2%",
+    "description": "Chiết khấu cho các sản phẩm có giá trị từ 30.000.000 đến 50.000.000 đồng",
+    "min_price": "30000000",
+    "max_price": "50000000",
+    "discount_percent": 0.01,
+    "order": 2
+  },
+  {
+    "created_at": "2024-09-29T07:03:50.417Z",
+    "deleted_at": null,
+    "id": 3,
+    "name": "Giá từ 15.000.000 < 30.000.000 chiết khấu 1.5%",
+    "description": "Chiết khấu 1.5% cho các sản phẩm có giá trị từ 15.000.000 đến nhỏ hơn 30.000.000 đồng",
+    "min_price": "15000000",
+    "max_price": "30000000",
+    "discount_percent": 0.015,
+    "order": 3
+  },
+  {
+    "created_at": "2024-09-29T07:07:07.265Z",
+    "deleted_at": null,
+    "id": 4,
+    "name": "Giá từ 5.000.000 < 15.000.000 chiết khấu 1.7%",
+    "description": "Chiết khấu 1.7% cho các sản phẩm có giá trị từ 5.000.000 đến nhỏ hơn 15.000.000 đồng",
+    "min_price": "5000000",
+    "max_price": "15000000",
+    "discount_percent": 0.017,
+    "order": 4
+  },
+  {
+    "created_at": "2024-09-29T07:08:23.823Z",
+    "deleted_at": null,
+    "id": 5,
+    "name": "Giá < 5.000.000 chiết khấu 2%",
+    "description": "Chiết khấu 2% cho các sản phẩm có giá trị nhỏ hơn 5.000.000 đồng",
+    "min_price": "0",
+    "max_price": "5000000",
+    "discount_percent": 0.02,
+    "order": 5
+  }
+]
