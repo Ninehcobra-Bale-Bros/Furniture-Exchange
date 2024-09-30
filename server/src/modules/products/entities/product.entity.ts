@@ -44,6 +44,9 @@ export class Product extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false })
   name!: string;
 
+  @Column({ type: 'int', nullable: false, default: 0 })
+  quantity!: number;
+
   @Column({ type: 'text', nullable: false })
   description!: string;
 

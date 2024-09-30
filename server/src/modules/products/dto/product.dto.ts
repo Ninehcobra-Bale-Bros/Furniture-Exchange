@@ -8,6 +8,7 @@ export class ProductDto implements Readonly<ProductDto> {
   seller_id!: UUID & { __brand: 'userId' };
   category_id!: number & { __brand: 'categoryId' };
   name!: string;
+  quantity!: number;
   description!: string;
   image_urls!: string[];
   image_ids!: string[];
@@ -27,6 +28,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.seller_id = dto.seller_id;
     it.category_id = dto.category_id;
     it.name = dto.name;
+    it.quantity = dto.quantity;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;
@@ -50,6 +52,7 @@ export class ProductDto implements Readonly<ProductDto> {
       seller_id: entity.seller_id,
       category_id: entity.category_id,
       name: entity.name,
+      quantity: entity.quantity,
       description: entity.description,
       image_urls: entity.image_urls,
       image_ids: entity.image_ids,
@@ -70,6 +73,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.seller_id = dto.seller_id;
     it.category_id = dto.category_id;
     it.name = dto.name;
+    it.quantity = dto.quantity;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;

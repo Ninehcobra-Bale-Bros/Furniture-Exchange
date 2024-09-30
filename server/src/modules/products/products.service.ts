@@ -11,7 +11,7 @@ import { ProductDto } from 'src/modules/products/dto/product.dto';
 import { User } from '../users/entities/user.entity';
 import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { Product } from 'src/modules/products/entities/product.entity';
 
 @Injectable()

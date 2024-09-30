@@ -71,6 +71,16 @@ export class CreateProductDto extends PartialType(ProductDto) {
   @ApiProperty({
     required: true,
     type: 'string',
+    description: 'Product quantity',
+    example: '1',
+  })
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  quantity!: number;
+
+  @ApiProperty({
+    required: true,
+    type: 'string',
     description: 'Product origin',
     example: 'Vietnam',
   })
@@ -129,14 +139,6 @@ export class CreateProductDto extends PartialType(ProductDto) {
     return value.replace(last, last.replace(':', ''));
   })
   expired_at: Date;
-
-  @ApiProperty({
-    required: true,
-    type: 'string',
-    example: 'd8334efe-45cc-455a-92c1-1f34a65cc942',
-  })
-  @IsUUID()
-  seller_id!: UUID & { __brand: 'userId' };
 
   @ApiProperty({
     required: true,

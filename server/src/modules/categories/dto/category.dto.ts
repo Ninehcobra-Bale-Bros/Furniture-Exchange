@@ -15,18 +15,18 @@ export class CategoryDto implements Readonly<CategoryDto> {
   order: number;
 
   public static from(dto: Partial<CategoryDto>) {
-    const category = new CategoryDto();
+    const it = new CategoryDto();
 
-    category.id = dto.id;
-    category.parent_id = dto.parent_id;
-    category.parent = dto.parent;
-    category.name = dto.name;
-    category.description = dto.description;
-    category.image_url = dto.image_url;
-    category.image_id = dto.image_id;
-    category.order = dto.order;
+    it.id = dto.id;
+    it.parent_id = dto.parent_id;
+    it.parent = dto.parent;
+    it.name = dto.name;
+    it.description = dto.description;
+    it.image_url = dto.image_url;
+    it.image_id = dto.image_id;
+    it.order = dto.order;
 
-    return category;
+    return it;
   }
 
   public static fromEntity(entity: Category) {
@@ -43,13 +43,13 @@ export class CategoryDto implements Readonly<CategoryDto> {
   }
 
   public static toEntity(dto: Partial<Category>) {
-    const category = new Category();
+    const it = new Category();
 
-    category.parent_id = dto.parent_id || null;
-    category.name = dto.name;
-    category.description = dto.description;
-    category.order = dto.order;
+    it.parent_id = dto.parent_id || null;
+    it.name = dto.name;
+    it.description = dto.description;
+    it.order = dto.order;
 
-    return category;
+    return it;
   }
 }

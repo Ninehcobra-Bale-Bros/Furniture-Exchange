@@ -27,10 +27,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let isValidationError = false;
 
     try {
-      isValidationError = Array.isArray(exception.getResponse()['message']);
+      isValidationError = Array.isArray(exception?.getResponse()['message']);
     } catch (error) {
-      console.log(error);
-
       isValidationError = false;
     }
 
@@ -59,9 +57,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   private getTitle(exception: any) {
     if (exception instanceof HttpException) {
-      const response = exception.getResponse();
+      const response = exception?.getResponse();
 
-      if (Array.isArray(response['message'])) {
+      if (response && Array.isArray(response['message'])) {
         return 'ValidationError';
       }
 
@@ -89,9 +87,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   private getTypeError(exception: any) {
     if (exception instanceof HttpException) {
-      const response = exception.getResponse();
+      const response = exception?.getResponse();
 
-      if (Array.isArray(response['message'])) {
+      if (response && Array.isArray(response['message'])) {
         return 'ValidationError';
       }
 

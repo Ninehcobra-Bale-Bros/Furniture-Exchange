@@ -51,7 +51,7 @@ export class CloudinaryService {
     const isValidUrl = await this.isValidUrlImage(url);
 
     if (!isValidUrl) {
-      throw new BadRequestException('Invalid image URL:' + url);
+      throw new BadRequestException(`URL ${url} không hợp lệ!`);
     }
 
     return new Promise((resolve, reject) => {
@@ -143,9 +143,11 @@ export class CloudinaryService {
   }
 
   private async isValidUrlImage(url: string): Promise<boolean> {
-    const response = await fetch(url, { method: 'HEAD' });
+    let response = null;
 
-    if (!response.ok) {
+    try {
+      response = await fetch(url, { method: 'HEAD' });
+    } catch (error) {
       return false;
     }
 

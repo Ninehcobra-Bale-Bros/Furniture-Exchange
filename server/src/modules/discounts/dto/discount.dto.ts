@@ -11,17 +11,17 @@ export class DiscountDto implements Readonly<DiscountDto> {
   order: number;
 
   public static from(dto: Partial<DiscountDto>) {
-    const discount = new DiscountDto();
+    const it = new DiscountDto();
 
-    discount.id = dto.id;
-    discount.name = dto.name;
-    discount.description = dto.description;
-    discount.min_price = dto.min_price;
-    discount.max_price = dto.max_price;
-    discount.discount_percent = dto.discount_percent;
-    discount.order = dto.order;
+    it.id = dto.id;
+    it.name = dto.name;
+    it.description = dto.description;
+    it.min_price = dto.min_price;
+    it.max_price = dto.max_price;
+    it.discount_percent = dto.discount_percent;
+    it.order = dto.order;
 
-    return discount;
+    return it;
   }
 
   public static fromEntity(entity: Discount) {
@@ -37,15 +37,15 @@ export class DiscountDto implements Readonly<DiscountDto> {
   }
 
   public static toEntity(dto: Partial<Discount>) {
-    const discount = new Discount();
+    const it = new Discount();
 
-    discount.name = dto.name;
-    discount.description = dto.description;
-    discount.min_price = dto.min_price;
-    discount.max_price = dto.max_price;
-    discount.discount_percent = dto.discount_percent;
-    discount.order = dto.order;
+    it.name = dto.name;
+    it.description = dto.description;
+    it.min_price = dto.min_price;
+    it.max_price = dto.max_price;
+    it.discount_percent = dto.discount_percent;
+    it.order = dto.order;
 
-    return discount;
+    return it;
   }
 }
