@@ -32,16 +32,6 @@ export class TypeormService implements TypeOrmOptionsFactory {
   ) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    console.log(
-      "this.config.get('POSTGRES_HOST')",
-      this.config.get('POSTGRES_HOST'),
-    );
-
-    console.log(
-      "this.config.get('POSTGRES_DATABASE')",
-      this.config.get('POSTGRES_DATABASE'),
-    );
-
     return {
       type: 'postgres',
       host: this.config.get('POSTGRES_HOST'),

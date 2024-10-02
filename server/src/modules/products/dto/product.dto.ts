@@ -1,4 +1,3 @@
-import { Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -20,6 +19,8 @@ export class ProductDto implements Readonly<ProductDto> {
   status!: StatusEnum;
   state!: StateEnum;
   expired_at!: Date;
+  created_at!: Date;
+  updated_at!: Date;
 
   public static from(dto: Partial<ProductDto>) {
     const it = new ProductDto();
@@ -40,8 +41,8 @@ export class ProductDto implements Readonly<ProductDto> {
     it.status = dto.status;
     it.state = dto.state;
     it.expired_at = dto.expired_at;
-
-    console.log('it', it);
+    it.created_at = dto.created_at;
+    it.updated_at = dto.updated_at;
 
     return it;
   }
@@ -64,6 +65,8 @@ export class ProductDto implements Readonly<ProductDto> {
       status: entity.status,
       state: entity.state,
       expired_at: entity.expired_at,
+      created_at: entity.created_at,
+      updated_at: entity.updated_at,
     });
   }
 
@@ -85,6 +88,8 @@ export class ProductDto implements Readonly<ProductDto> {
     it.status = dto.status;
     it.state = dto.state;
     it.expired_at = dto.expired_at;
+    it.created_at = dto.created_at;
+    it.updated_at = dto.updated_at;
 
     return it;
   }

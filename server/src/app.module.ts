@@ -16,6 +16,8 @@ import { CloudinaryModule } from './config/upload/cloudinary.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscountModule } from './modules/discounts/discounts.module';
+import { ConversationsModule } from './modules/conversations/conversations.module';
+import { SocketModule } from './config/websocket/socket.module';
 
 @Module({
   imports: [
@@ -32,19 +34,17 @@ import { DiscountModule } from './modules/discounts/discounts.module';
     MailModule,
     // cloudinary module
     CloudinaryModule,
+    // cache module for caching data in redis
+    RedisModule,
+    // websocket module
+    SocketModule,
     // other business modules
     UsersModule,
     AuthModule,
-    MailModule,
-
-    // cache module for caching data in redis
-    RedisModule,
-
     ProductsModule,
-
     CategoriesModule,
-
     DiscountModule,
+    ConversationsModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({

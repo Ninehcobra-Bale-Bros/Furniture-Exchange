@@ -29,8 +29,6 @@ export class ProductsService {
   ) {
     const myWallet = 100000000;
 
-    console.log(dto);
-
     if (
       !(dto?.image_urls && dto.image_urls?.length) &&
       !(files && files?.length)
@@ -106,7 +104,7 @@ export class ProductsService {
       await this.productRepository.save(newProduct);
     }
 
-    return newProduct;
+    return ProductDto.fromEntity(newProduct);
   }
 
   async findAll() {
