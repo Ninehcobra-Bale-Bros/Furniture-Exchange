@@ -29,7 +29,7 @@ export class Message extends BaseEntity {
   @Column({ type: 'uuid', nullable: false })
   sender_id!: UUID & { __brand: 'userId' };
 
-  @OneToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({
     name: 'sender_id',
     referencedColumnName: 'id',

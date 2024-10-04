@@ -6,6 +6,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,7 +22,7 @@ export class Conversation extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   product_id!: number & { __brand: 'productId' };
 
-  @OneToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id)
   @JoinColumn({
     name: 'product_id',
     referencedColumnName: 'id',
@@ -31,7 +32,7 @@ export class Conversation extends BaseEntity {
   @Column({ type: 'uuid', nullable: false })
   seller_id!: UUID & { __brand: 'userId' };
 
-  @OneToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({
     name: 'seller_id',
     referencedColumnName: 'id',
@@ -39,12 +40,12 @@ export class Conversation extends BaseEntity {
   seller!: User;
 
   @Column({ type: 'uuid', nullable: false })
-  buyer_id!: UUID & { __brand: 'userId' };
+  other_id!: UUID & { __brand: 'userId' };
 
-  @OneToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({
-    name: 'buyer_id',
+    name: 'other_id',
     referencedColumnName: 'id',
   })
-  buyer!: User;
+  other!: User;
 }

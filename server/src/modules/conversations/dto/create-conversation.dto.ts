@@ -25,8 +25,8 @@ export class CreateConversationDto extends PartialType(ConversationDto) {
   @ApiProperty({
     required: true,
     type: 'string',
-    description: 'Buyer id',
+    description: 'other id',
     example: '20949d0d-736c-4802-a3e5-3d3db401c1ad',
   })
-  buyer_id!: UUID & { __brand: 'userId' };
+  other_id!: UUID & { __brand: 'userId' };
 }

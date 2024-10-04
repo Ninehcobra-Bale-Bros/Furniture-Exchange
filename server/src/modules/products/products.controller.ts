@@ -16,7 +16,6 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { UPLOAD_CONSTANTS } from 'src/common/constants/upload.constant';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { DiscountService } from '../discounts/discounts.service';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/decorators/role.decorator';

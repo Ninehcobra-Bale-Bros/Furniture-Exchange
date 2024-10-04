@@ -8,9 +8,9 @@ import {
 } from '@nestjs/websockets';
 import { Gateway } from '../gateway';
 import { Server, Socket } from 'socket.io';
-import * as utils from '../../../utils';
 import { ConversationsService } from 'src/modules/conversations/conversations.service';
 import { UsersService } from 'src/modules/users/users.service';
+import { ConversationDto } from 'src/modules/conversations/dto/conversation.dto';
 
 @WebSocketGateway(3002, {
   cors: {
@@ -41,12 +41,43 @@ export class ChatGateway
   }
 
   @SubscribeMessage('newMessage')
-  handleMessage(client: Socket, message: Message) {
+  async handleMessage(client: Socket, message: Message) {
     console.log('Message:', message);
 
-    console.log(message.content);
+    const user = await this.authenticate(client);
 
-    client.broadcast.emit('reply', 'this is a reply');
+    if (!user) {
+      return;
+    }
+
+    let conversation: ConversationDto | null = null;
+
+    conversation =
+      await this.conversationsService.findByProductIdAndSellerIdAndOtherId(
+        message.product_id,
+        message.other_id,
+        user.id,
+      );
+
+    if (!conversation) {
+      conversation = await this.conversationsService.create({
+        product_id: message.product_id as any,
+        seller_id: message.other_id as any,
+        other_id: user.id as any,
+      });
+    }
+
+    console.log('conversation:', conversation);
+
+    this.conversationsService.createMessage(
+      {
+        content: message.content,
+        conversation_id: conversation.id,
+      },
+      user as any,
+    );
+
+    client.broadcast.emit(conversation.name, message);
 
     this.server.emit('reply', '...broadcasting');
   }
@@ -57,6 +88,7 @@ export class ChatGateway
 }
 
 interface Message {
-  name: string;
+  product_id: number;
+  other_id: string;
   content: string;
 }
