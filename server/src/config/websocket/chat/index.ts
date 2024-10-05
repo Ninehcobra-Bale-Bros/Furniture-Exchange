@@ -12,6 +12,12 @@ import { ConversationsService } from 'src/modules/conversations/conversations.se
 import { UsersService } from 'src/modules/users/users.service';
 import { ConversationDto } from 'src/modules/conversations/dto/conversation.dto';
 
+interface Message {
+  product_id: number;
+  other_id: string;
+  content: string;
+}
+
 @WebSocketGateway(3002, {
   cors: {
     origin: '*',
@@ -42,8 +48,6 @@ export class ChatGateway
 
   @SubscribeMessage('newMessage')
   async handleMessage(client: Socket, message: Message) {
-    console.log('Message:', message);
-
     const user = await this.authenticate(client);
 
     if (!user) {
@@ -55,19 +59,17 @@ export class ChatGateway
     conversation =
       await this.conversationsService.findByProductIdAndSellerIdAndOtherId(
         message.product_id,
-        message.other_id,
         user.id,
+        message.other_id,
       );
 
     if (!conversation) {
       conversation = await this.conversationsService.create({
         product_id: message.product_id as any,
-        seller_id: message.other_id as any,
-        other_id: user.id as any,
+        user_id: user.id as any,
+        other_id: message.other_id as any,
       });
     }
-
-    console.log('conversation:', conversation);
 
     this.conversationsService.createMessage(
       {
@@ -77,18 +79,13 @@ export class ChatGateway
       user as any,
     );
 
-    client.broadcast.emit(conversation.name, message);
-
-    this.server.emit('reply', '...broadcasting');
+    client.broadcast.emit(conversation.name, {
+      ...message,
+      conversation_name: conversation.name,
+    });
   }
 
   handleDisconnect(client: any) {
     console.log('Client disconnected:', client.id);
   }
-}
-
-interface Message {
-  product_id: number;
-  other_id: string;
-  content: string;
 }

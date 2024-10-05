@@ -15,5 +15,6 @@ import { CloudinaryModule } from 'src/config/upload/cloudinary.module';
   ],
   controllers: [ProductsController],
   providers: [ProductsService, ProductRepository],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

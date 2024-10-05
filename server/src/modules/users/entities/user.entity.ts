@@ -37,8 +37,11 @@ export class User extends BaseEntity {
   })
   sex!: SexEnum;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', default: '' })
   image: string;
+
+  @Column({ type: 'text', default: '' })
+  image_id: string;
 
   @Column({ type: 'varchar', length: 10, nullable: false })
   phone_number: string;

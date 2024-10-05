@@ -38,4 +38,7 @@ export class Message extends BaseEntity {
 
   @Column({ type: 'text', nullable: false })
   content!: string;
+
+  @Column({ type: 'boolean', default: false })
+  isRead!: boolean;
 }

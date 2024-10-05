@@ -6,9 +6,11 @@ import { MessageRepository } from './repository/message.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Conversation } from './entities/conversation.entity';
+import { ProductsService } from 'src/modules/products/products.service';
+import { ProductsModule } from 'src/modules/products/products.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Conversation, Message])],
+  imports: [ProductsModule, TypeOrmModule.forFeature([Conversation, Message])],
   controllers: [ConversationsController],
   providers: [ConversationsService, ConversationRepository, MessageRepository],
   exports: [ConversationsService],

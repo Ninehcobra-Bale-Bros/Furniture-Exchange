@@ -1,5 +1,6 @@
 import { UUID } from 'crypto';
 import { BaseEntity } from 'src/core/base.entity';
+import { Message } from 'src/modules/conversations/entities/message.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
@@ -7,8 +8,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 
 @Entity()
@@ -29,15 +32,18 @@ export class Conversation extends BaseEntity {
   })
   product!: Product;
 
+  @OneToMany(() => Message, (message) => message.conversation)
+  messages!: Message[];
+
   @Column({ type: 'uuid', nullable: false })
-  seller_id!: UUID & { __brand: 'userId' };
+  user_id!: UUID & { __brand: 'userId' };
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({
-    name: 'seller_id',
+    name: 'user_id',
     referencedColumnName: 'id',
   })
-  seller!: User;
+  user!: User;
 
   @Column({ type: 'uuid', nullable: false })
   other_id!: UUID & { __brand: 'userId' };

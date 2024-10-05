@@ -17,10 +17,10 @@ export class CreateConversationDto extends PartialType(ConversationDto) {
   @ApiProperty({
     required: true,
     type: 'string',
-    description: 'Seller id',
+    description: 'Current user id',
     example: 'd8334efe-45cc-455a-92c1-1f34a65cc942',
   })
-  seller_id!: UUID & { __brand: 'userId' };
+  user_id!: UUID & { __brand: 'userId' };
 
   @ApiProperty({
     required: true,

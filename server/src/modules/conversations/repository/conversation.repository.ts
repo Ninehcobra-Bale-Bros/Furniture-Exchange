@@ -11,18 +11,126 @@ export class ConversationRepository extends GenericRepository<Conversation> {
     super(conversationRepository);
   }
 
+  async findByUserIdAndOtherId(
+    user_id: string,
+    other_id: string,
+  ): Promise<Conversation[]> {
+    const conversation1 = await this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoin('conversation.messages', 'message')
+      .select([
+        'conversation.id',
+        'conversation.name',
+        'message.id',
+        'message.sender_id',
+        'message.content',
+        'message.isRead',
+        'message.created_at',
+      ])
+      .where(
+        '(conversation.user_id = :user_id AND conversation.other_id = :other_id)',
+        { user_id, other_id },
+      )
+      .getMany();
+
+    console.log(conversation1);
+
+    const conversation2 = await this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoin('conversation.messages', 'message')
+      .select([
+        'conversation.id',
+        'conversation.name',
+        'message.id',
+        'message.sender_id',
+        'message.content',
+        'message.isRead',
+        'message.created_at',
+      ])
+      .where(
+        '(conversation.user_id = :other_id AND conversation.other_id = :user_id)',
+        { user_id, other_id },
+      );
+
+    if (conversation1?.length && conversation2?.length) {
+      return [...conversation1, ...conversation2];
+    }
+
+    return conversation1 ?? conversation2;
+  }
+
   async findByProductIdAndSellerIdAndOtherId(
     product_id: number,
-    seller_id: string,
+    user_id: string,
     other_id: string,
   ): Promise<Conversation> {
-    return await this.conversationRepository
+    const conversation = await this.conversationRepository
       .createQueryBuilder('conversation')
-      .where('conversation.product_id = :product_id', { product_id })
+      .leftJoin('conversation.messages', 'message')
+      .select([
+        'conversation.id',
+        'conversation.name',
+        'message.id',
+        'message.sender_id',
+        'message.content',
+        'message.isRead',
+        'message.created_at',
+      ])
+      .where('conversation.product_id = :product_id', { product_id }) // Dynamically pass the correct product_id
       .andWhere(
-        'conversation.seller_id = :seller_id AND conversation.other_id = :other_id OR conversation.seller_id = :other_id AND conversation.other_id = :seller_id',
-        { seller_id, other_id },
+        '(conversation.user_id = :user_id AND conversation.other_id = :other_id)',
+        { user_id, other_id },
       )
       .getOne();
+
+    if (conversation) {
+      return conversation;
+    }
+
+    const otherConversation = await this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoin('conversation.messages', 'message')
+      .where('conversation.product_id = :product_id', { product_id }) // Dynamically pass the correct product_id
+      .andWhere(
+        '(conversation.user_id = :other_id AND conversation.other_id = :user_id)',
+        { user_id, other_id },
+      )
+      .getOne();
+
+    return otherConversation;
+  }
+
+  async findAllConversationsByUserId(user_id: string): Promise<Conversation[]> {
+    return await this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoin('conversation.product', 'product') // Join product without selecting all fields
+      .leftJoin('conversation.user', 'user') // Join user without selecting all fields
+      .leftJoin('conversation.other', 'other') // Join other user without selecting all fields
+      .leftJoin('conversation.messages', 'message') // Join messages without selecting all fields
+      .select([
+        'conversation.id', // Select conversation id
+        'conversation.name', // Select conversation name
+        'product.id', // Select product id
+        'product.name', // Select product name
+        'product.image_urls',
+        'product.price',
+        'user.id', // Select user id
+        'user.last_name', // Select user name
+        'user.first_name',
+        'user.image',
+        'other.id', // Select other user id
+        'other.last_name', // Select other user name
+        'other.first_name', // Select other user name
+        'message.id', // Select message id
+        'message.sender_id', // Select message creation date
+        'message.content', // Select message content
+        'message.isRead', // Select message read status
+        'message.created_at', // Select message creation date
+      ])
+      .where(
+        'conversation.user_id = :user_id OR conversation.other_id = :user_id',
+        { user_id },
+      )
+      .getMany();
   }
 }

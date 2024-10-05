@@ -5,14 +5,14 @@ import CategorySeeder from 'db/seeds/categories/category.seed';
 import DiscountSeeder from 'db/seeds/discounts/discount.seed';
 import ProductSeeder from 'db/seeds/products/product.seed';
 import UserSeeder from 'db/seeds/users/user.seed';
+import { POSTGRES_HOST } from 'src/environments';
 import { EnvVariables } from 'src/environments/env.interface';
-import { Discount } from 'src/modules/discounts/entities/discount.entity';
 import { DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 
 export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   type: 'postgres',
-  host: 'postgres',
+  host: POSTGRES_HOST,
   port: 5432,
   username: 'bale',
   password: 'bale',

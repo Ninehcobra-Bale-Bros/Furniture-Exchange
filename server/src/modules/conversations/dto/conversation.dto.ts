@@ -5,7 +5,7 @@ export class ConversationDto implements Readonly<ConversationDto> {
   id!: number & { __brand: 'conversationId' };
   name!: string;
   product_id!: number & { __brand: 'productId' };
-  seller_id!: UUID & { __brand: 'userId' };
+  user_id!: UUID & { __brand: 'userId' };
   other_id!: UUID & { __brand: 'userId' };
   created_at!: Date;
 
@@ -15,7 +15,7 @@ export class ConversationDto implements Readonly<ConversationDto> {
     it.id = dto.id;
     it.name = dto.name;
     it.product_id = dto.product_id;
-    it.seller_id = dto.seller_id;
+    it.user_id = dto.user_id;
     it.other_id = dto.other_id;
     it.created_at = dto.created_at;
 
@@ -27,7 +27,7 @@ export class ConversationDto implements Readonly<ConversationDto> {
       id: entity.id,
       name: entity.name,
       product_id: entity.product_id,
-      seller_id: entity.seller_id,
+      user_id: entity.user_id,
       other_id: entity.other_id,
       created_at: entity.created_at,
     });
@@ -39,7 +39,7 @@ export class ConversationDto implements Readonly<ConversationDto> {
     it.id = dto.id;
     it.name = `conversation_${Date.now()}`;
     it.product_id = dto.product_id;
-    it.seller_id = dto.seller_id;
+    it.user_id = dto.user_id;
     it.other_id = dto.other_id;
 
     return it;
