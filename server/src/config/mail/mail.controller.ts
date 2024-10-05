@@ -1,10 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MailService } from './mail.service';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/common/guards/role.guard';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Controller('mail')
 @ApiTags('mail')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RoleGuard)
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
@@ -24,6 +29,7 @@ export class MailController {
       },
     },
   })
+  @Roles(RoleEnum.ADMIN)
   send(@Body() body: { email: string }) {
     return this.mailService.sendEmailVerification({
       to: body.email,

@@ -183,4 +183,8 @@ export class ConversationsService {
 
     return conversation;
   }
+
+  async writeToFile() {
+    return [];
+  }
 }

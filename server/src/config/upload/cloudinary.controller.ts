@@ -12,14 +12,23 @@ import {
 } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UPLOAD_CONSTANTS } from 'src/common/constants/upload.constant';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/common/guards/role.guard';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Controller('cloudinary')
 @ApiTags('cloudinary')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RoleGuard)
 export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
   @Post('single')
@@ -57,6 +66,11 @@ export class CloudinaryController {
       },
     }),
   )
+  @ApiOperation({
+    summary: '[ADMIN] Upload a single image (FOR TESTING ONLY)',
+    description: 'Upload a single image to Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     return await this.cloudinaryService.uploadFile(file).catch((err) => {
       throw new BadRequestException(err);
@@ -103,6 +117,11 @@ export class CloudinaryController {
       },
     }),
   )
+  @ApiOperation({
+    summary: '[ADMIN] Upload multiple images (FOR TESTING ONLY)',
+    description: 'Upload multiple images to Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     if (!files || files.length === 0) {
       throw new BadRequestException('At least one file is required.');
@@ -134,6 +153,11 @@ export class CloudinaryController {
       },
     },
   })
+  @ApiOperation({
+    summary: '[ADMIN] Upload an image from URL (FOR TESTING ONLY)',
+    description: 'Upload an image from URL to Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   async uploadImageFromUrl(@Body('url') url: string) {
     return await this.cloudinaryService.uploadFileFromUrl(url).catch((err) => {
       throw new BadRequestException(err);
@@ -154,6 +178,11 @@ export class CloudinaryController {
       },
     },
   })
+  @ApiOperation({
+    summary: '[ADMIN] Upload multiple images from URLs (FOR TESTING ONLY)',
+    description: 'Upload multiple images from URLs to Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   uploadImagesFromUrls(@Body('urls') urls: string[]) {
     if (!urls || urls.length === 0) {
       throw new BadRequestException('At least one URL is required.');
@@ -185,6 +214,11 @@ export class CloudinaryController {
       },
     },
   })
+  @ApiOperation({
+    summary: '[ADMIN] Delete an image (FOR TESTING ONLY)',
+    description: 'Delete an image from Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   async deleteImage(@Body('publicId') publicId: string) {
     return await this.cloudinaryService.deleteFile(publicId).catch((err) => {
       throw new BadRequestException(err);
@@ -205,6 +239,11 @@ export class CloudinaryController {
       },
     },
   })
+  @ApiOperation({
+    summary: '[ADMIN] Delete multiple images (FOR TESTING ONLY)',
+    description: 'Delete multiple images from Cloudinary',
+  })
+  @Roles(RoleEnum.ADMIN)
   deleteImages(@Body('publicIds') publicIds: string[]) {
     if (!publicIds || publicIds.length === 0) {
       throw new BadRequestException('At least one public ID is required.');
