@@ -32,7 +32,10 @@ export class UserDto implements Readonly<UserDto> {
   role: RoleEnum;
 
   @IsString()
-  image: string;
+  image_url: string;
+
+  @IsString()
+  image_id: string;
 
   @IsString()
   address_line1: string;
@@ -49,7 +52,8 @@ export class UserDto implements Readonly<UserDto> {
     user.password = dto.password;
     user.first_name = dto.first_name;
     user.last_name = dto.last_name;
-    user.image = dto.image;
+    user.image_url = dto.image_url;
+    user.image_id = dto.image_id;
     user.phone_number = dto.phone_number;
     user.sex = dto.sex;
     user.role = dto.role;
@@ -67,7 +71,8 @@ export class UserDto implements Readonly<UserDto> {
       password: entity.password,
       first_name: entity.first_name,
       last_name: entity.last_name,
-      image: entity.image,
+      image_url: entity.image_url,
+      image_id: entity.image_id,
       phone_number: entity.phone_number,
       sex: entity.sex,
       role: entity.role,
@@ -84,7 +89,8 @@ export class UserDto implements Readonly<UserDto> {
     user.password = dto.password;
     user.first_name = dto.first_name;
     user.last_name = dto.last_name;
-    user.image = dto.image;
+    user.image_url = dto.image_url;
+    user.image_id = dto.image_id;
     user.phone_number = dto.phone_number;
     user.sex = dto.sex;
     user.role = dto.role ?? RoleEnum.BUYER;

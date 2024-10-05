@@ -84,10 +84,11 @@ export class ConversationsController {
   }
 
   @Get('write-to-file')
+  @Public()
   @ApiOperation({
     summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
   })
-  @Roles(RoleEnum.ADMIN)
+  // @Roles(RoleEnum.ADMIN)
   writeToFile() {
     return this.conversationsService.writeToFile();
   }

@@ -38,7 +38,7 @@ export class User extends BaseEntity {
   sex!: SexEnum;
 
   @Column({ type: 'text', default: '' })
-  image: string;
+  image_url: string;
 
   @Column({ type: 'text', default: '' })
   image_id: string;

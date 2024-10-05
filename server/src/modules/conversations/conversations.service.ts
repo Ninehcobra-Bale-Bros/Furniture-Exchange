@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -8,6 +12,8 @@ import { ConversationDto } from './dto/conversation.dto';
 import { MessageDto } from './dto/message.dto';
 import { User } from '../users/entities/user.entity';
 import { ProductsService } from 'src/modules/products/products.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ConversationsService {
@@ -185,6 +191,30 @@ export class ConversationsService {
   }
 
   async writeToFile() {
-    return [];
+    const conversations = await this.conversationRepository.findAll();
+    const messages = await this.messageRepository.findAll();
+
+    const filePath_1 = path.resolve(
+      'db/seeds/conversations/conversations.json',
+    );
+    const filePath_2 = path.resolve('db/seeds/conversations/messages.json');
+
+    fs.writeFile(filePath_1, JSON.stringify(conversations), (err) => {
+      if (err) {
+        throw new InternalServerErrorException(
+          `Error writing to file: ${err.message}`,
+        );
+      }
+    });
+
+    fs.writeFile(filePath_2, JSON.stringify(messages), (err) => {
+      if (err) {
+        throw new InternalServerErrorException(
+          `Error writing to file: ${err.message}`,
+        );
+      }
+    });
+
+    return 'Write to file successfully';
   }
 }
