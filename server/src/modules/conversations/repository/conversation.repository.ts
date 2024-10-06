@@ -15,9 +15,15 @@ export class ConversationRepository extends GenericRepository<Conversation> {
     user_id: string,
     other_id: string,
   ): Promise<Conversation[]> {
+    console.log('user_id', user_id);
+    console.log('other_id', other_id);
+
     const conversation1 = await this.conversationRepository
       .createQueryBuilder('conversation')
       .leftJoin('conversation.messages', 'message')
+      .leftJoin('conversation.product', 'product')
+      .leftJoin('conversation.user', 'user')
+      .leftJoin('conversation.other', 'other') // Join other user without selecting all fields
       .select([
         'conversation.id',
         'conversation.name',
@@ -26,6 +32,18 @@ export class ConversationRepository extends GenericRepository<Conversation> {
         'message.content',
         'message.isRead',
         'message.created_at',
+        'product.id',
+        'product.name',
+        'product.image_urls',
+        'product.price',
+        'user.id',
+        'user.last_name',
+        'user.first_name',
+        'user.image_url',
+        'other.id',
+        'other.last_name',
+        'other.first_name',
+        'other.image_url',
       ])
       .where(
         '(conversation.user_id = :user_id AND conversation.other_id = :other_id)',
@@ -33,11 +51,12 @@ export class ConversationRepository extends GenericRepository<Conversation> {
       )
       .getMany();
 
-    console.log(conversation1);
-
     const conversation2 = await this.conversationRepository
       .createQueryBuilder('conversation')
       .leftJoin('conversation.messages', 'message')
+      .leftJoin('conversation.product', 'product')
+      .leftJoin('conversation.user', 'user')
+      .leftJoin('conversation.other', 'other') // Join other user without selecting all fields
       .select([
         'conversation.id',
         'conversation.name',
@@ -46,17 +65,30 @@ export class ConversationRepository extends GenericRepository<Conversation> {
         'message.content',
         'message.isRead',
         'message.created_at',
+        'product.id',
+        'product.name',
+        'product.image_urls',
+        'product.price',
+        'user.id',
+        'user.last_name',
+        'user.first_name',
+        'user.image_url',
+        'other.id',
+        'other.last_name',
+        'other.first_name',
+        'other.image_url',
       ])
       .where(
         '(conversation.user_id = :other_id AND conversation.other_id = :user_id)',
         { user_id, other_id },
-      );
+      )
+      .getMany();
 
-    if (conversation1?.length && conversation2?.length) {
-      return [...conversation1, ...conversation2];
+    if (conversation1.length || conversation2.length) {
+      return [...(conversation1 || []), ...(conversation2 || [])];
     }
 
-    return conversation1 ?? conversation2;
+    return [];
   }
 
   async findByProductIdAndSellerIdAndOtherId(
@@ -67,6 +99,9 @@ export class ConversationRepository extends GenericRepository<Conversation> {
     const conversation = await this.conversationRepository
       .createQueryBuilder('conversation')
       .leftJoin('conversation.messages', 'message')
+      .leftJoin('conversation.product', 'product')
+      .leftJoin('conversation.user', 'user')
+      .leftJoin('conversation.other', 'other') // Join other user without selecting all fields
       .select([
         'conversation.id',
         'conversation.name',
@@ -75,6 +110,18 @@ export class ConversationRepository extends GenericRepository<Conversation> {
         'message.content',
         'message.isRead',
         'message.created_at',
+        'product.id',
+        'product.name',
+        'product.image_urls',
+        'product.price',
+        'user.id',
+        'user.last_name',
+        'user.first_name',
+        'user.image_url',
+        'other.id',
+        'other.last_name',
+        'other.first_name',
+        'other.image_url',
       ])
       .where('conversation.product_id = :product_id', { product_id }) // Dynamically pass the correct product_id
       .andWhere(
@@ -117,10 +164,11 @@ export class ConversationRepository extends GenericRepository<Conversation> {
         'user.id', // Select user id
         'user.last_name', // Select user name
         'user.first_name',
-        'user.image',
+        'user.image_url',
         'other.id', // Select other user id
         'other.last_name', // Select other user name
         'other.first_name', // Select other user name
+        'other.image_url',
         'message.id', // Select message id
         'message.sender_id', // Select message creation date
         'message.content', // Select message content

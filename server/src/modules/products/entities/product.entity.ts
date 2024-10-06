@@ -54,9 +54,21 @@ export class Product extends BaseEntity {
   description!: string;
 
   @Column({ type: 'text', nullable: false })
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_urls!: string[];
 
   @Column({ type: 'text', nullable: false })
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_ids!: string[];
 
   @Column({ type: 'bigint', nullable: false })

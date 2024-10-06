@@ -14,6 +14,9 @@ import { User } from '../users/entities/user.entity';
 import { ProductsService } from 'src/modules/products/products.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import { plainToClass } from 'class-transformer';
+import { UserDto } from 'src/modules/users/dto/user.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Injectable()
 export class ConversationsService {
@@ -61,15 +64,41 @@ export class ConversationsService {
           return null;
         }
 
+        for (const item of conversation) {
+          for (const message of item.messages) {
+            if (message.sender_id !== user_id) {
+              message.isRead = true;
+            }
+
+            this.messageRepository.update(
+              {
+                conversation_id: item.id,
+                isRead: false,
+              },
+              {
+                isRead: true,
+              },
+            );
+          }
+        }
+
+        console.log('conversation', conversation);
+
         const final = conversation.reduce((pre, val) => {
           return [...pre, ...val.messages];
         }, []);
 
-        return final.sort((a, b) => {
+        const sortMessages = final.sort((a, b) => {
           return (
             new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           );
         });
+
+        return {
+          user: conversation[0].user,
+          other: conversation[0].other,
+          messages: sortMessages,
+        };
       });
   }
 
@@ -131,9 +160,10 @@ export class ConversationsService {
 
           if (!grouped[key]) {
             grouped[key] = {
-              user: conversation.user,
-              other: conversation.other,
+              user: plainToClass(UserDto, conversation.user),
+              other: plainToClass(UserDto, conversation.other),
               messages: [],
+              last_message: null,
             };
 
             grouped[key].messages = conversation.messages;
@@ -150,9 +180,26 @@ export class ConversationsService {
               );
             });
           }
+
+          let messages = grouped[key].messages;
+
+          grouped[key].last_message = messages[messages.length - 1];
         });
 
-        return Object.values(grouped);
+        return Object.values(grouped)
+          .sort((a, b) => {
+            return (
+              new Date(b['last_message'].created_at).getTime() -
+              new Date(a['last_message'].created_at).getTime()
+            );
+          })
+          .map((conversation) => {
+            return {
+              user: conversation['user'],
+              other: conversation['other'],
+              last_message: conversation['last_message'],
+            };
+          });
       });
 
     return conversations;
@@ -166,28 +213,44 @@ export class ConversationsService {
     const product = await this.productService.findById(product_id);
 
     if (user.id === product.seller_id) {
-      throw new BadRequestException('Invalid conversation');
+      throw new BadRequestException('Can not get conversation with yourself');
     }
 
-    const conversation = await this.findByProductIdAndSellerIdAndOtherId(
+    let conversation = await this.findByProductIdAndSellerIdAndOtherId(
       Number(product_id),
       user.id,
       product.seller_id,
     );
 
-    // console.log(conversation);
+    if (!conversation) {
+      const newConversation = await this.create({
+        product_id: Number(product_id) as any,
+        user_id: user.id,
+        other_id: product.seller_id,
+      });
+
+      conversation = await this.findByProductIdAndSellerIdAndOtherId(
+        Number(product_id),
+        user.id,
+        product.seller_id,
+      );
+    }
+
+    conversation.user = plainToClass(User, conversation.user);
+    conversation.other = plainToClass(User, conversation.other);
+    conversation.product = plainToClass(Product, conversation.product);
 
     return conversation;
   }
 
   async GetConversationByOtherId(user: User, other_id: string) {
-    // if (!parseInt(other_id)) {
-    //   throw new BadRequestException('Invalid other id');
-    // }
+    try {
+      const conversation = await this.findByUserIdAndOtherId(user.id, other_id);
 
-    const conversation = await this.findByUserIdAndOtherId(user.id, other_id);
-
-    return conversation;
+      return conversation;
+    } catch (error) {
+      throw new BadRequestException('Invalid user_id or conversation');
+    }
   }
 
   async writeToFile() {

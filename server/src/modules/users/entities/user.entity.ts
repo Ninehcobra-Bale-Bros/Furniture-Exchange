@@ -39,9 +39,25 @@ export class User extends BaseEntity {
   sex!: SexEnum;
 
   @Column({ type: 'text', default: '' })
+  @Transform(
+    ({ value }) => {
+      return value
+        .match(/"([^"]+)"/g)
+        .map((s: string) => s.replace(/"/g, ''))[0];
+    },
+    { toClassOnly: true },
+  )
   image_url: string;
 
   @Column({ type: 'text', default: '' })
+  @Transform(
+    ({ value }) => {
+      return value
+        .match(/"([^"]+)"/g)
+        .map((s: string) => s.replace(/"/g, ''))[0];
+    },
+    { toClassOnly: true },
+  )
   image_id: string;
 
   @Column({ type: 'varchar', length: 10, nullable: false })

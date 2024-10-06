@@ -55,4 +55,11 @@ export class GenericRepository<T extends BaseEntity>
   async save(entity: T): Promise<T> {
     return await this.repository.save(entity);
   }
+
+  async update(
+    where: FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>,
+  ) {
+    return await this.repository.update(where, partialEntity);
+  }
 }
