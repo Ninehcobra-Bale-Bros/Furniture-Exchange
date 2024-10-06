@@ -1,11 +1,26 @@
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Discount } from '../entities/discount.entity';
+import { plainToClass, Transform } from 'class-transformer';
 
 export class DiscountDto implements Readonly<DiscountDto> {
   id: number;
   name: string;
   description: string;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   min_price: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   max_price: number;
   discount_percent: number;
   order: number;
@@ -21,7 +36,7 @@ export class DiscountDto implements Readonly<DiscountDto> {
     it.discount_percent = dto.discount_percent;
     it.order = dto.order;
 
-    return it;
+    return plainToClass(DiscountDto, it);
   }
 
   public static fromEntity(entity: Discount) {

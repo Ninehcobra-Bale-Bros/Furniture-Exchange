@@ -2,64 +2,58 @@ import { IsBoolean, IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
 import { User } from '../entities/user.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
+import { plainToClass, Transform } from 'class-transformer';
 
 export class UserDto implements Readonly<UserDto> {
-  @IsUUID()
   id: string;
-
-  @IsEmail()
   email: string;
-
-  @IsBoolean()
   email_verified: boolean;
-
-  @IsString()
   password: string;
-
-  @IsString()
   first_name: string;
-
-  @IsString()
   last_name: string;
-
-  @IsString()
   phone_number: string;
-
-  @IsEnum(SexEnum)
   sex: SexEnum;
-
-  @IsEnum(RoleEnum)
   role: RoleEnum;
 
-  @IsString()
+  @Transform(
+    ({ value }) => {
+      return value
+        .match(/"([^"]+)"/g)
+        .map((s: string) => s.replace(/"/g, ''))[0];
+    },
+    { toClassOnly: true },
+  )
   image_url: string;
 
-  @IsString()
+  @Transform(
+    ({ value }) => {
+      return value
+        .match(/"([^"]+)"/g)
+        .map((s: string) => s.replace(/"/g, ''))[0];
+    },
+    { toClassOnly: true },
+  )
   image_id: string;
-
-  @IsString()
   address_line1: string;
-
-  @IsString()
   address_line2: string;
 
   public static from(dto: Partial<UserDto>) {
-    const user = new UserDto();
+    const it = new UserDto();
 
-    user.id = dto.id;
-    user.email = dto.email;
-    user.email_verified = dto.email_verified;
-    user.first_name = dto.first_name;
-    user.last_name = dto.last_name;
-    user.image_url = dto.image_url;
-    user.image_id = dto.image_id;
-    user.phone_number = dto.phone_number;
-    user.sex = dto.sex;
-    user.role = dto.role;
-    user.address_line1 = dto.address_line1;
-    user.address_line2 = dto.address_line2;
+    it.id = dto.id;
+    it.email = dto.email;
+    it.email_verified = dto.email_verified;
+    it.first_name = dto.first_name;
+    it.last_name = dto.last_name;
+    it.image_url = dto.image_url;
+    it.image_id = dto.image_id;
+    it.phone_number = dto.phone_number;
+    it.sex = dto.sex;
+    it.role = dto.role;
+    it.address_line1 = dto.address_line1;
+    it.address_line2 = dto.address_line2;
 
-    return user;
+    return plainToClass(UserDto, it);
   }
 
   public static fromEntity(entity: User) {

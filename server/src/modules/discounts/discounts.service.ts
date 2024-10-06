@@ -32,6 +32,8 @@ export class DiscountService {
   async findAll() {
     const discounts = await this.discountRepository.findAll();
 
+    console.log(discounts);
+
     return discounts.map((discount) => DiscountDto.fromEntity(discount));
   }
 

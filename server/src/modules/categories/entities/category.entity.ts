@@ -35,7 +35,7 @@ export class Category extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   description!: string; // Changed to 'text' for more flexibility
 
-  @Column({ type: 'varchar', nullable: false, default: '' })
+  @Column({ type: 'text', default: '' })
   image_url!: string;
 
   @Column({ type: 'varchar', default: '' })

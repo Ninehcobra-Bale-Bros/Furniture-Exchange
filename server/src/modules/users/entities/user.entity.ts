@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';

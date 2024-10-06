@@ -83,18 +83,17 @@ export class ProductsController {
   @ApiOperation({
     summary: '[PUBLIC] Get all products',
   })
-  @Roles(RoleEnum.ADMIN)
   findAll() {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
   @ApiOperation({
     summary: '[PUBLIC] Get a product by ID',
   })
-  findOne(@Param('id') id: string) {
-    return this.productsService.findById(id);
+  findOne(@Param('slug') id: string) {
+    return this.productsService.findBySlug(id);
   }
 
   @Get('write-to-file')

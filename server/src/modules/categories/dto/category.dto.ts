@@ -4,6 +4,7 @@ import { SexEnum } from 'src/common/enums/sex.enum';
 import { Category } from '../entities/category.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { slugSerialize } from '../../../utils';
+import { plainToClass, Transform } from 'class-transformer';
 
 export class CategoryDto implements Readonly<CategoryDto> {
   id!: number;
@@ -11,6 +12,15 @@ export class CategoryDto implements Readonly<CategoryDto> {
   parent?: Category;
   name!: string;
   description!: string;
+
+  @Transform(
+    ({ value }) => {
+      return value
+        .match(/"([^"]+)"/g)
+        .map((s: string) => s.replace(/"/g, ''))[0];
+    },
+    { toClassOnly: true },
+  )
   image_url!: string;
   slug!: string;
   order: number;
@@ -27,7 +37,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
     it.image_url = dto.image_url;
     it.order = dto.order;
 
-    return it;
+    return plainToClass(CategoryDto, it);
   }
 
   public static fromEntity(entity: Category) {

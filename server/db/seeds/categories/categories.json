@@ -7,8 +7,7 @@
     "name": "Bàn",
     "slug": "ban",
     "description": "",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:05:38.595Z"
   },
@@ -20,8 +19,7 @@
     "name": "Ghế",
     "slug": "ghe",
     "description": "",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:05:57.347Z"
   },
@@ -33,8 +31,7 @@
     "name": "Tủ",
     "slug": "tu",
     "description": "",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:06:07.162Z"
   },
@@ -46,8 +43,7 @@
     "name": "Kệ",
     "slug": "ke",
     "description": "",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 4,
     "updated_at": "2024-09-28T16:06:35.622Z"
   },
@@ -59,8 +55,7 @@
     "name": "Giường",
     "slug": "giuong",
     "description": "",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 5,
     "updated_at": "2024-09-28T16:06:42.934Z"
   },
@@ -72,8 +67,7 @@
     "name": "Kệ nhà bếp",
     "slug": "ke-nha-bep",
     "description": "Kệ dùng để chứa bát đĩa, nồi niêu, hoặc gia vị, thường được đặt trong không gian nhà bếp để tối ưu hóa việc lưu trữ.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:28:05.934Z"
   },
@@ -85,8 +79,7 @@
     "name": "Giường đơn",
     "slug": "giuong-don",
     "description": "Giường có kích thước nhỏ, thường dành cho một người sử dụng, thích hợp cho phòng ngủ cá nhân hoặc trẻ em.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:28:59.503Z"
   },
@@ -98,8 +91,7 @@
     "name": "Giường gỗ",
     "slug": "giuong-go",
     "description": "loại giường được chế tác từ gỗ tự nhiên hoặc gỗ công nghiệp, mang lại vẻ đẹp ấm áp và gần gũi với thiên nhiên.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:29:49.848Z"
   },
@@ -111,8 +103,7 @@
     "name": "Giường đôi",
     "slug": "giuong-doi",
     "description": "Giường có kích thước lớn hơn, dành cho hai người, phổ biến trong phòng ngủ chính hoặc phòng ngủ khách.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:30:19.172Z"
   },
@@ -124,8 +115,7 @@
     "name": "Bàn làm việc",
     "slug": "ban-lam-viec",
     "description": "Bàn có kích thước lớn hoặc trung bình, dùng cho việc làm việc, học tập. Thường có ngăn kéo hoặc giá đỡ để chứa tài liệu và đồ dùng văn phòng.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:20:32.235Z"
   },
@@ -137,8 +127,7 @@
     "name": "Bàn ăn",
     "slug": "ban-an",
     "description": "Bàn dùng trong phòng ăn, thường có kích thước lớn để phục vụ cho nhiều người. Có thể là bàn hình chữ nhật, tròn, hoặc oval.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:20:54.045Z"
   },
@@ -150,8 +139,7 @@
     "name": "Bàn học",
     "slug": "ban-hoc",
     "description": "Bàn dành cho học sinh, có kích thước phù hợp để chứa sách vở, dụng cụ học tập và thiết kế để tạo không gian học tập thoải mái.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:21:20.055Z"
   },
@@ -163,8 +151,7 @@
     "name": "Bàn trang điểm",
     "slug": "ban-trang-diem",
     "description": "Bàn nhỏ kèm gương và các ngăn kéo để sắp xếp mỹ phẩm, đồ trang sức, và các vật dụng cá nhân.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 4,
     "updated_at": "2024-09-28T16:21:34.119Z"
   },
@@ -176,8 +163,7 @@
     "name": "Ghế Sofa",
     "slug": "ghe-sofa",
     "description": "Ghế dài dành cho nhiều người ngồi, thường được sử dụng trong phòng khách. Có nhiều loại như sofa băng, sofa góc, hoặc sofa giường.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:22:41.013Z"
   },
@@ -189,8 +175,7 @@
     "name": "Ghế văn phòng",
     "slug": "ghe-van-phong",
     "description": "Ghế xoay, có thể điều chỉnh độ cao và độ nghiêng, thường được dùng trong văn phòng hoặc phòng làm việc tại nhà.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:22:57.779Z"
   },
@@ -202,8 +187,7 @@
     "name": "Ghế gỗ",
     "slug": "ghe-go",
     "description": "loại ghế được chế tác hoàn toàn hoặc phần lớn từ gỗ tự nhiên hoặc gỗ công nghiệp.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:23:55.815Z"
   },
@@ -215,8 +199,7 @@
     "name": "Tủ bếp",
     "slug": "tu-bep",
     "description": "Tủ được sử dụng trong nhà bếp để lưu trữ bát đĩa, đồ gia dụng, hoặc thực phẩm khô. Có thể là tủ treo hoặc tủ đứng.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:25:57.384Z"
   },
@@ -228,8 +211,7 @@
     "name": "Tủ quần áo",
     "slug": "tu-quan-ao",
     "description": "Tủ lớn có ngăn và thanh treo quần áo, thường được dùng trong phòng ngủ để chứa quần áo và phụ kiện.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:26:11.382Z"
   },
@@ -241,8 +223,7 @@
     "name": "Tủ tài liệu",
     "slug": "tu-tai-lieu",
     "description": "Tủ chứa tài liệu trong văn phòng hoặc phòng làm việc, có nhiều ngăn kéo để sắp xếp giấy tờ và hồ sơ.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 3,
     "updated_at": "2024-09-28T16:26:49.097Z"
   },
@@ -254,8 +235,7 @@
     "name": "Kệ sách",
     "slug": "ke-sach",
     "description": "Kệ đứng hoặc treo tường để trưng bày và lưu trữ sách, thường được đặt trong phòng khách hoặc phòng làm việc.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 1,
     "updated_at": "2024-09-28T16:27:32.746Z"
   },
@@ -267,8 +247,7 @@
     "name": "Kệ trang trí",
     "slug": "ke-trang-tri",
     "description": "Kệ dùng để trưng bày các vật dụng trang trí, ảnh, hoặc đồ lưu niệm. Có nhiều loại kệ đứng hoặc gắn tường.",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 2,
     "updated_at": "2024-09-28T16:27:47.786Z"
   },
@@ -280,8 +259,7 @@
     "name": "Bàn gỗ",
     "slug": "ban-go",
     "description": "Bàn được làm từ gỗ tự nhiên hoặc gỗ công nghiệp",
-    "image_url": "",
-    "image_id": "",
+    "image_url": "{\"https://gomynghe.vn/sites/default/files/styles/style_533x396/public/ban-giam-doc-go-tu-nhien-dep.jpg?itok=Gwjw6AzR\"}",
     "order": 5,
     "updated_at": "2024-09-29T08:00:23.170Z"
   }

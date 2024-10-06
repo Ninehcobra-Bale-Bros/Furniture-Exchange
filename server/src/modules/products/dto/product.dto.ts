@@ -1,3 +1,4 @@
+import { plainToClass, Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -11,8 +12,24 @@ export class ProductDto implements Readonly<ProductDto> {
   slug: string;
   quantity!: number;
   description!: string;
+
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_urls!: string[];
+
+  @Transform(
+    ({ value }) => {
+      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+    },
+    { toClassOnly: true },
+  )
   image_ids!: string[];
+
+  @Transform(({ value }) => Number(value))
   price!: number;
   origin!: string;
   address_line!: string;
@@ -47,7 +64,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.created_at = dto.created_at;
     it.updated_at = dto.updated_at;
 
-    return it;
+    return plainToClass(ProductDto, it);
   }
 
   public static fromEntity(entity: Product) {

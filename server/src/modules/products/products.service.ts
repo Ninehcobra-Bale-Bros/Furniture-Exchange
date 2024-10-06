@@ -13,7 +13,6 @@ import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
 import { plainToClass } from 'class-transformer';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { UserDto } from 'src/modules/users/dto/user.dto';
 
 @Injectable()
 export class ProductsService {
@@ -111,7 +110,7 @@ export class ProductsService {
   async findAll() {
     const products = await this.productRepository.findAll();
 
-    return products.map((product) => plainToClass(Product, product));
+    return products.map((product) => ProductDto.fromEntity(product));
   }
 
   async findById(productId: string): Promise<ProductDto> {
@@ -122,6 +121,16 @@ export class ProductsService {
     });
 
     return product;
+  }
+
+  async findBySlug(slug: string): Promise<ProductDto> {
+    const product = await this.productRepository.findOneBy({
+      where: {
+        slug,
+      },
+    });
+
+    return ProductDto.fromEntity(product);
   }
 
   async writeToFile() {
