@@ -22,7 +22,7 @@ export class UsersService {
   async findAll(): Promise<UserDto[]> {
     return await this.userRepository
       .findAll()
-      .then((users) => users.map((user) => UserDto.fromEntity(user)));
+      .then((users) => users.map((user) => user));
   }
 
   async findOneByEmail(email: string): Promise<UserDto> {
