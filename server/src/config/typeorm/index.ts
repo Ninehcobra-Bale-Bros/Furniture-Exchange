@@ -52,7 +52,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
       migrations: ['dist/db/migrations/*{.ts,.js}'],
       autoLoadEntities: true,
       // synchronize: this.config.get('NODE_ENV') === 'development' ? true : false,
-      synchronize: true,
+      synchronize: false,
     };
   }
 }
