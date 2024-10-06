@@ -39,6 +39,24 @@ export class CategoriesService {
     return categories.map((category) => CategoryDto.fromEntity(category));
   }
 
+  async getProductsByCategory(slug: string) {
+    // const category = await this.categoryRepository.findOneBy({
+    //   where: { slug },
+    // });
+
+    // if (!category) {
+    //   throw new BadRequestException('Category not found');
+    // }
+
+    // if(category.parent_id !== null) {
+
+    // }
+
+    const category = await this.categoryRepository.getProductsBySlug(slug);
+
+    return category;
+  }
+
   async writeToFile() {
     const categories = await this.categoryRepository.findAll();
 

@@ -3,6 +3,7 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { Category } from '../entities/category.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { slugSerialize } from '../../../utils';
 
 export class CategoryDto implements Readonly<CategoryDto> {
   id!: number;
@@ -11,7 +12,7 @@ export class CategoryDto implements Readonly<CategoryDto> {
   name!: string;
   description!: string;
   image_url!: string;
-  image_id!: string;
+  slug!: string;
   order: number;
 
   public static from(dto: Partial<CategoryDto>) {
@@ -21,9 +22,9 @@ export class CategoryDto implements Readonly<CategoryDto> {
     it.parent_id = dto.parent_id;
     it.parent = dto.parent;
     it.name = dto.name;
+    it.slug = dto.slug;
     it.description = dto.description;
     it.image_url = dto.image_url;
-    it.image_id = dto.image_id;
     it.order = dto.order;
 
     return it;
@@ -35,9 +36,9 @@ export class CategoryDto implements Readonly<CategoryDto> {
       parent_id: entity.parent_id,
       parent: entity.parent,
       name: entity.name,
+      slug: entity.slug,
       description: entity.description,
       image_url: entity.image_url,
-      image_id: entity.image_id,
       order: entity.order,
     });
   }
@@ -47,6 +48,8 @@ export class CategoryDto implements Readonly<CategoryDto> {
 
     it.parent_id = dto.parent_id || null;
     it.name = dto.name;
+    it.image_url = dto.image_url;
+    it.slug = slugSerialize(dto.name);
     it.description = dto.description;
     it.order = dto.order;
 

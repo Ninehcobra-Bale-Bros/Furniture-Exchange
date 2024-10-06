@@ -49,7 +49,6 @@ export class UserDto implements Readonly<UserDto> {
     user.id = dto.id;
     user.email = dto.email;
     user.email_verified = dto.email_verified;
-    user.password = dto.password;
     user.first_name = dto.first_name;
     user.last_name = dto.last_name;
     user.image_url = dto.image_url;
@@ -68,7 +67,6 @@ export class UserDto implements Readonly<UserDto> {
       id: entity.id,
       email: entity.email,
       email_verified: entity.email_verified,
-      password: entity.password,
       first_name: entity.first_name,
       last_name: entity.last_name,
       image_url: entity.image_url,

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import {
@@ -27,6 +27,15 @@ export class CategoriesController {
   })
   findAll() {
     return this.categoriesService.findAll();
+  }
+
+  @Get(':slug/products')
+  @Public()
+  @ApiOperation({
+    summary: '[PUBLIC] Get products by category',
+  })
+  getProductsByCategory(@Param('slug') slug: string) {
+    return this.categoriesService.getProductsByCategory(slug);
   }
 
   @Get('write-to-file')

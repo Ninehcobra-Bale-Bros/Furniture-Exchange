@@ -53,7 +53,7 @@ export class ConversationsController {
     return this.conversationsService.GetAllConversations(req.user);
   }
 
-  @Get(':product_id/product')
+  @Get(':product_id/products')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by product id',
   })
@@ -68,7 +68,7 @@ export class ConversationsController {
     );
   }
 
-  @Get(':other_id/user')
+  @Get(':other_id/users')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by other user',
   })

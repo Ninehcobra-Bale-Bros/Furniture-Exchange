@@ -10,4 +10,12 @@ export class CategoryRepository extends GenericRepository<Category> {
   ) {
     super(categoryRepository);
   }
+
+  async getProductsBySlug(slug: string) {
+    return this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.products', 'products') // Join with products
+      .where('category.slug = :slug', { slug })
+      .getOne();
+  }
 }

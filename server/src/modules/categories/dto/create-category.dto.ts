@@ -28,6 +28,15 @@ export class CreateCategoryDto extends PartialType(CategoryDto) {
   description!: string;
 
   @ApiProperty({
+    required: true,
+    type: 'string',
+    description: 'Category image url',
+    example: 'https://example.com/image.jpg',
+  })
+  @IsString()
+  image_url!: string;
+
+  @ApiProperty({
     required: false,
     type: 'string',
     description: 'Parent category id',

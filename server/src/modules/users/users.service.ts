@@ -10,6 +10,7 @@ import { RedisService } from 'src/config/cache/redis.service';
 import * as fs from 'fs';
 import * as path from 'path';
 import { UserRepository } from './repository/user.repository';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -30,6 +31,18 @@ export class UsersService {
         email: email,
       },
     });
+
+    return user;
+  }
+
+  async findOneById(id: UUID & { __brand: 'userId' }): Promise<UserDto> {
+    const user = await this.userRepository
+      .findOneBy({
+        where: {
+          id: id,
+        },
+      })
+      .then((u) => UserDto.fromEntity(u));
 
     return user;
   }

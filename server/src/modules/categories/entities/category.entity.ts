@@ -1,10 +1,12 @@
 import { Transform } from 'class-transformer';
 import { BaseEntity } from 'src/core/base.entity';
+import { Product } from 'src/modules/products/entities/product.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,11 +38,14 @@ export class Category extends BaseEntity {
   @Column({ type: 'varchar', nullable: false, default: '' })
   image_url!: string;
 
-  @Column({ type: 'varchar', nullable: false, default: '' })
-  image_id!: string;
+  @Column({ type: 'varchar', default: '' })
+  slug!: string;
 
   @Column({ type: 'int', nullable: false, default: 0 })
   order!: number;
+
+  @OneToMany(() => Product, (product) => product.category)
+  products!: Product[]; // Relation to products
 
   @UpdateDateColumn({
     type: 'timestamptz',

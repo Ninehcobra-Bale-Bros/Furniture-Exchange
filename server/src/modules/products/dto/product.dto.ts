@@ -1,12 +1,14 @@
 import { UUID } from 'crypto';
 import { StateEnum, StatusEnum } from 'src/common/enums/product.enum';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { slugSerialize } from 'src/utils';
 
 export class ProductDto implements Readonly<ProductDto> {
   id!: number & { __brand: 'productId' };
   seller_id!: UUID & { __brand: 'userId' };
   category_id!: number & { __brand: 'categoryId' };
   name!: string;
+  slug: string;
   quantity!: number;
   description!: string;
   image_urls!: string[];
@@ -29,6 +31,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.seller_id = dto.seller_id;
     it.category_id = dto.category_id;
     it.name = dto.name;
+    it.slug = dto.slug;
     it.quantity = dto.quantity;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
@@ -53,6 +56,7 @@ export class ProductDto implements Readonly<ProductDto> {
       seller_id: entity.seller_id,
       category_id: entity.category_id,
       name: entity.name,
+      slug: entity.slug,
       quantity: entity.quantity,
       description: entity.description,
       image_urls: entity.image_urls,
@@ -76,6 +80,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.seller_id = dto.seller_id;
     it.category_id = dto.category_id;
     it.name = dto.name;
+    it.slug = slugSerialize(dto.name);
     it.quantity = dto.quantity;
     it.description = dto.description;
     it.image_urls = dto.image_urls;

@@ -8,6 +8,7 @@ import {
   UploadedFiles,
   Req,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -85,6 +86,15 @@ export class ProductsController {
   @Roles(RoleEnum.ADMIN)
   findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get(':id')
+  @Public()
+  @ApiOperation({
+    summary: '[PUBLIC] Get a product by ID',
+  })
+  findOne(@Param('id') id: string) {
+    return this.productsService.findById(id);
   }
 
   @Get('write-to-file')

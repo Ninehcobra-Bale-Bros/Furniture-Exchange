@@ -24,6 +24,14 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
+  @Get('profile')
+  @ApiOperation({
+    summary: 'Get user profile',
+  })
+  async profile(@Req() req: Request): Promise<UserDto> {
+    return await this.usersService.findOneById(req.user.id);
+  }
+
   @Get('write-to-file')
   @ApiOperation({
     summary: '[ADMIN] DO NOT USE THIS ENDPOINT',

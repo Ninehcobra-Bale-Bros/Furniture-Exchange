@@ -32,7 +32,7 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   category_id!: number & { __brand: 'categoryId' };
 
-  @ManyToOne(() => Category, (category) => category.id, {
+  @ManyToOne(() => Category, (category) => category.products, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({
@@ -43,6 +43,9 @@ export class Product extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name!: string;
+
+  @Column({ type: 'varchar', default: '' })
+  slug!: string;
 
   @Column({ type: 'int', nullable: false, default: 0 })
   quantity!: number;
