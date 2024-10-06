@@ -100,7 +100,6 @@ export class ProductsController {
   @ApiOperation({
     summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
   })
-  @Roles(RoleEnum.ADMIN)
   writeToFile() {
     return this.productsService.writeToFile();
   }
