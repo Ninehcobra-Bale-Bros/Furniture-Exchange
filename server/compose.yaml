@@ -29,6 +29,7 @@ services:
     container_name: furniture-backend
     ports:
       - ${PORT}:${PORT}
+      - 3002:3002 # Websocket port
     environment:
       - PORT=${PORT}
       - NODE_ENV=development
