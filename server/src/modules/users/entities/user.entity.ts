@@ -3,17 +3,28 @@ import { UUID } from 'crypto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { BaseEntity } from 'src/core/base.entity';
+import { Account } from 'src/modules/payments/entities/account.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: UUID & { __brand: 'userId' };
+
+  @Column({ type: 'uuid', nullable: true })
+  account_id!: UUID & { __brand: 'accountId' };
+
+  @OneToOne(() => Account, (account) => account.user)
+  @JoinColumn({ name: 'account_id' })
+  account!: Account;
 
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   email!: string;
@@ -77,7 +88,7 @@ export class User extends BaseEntity {
   })
   role!: RoleEnum;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',

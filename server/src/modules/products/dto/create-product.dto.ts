@@ -8,7 +8,6 @@ import { ProductDto } from 'src/modules/products/dto/product.dto';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; // ES 2015
 import timezone from 'dayjs/plugin/timezone'; // ES 2015
-import { zipAll } from 'rxjs';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 

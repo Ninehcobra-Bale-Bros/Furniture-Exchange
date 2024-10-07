@@ -18,6 +18,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscountModule } from './modules/discounts/discounts.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { SocketModule } from './config/websocket/socket.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SocketModule } from './config/websocket/socket.module';
     CategoriesModule,
     DiscountModule,
     ConversationsModule,
+    PaymentsModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({
