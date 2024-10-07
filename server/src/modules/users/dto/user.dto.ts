@@ -17,9 +17,13 @@ export class UserDto implements Readonly<UserDto> {
 
   @Transform(
     ({ value }) => {
-      return value
-        .match(/"([^"]+)"/g)
-        .map((s: string) => s.replace(/"/g, ''))[0];
+      if (value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''))[0];
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -27,9 +31,13 @@ export class UserDto implements Readonly<UserDto> {
 
   @Transform(
     ({ value }) => {
-      return value
-        .match(/"([^"]+)"/g)
-        .map((s: string) => s.replace(/"/g, ''))[0];
+      if (value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''))[0];
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )

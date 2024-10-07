@@ -21,4 +21,10 @@ export class PaymentsController {
   createTransaction(@Body() dto: CreateTransactionDto) {
     return this.paymentsService.createTransaction(dto);
   }
+
+  @Post('transactions/deposit')
+  @ApiOperation({ summary: 'Deposit money' })
+  deposit(@Body() dto: CreateTransactionDto) {
+    return this.paymentsService.deposit();
+  }
 }

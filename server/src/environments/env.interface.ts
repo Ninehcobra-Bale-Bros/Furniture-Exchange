@@ -43,4 +43,9 @@ export interface EnvVariables {
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
   CLOUDINARY_FOLDER: string;
+
+  // VNPay
+  VNPAY_TMN_CODE: string;
+  VNPAY_HASH_SECRET: string;
+  VNPAY_URL: string;
 }

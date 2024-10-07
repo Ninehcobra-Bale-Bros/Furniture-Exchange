@@ -63,8 +63,8 @@ export class CreateProductDto extends PartialType(ProductDto) {
     description: 'Product price',
     example: '500000',
   })
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
   price!: number;
 
   @ApiProperty({

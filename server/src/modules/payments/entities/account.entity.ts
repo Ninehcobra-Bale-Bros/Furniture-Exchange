@@ -21,7 +21,7 @@ export class Account extends BaseEntity {
   @Column({ type: 'uuid', nullable: false })
   user_id!: UUID & { __brand: 'userId' };
 
-  @Column({ type: 'bigint', nullable: false })
+  @Column({ type: 'bigint', default: 0 })
   balance!: number;
 
   @UpdateDateColumn({ type: 'varchar', nullable: false })

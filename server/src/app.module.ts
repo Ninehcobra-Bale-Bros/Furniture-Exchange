@@ -19,6 +19,7 @@ import { DiscountModule } from './modules/discounts/discounts.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { SocketModule } from './config/websocket/socket.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { VnpayModule } from './config/vnpay/vnpay.module';
 
 @Module({
   imports: [
@@ -39,7 +40,10 @@ import { PaymentsModule } from './modules/payments/payments.module';
     RedisModule,
     // websocket module
     SocketModule,
+    // Vnpay module
+    VnpayModule,
     // other business modules
+
     UsersModule,
     AuthModule,
     ProductsModule,

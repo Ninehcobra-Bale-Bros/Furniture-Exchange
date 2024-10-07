@@ -1,10 +1,12 @@
-import { plainToClass } from 'class-transformer';
+import { plainToClass, Transform } from 'class-transformer';
 import { Account } from '../entities/account.entity';
 import { UUID } from 'crypto';
 
 export class AccountDto implements Readonly<AccountDto> {
   id!: string & { __brand: 'accountId' };
   user_id!: UUID & { __brand: 'userId' };
+
+  @Transform(({ value }) => Number(value))
   balance!: number;
   created_at!: Date;
   updated_at!: Date;
