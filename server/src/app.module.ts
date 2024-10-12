@@ -21,6 +21,7 @@ import { SocketModule } from './config/websocket/socket.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { VnpayModule } from './config/vnpay/vnpay.module';
 import { EventModule } from 'src/config/events/event.module';
+import { DeliveryModule } from './modules/delivery/delivery.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { EventModule } from 'src/config/events/event.module';
     DiscountModule,
     ConversationsModule,
     PaymentsModule,
+    DeliveryModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({

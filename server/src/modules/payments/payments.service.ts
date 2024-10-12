@@ -5,7 +5,6 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { AccountRepository } from './repository/account.repository';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountDto } from './dto/account.dto';
-import { UsersService } from '../users/users.service';
 import { UUID } from 'crypto';
 import { UserDto } from 'src/modules/users/dto/user.dto';
 import { VnpayService } from 'src/config/vnpay/vnpay.service';
