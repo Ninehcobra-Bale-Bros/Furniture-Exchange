@@ -6,5 +6,6 @@ import { VnpayController } from './vnpay.controller';
   imports: [],
   controllers: [VnpayController],
   providers: [VnpayService],
+  exports: [VnpayService],
 })
 export class VnpayModule {}

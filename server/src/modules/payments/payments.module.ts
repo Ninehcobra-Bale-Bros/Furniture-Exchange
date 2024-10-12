@@ -6,9 +6,10 @@ import { Account } from './entities/account.entity';
 import { Transaction } from './entities/transaction.entity';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountRepository } from './repository/account.repository';
+import { VnpayModule } from 'src/config/vnpay/vnpay.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Account, Transaction])],
+  imports: [TypeOrmModule.forFeature([Account, Transaction]), VnpayModule],
   controllers: [PaymentsController],
   providers: [PaymentsService, TransactionRepository, AccountRepository],
   exports: [PaymentsService],

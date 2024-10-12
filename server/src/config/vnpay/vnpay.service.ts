@@ -4,14 +4,16 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { VNPAY_RESPONSE_MESSAGE } from 'src/common/constants/vnpay.constant';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import PaySuccessEvent from 'src/config/events/pay-success.interface';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 @Injectable()
 export class VnpayService {
-  constructor() {}
+  constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  createPaymentUrl(ipAddr: string, amount: string) {
+  createPaymentUrl(ipAddr: string, amount: string, info: string) {
     if (!parseFloat(amount)) {
       throw new BadRequestException('Amount must be a number');
     }
@@ -23,7 +25,12 @@ export class VnpayService {
       .add(1, 'day')
       .format('YYYYMMDDHHmmss');
 
-    const vnpUrl = vnpayParamsBuilder(ipAddr, parseFloat(amount), createDate);
+    const vnpUrl = vnpayParamsBuilder(
+      ipAddr,
+      info,
+      parseFloat(amount),
+      createDate,
+    );
 
     return vnpUrl;
   }
@@ -34,12 +41,20 @@ export class VnpayService {
     if (secureHash === signed) {
       var orderId = vnp_Params['vnp_TxnRef'];
       var rspCode = vnp_Params['vnp_ResponseCode'];
+      var info = vnp_Params['vnp_OrderInfo'];
+      var amount = vnp_Params['vnp_Amount'];
+      const account_id = info.split(' ')[1];
 
       let message = '';
+      amount = parseFloat(amount) / 100;
 
       switch (rspCode) {
         case '00':
           message = VNPAY_RESPONSE_MESSAGE.SUCCESS;
+          this.eventEmitter.emit(
+            'payment.success',
+            new PaySuccessEvent(amount, account_id),
+          );
           break;
         case '01':
           message = VNPAY_RESPONSE_MESSAGE.NOT_COMPLETE;

@@ -7,13 +7,17 @@ import { TransactionRepository } from './repository/transaction.repository';
 import { AccountDto } from './dto/account.dto';
 import { UsersService } from '../users/users.service';
 import { UUID } from 'crypto';
+import { UserDto } from 'src/modules/users/dto/user.dto';
+import { VnpayService } from 'src/config/vnpay/vnpay.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import PaySuccessEvent from 'src/config/events/pay-success.interface';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly transactionRepository: TransactionRepository,
-    // private readonly userService: UsersService,
+    private readonly vnPayService: VnpayService,
   ) {}
 
   async findAccountByUserId(userId: string) {
@@ -63,7 +67,38 @@ export class PaymentsService {
   }
 
   //
-  async deposit() {
-    return;
+  async deposit(user: UserDto, ip: string, dto: CreateTransactionDto) {
+    const account = await this.accountRepository.findOneBy({
+      where: { id: dto.account_id },
+    });
+
+    if (!account) {
+      throw new BadRequestException('Không tìm thấy tài khoản');
+    }
+
+    const paymentUrl = this.vnPayService.createPaymentUrl(
+      ip,
+      dto.amount.toString(),
+      account.id,
+    );
+
+    return paymentUrl;
+  }
+
+  @OnEvent('payment.success')
+  async successDeposit({ amount, account_id }: PaySuccessEvent) {
+    const account = await this.accountRepository.findOneBy({
+      where: { id: account_id as any },
+    });
+
+    if (!account) {
+      throw new BadRequestException('Không tìm thấy tài khoản');
+    }
+
+    account.balance += amount;
+
+    await this.accountRepository.save(account);
+
+    return 'Nạp tiền thành công';
   }
 }

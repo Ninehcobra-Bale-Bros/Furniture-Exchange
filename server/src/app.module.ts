@@ -20,6 +20,7 @@ import { ConversationsModule } from './modules/conversations/conversations.modul
 import { SocketModule } from './config/websocket/socket.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { VnpayModule } from './config/vnpay/vnpay.module';
+import { EventModule } from 'src/config/events/event.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { VnpayModule } from './config/vnpay/vnpay.module';
     // Vnpay module
     VnpayModule,
     // other business modules
+    EventModule,
 
     UsersModule,
     AuthModule,

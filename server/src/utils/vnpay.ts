@@ -22,6 +22,7 @@ interface VNPayParams {
 
 export const vnpayParamsBuilder = (
   ipAddr: string,
+  info: string,
   amount: number,
   createDate: string,
   returnUrl: string = 'http://localhost:3001/api-docs',
@@ -36,7 +37,7 @@ export const vnpayParamsBuilder = (
   vnp_Params['vnp_Locale'] = 'vn';
   vnp_Params['vnp_CurrCode'] = 'VND';
   vnp_Params['vnp_TxnRef'] = Date.now().toString();
-  vnp_Params['vnp_OrderInfo'] = 'Nap tien cho tai khoan';
+  vnp_Params['vnp_OrderInfo'] = 'account_id ' + info;
   vnp_Params['vnp_OrderType'] = 'billpayment';
   vnp_Params['vnp_Amount'] = amount * 100;
   vnp_Params['vnp_ReturnUrl'] = returnUrl;
