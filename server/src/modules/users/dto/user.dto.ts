@@ -3,6 +3,7 @@ import { User } from '../entities/user.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { plainToClass, Transform } from 'class-transformer';
+import { UUID } from 'crypto';
 
 export class UserDto implements Readonly<UserDto> {
   id: string;
@@ -14,6 +15,8 @@ export class UserDto implements Readonly<UserDto> {
   phone_number: string;
   sex: SexEnum;
   role: RoleEnum;
+  address_line1: string;
+  address_line2: string;
 
   @Transform(
     ({ value }) => {
@@ -42,8 +45,6 @@ export class UserDto implements Readonly<UserDto> {
     { toClassOnly: true },
   )
   image_id: string;
-  address_line1: string;
-  address_line2: string;
 
   public static from(dto: Partial<UserDto>) {
     const it = new UserDto();

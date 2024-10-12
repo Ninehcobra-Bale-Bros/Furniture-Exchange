@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { RegisterSellingDto } from './dto/register-selling.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -39,5 +40,17 @@ export class UsersController {
   @Roles(RoleEnum.ADMIN)
   async writeToFile(): Promise<void> {
     await this.usersService.findAllAndWriteToFile();
+  }
+
+  @Post('register-selling')
+  @ApiOperation({
+    summary: 'Register selling',
+  })
+  @Roles(RoleEnum.BUYER)
+  async registerSelling(
+    @Body() body: RegisterSellingDto,
+    @Req() req: Request,
+  ): Promise<void> {
+    await this.usersService.registerSelling(req.user, body);
   }
 }

@@ -6,11 +6,11 @@ import { Account } from './entities/account.entity';
 import { Transaction } from './entities/transaction.entity';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountRepository } from './repository/account.repository';
-import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forFeature([Account, Transaction])],
+  imports: [TypeOrmModule.forFeature([Account, Transaction])],
   controllers: [PaymentsController],
   providers: [PaymentsService, TransactionRepository, AccountRepository],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}

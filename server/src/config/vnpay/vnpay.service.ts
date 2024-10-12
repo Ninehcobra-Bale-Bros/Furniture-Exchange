@@ -1,10 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { sortObject, vnpayParamsBuilder } from 'src/utils';
-import * as crypto from 'crypto';
+import { signedParams, vnpayParamsBuilder } from 'src/utils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { VNPAY_HASH_SECRET } from 'src/environments';
+import { VNPAY_RESPONSE_MESSAGE } from 'src/common/constants/vnpay.constant';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -29,34 +28,38 @@ export class VnpayService {
     return vnpUrl;
   }
 
-  ipn(query: any) {
-    console.log(query);
-
-    var vnp_Params = query;
-    var secureHash = vnp_Params['vnp_SecureHash'];
-
-    delete vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHashType'];
-
-    vnp_Params = sortObject(vnp_Params);
-
-    var querystring = require('qs');
-
-    var signData = querystring.stringify(vnp_Params, { encode: false });
-
-    var crypto = require('crypto');
-
-    var hmac = crypto.createHmac('sha512', VNPAY_HASH_SECRET);
-
-    var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+  ipn(query: object) {
+    const { secureHash, signed, vnp_Params } = signedParams(query);
 
     if (secureHash === signed) {
       var orderId = vnp_Params['vnp_TxnRef'];
       var rspCode = vnp_Params['vnp_ResponseCode'];
 
-      return { RspCode: '00', Message: 'success' };
+      let message = '';
+
+      switch (rspCode) {
+        case '00':
+          message = VNPAY_RESPONSE_MESSAGE.SUCCESS;
+          break;
+        case '01':
+          message = VNPAY_RESPONSE_MESSAGE.NOT_COMPLETE;
+          break;
+        case '02':
+          message = VNPAY_RESPONSE_MESSAGE.ERROR;
+          break;
+        case '24':
+          message = VNPAY_RESPONSE_MESSAGE.CANCEL;
+          break;
+        case '51':
+          message = VNPAY_RESPONSE_MESSAGE.NOT_HAVE_ENOUGH_MONEY;
+          break;
+        default:
+          message = 'Không xác định';
+      }
+
+      return { rspCode: rspCode, message: message };
     } else {
-      return { RspCode: '97', Message: 'Fail checksum' };
+      return { RspCode: '97', Message: 'Mã hash không hợp lệ' };
     }
   }
 }

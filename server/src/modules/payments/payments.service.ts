@@ -6,29 +6,35 @@ import { AccountRepository } from './repository/account.repository';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountDto } from './dto/account.dto';
 import { UsersService } from '../users/users.service';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly transactionRepository: TransactionRepository,
-    private readonly userService: UsersService,
+    // private readonly userService: UsersService,
   ) {}
 
+  async findAccountByUserId(userId: string) {
+    return this.accountRepository.findOneBy({
+      where: {
+        user_id: userId as UUID & { __brand: 'userId' },
+      },
+    });
+  }
+
   async createAccount(dto: CreateAccountDto) {
-    const user = this.userService.findOneById(dto.user_id);
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    const account = this.accountRepository
-      .save(AccountDto.toEntity(dto))
-      .then((account) => {
-        return AccountDto.fromEntity(account);
-      });
-
-    return account;
+    // const user = this.userService.findOneById(dto.user_id);
+    // if (!user) {
+    //   throw new BadRequestException('User not found');
+    // }
+    // const account = this.accountRepository
+    //   .save(AccountDto.toEntity(dto))
+    //   .then((account) => {
+    //     return AccountDto.fromEntity(account);
+    //   });
+    // return account;
   }
 
   async createTransaction(dto: CreateTransactionDto) {

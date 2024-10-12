@@ -11,11 +11,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { UserRepository } from './repository/user.repository';
 import { UUID } from 'crypto';
+import { AccountRepository } from '../payments/repository/account.repository';
+import { PaymentsService } from '../payments/payments.service';
+import { RegisterSellingDto } from './dto/register-selling.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userRepository: UserRepository, // Inject Repository
+    private readonly paymentsService: PaymentsService, // Inject AccountRepository
     private readonly redis: RedisService, // Inject RedisService
   ) {}
 
@@ -86,5 +90,17 @@ export class UsersService {
     });
 
     return 'Write to file successfully';
+  }
+
+  async registerSelling(user: UserDto, dto: RegisterSellingDto) {
+    const account = await this.paymentsService.findAccountByUserId(user.id);
+
+    if (!account) {
+      throw new BadRequestException('Không tìm thấy tài khoản');
+    }
+
+    if (account.balance < 1200000) {
+      throw new BadRequestException('Số dư không đủ');
+    }
   }
 }

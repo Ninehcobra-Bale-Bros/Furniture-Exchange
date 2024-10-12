@@ -1,4 +1,6 @@
 import { VNPAY_HASH_SECRET, VNPAY_TMN_CODE, VNPAY_URL } from 'src/environments';
+import * as crypto from 'crypto';
+import * as querystring from 'qs';
 
 interface VNPayParams {
   vnp_Amount: string;
@@ -59,6 +61,27 @@ export const vnpayParamsBuilder = (
   vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
   return vnpUrl;
+};
+
+export const signedParams = (vnp_Params: object): any => {
+  var secureHash = vnp_Params['vnp_SecureHash'];
+
+  delete vnp_Params['vnp_SecureHash'];
+  delete vnp_Params['vnp_SecureHashType'];
+
+  vnp_Params = sortObject(vnp_Params);
+
+  var signData = querystring.stringify(vnp_Params, { encode: false });
+
+  var hmac = crypto.createHmac('sha512', VNPAY_HASH_SECRET);
+
+  var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+
+  return {
+    secureHash,
+    signed,
+    vnp_Params,
+  };
 };
 
 export const sortObject = (obj: any) => {
