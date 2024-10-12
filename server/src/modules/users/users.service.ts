@@ -14,6 +14,7 @@ import { UUID } from 'crypto';
 import { AccountRepository } from '../payments/repository/account.repository';
 import { PaymentsService } from '../payments/payments.service';
 import { RegisterSellingDto } from './dto/register-selling.dto';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -93,6 +94,10 @@ export class UsersService {
   }
 
   async registerSelling(user: UserDto, dto: RegisterSellingDto) {
+    if (user.role === RoleEnum.SELLER) {
+      throw new BadRequestException('Bạn đã đăng kí bán rồi');
+    }
+
     const account = await this.paymentsService.findAccountByUserId(user.id);
 
     if (!account) {
@@ -102,5 +107,26 @@ export class UsersService {
     if (account.balance < 1200000) {
       throw new BadRequestException('Số dư không đủ');
     }
+
+    const seller = await this.userRepository.update(
+      { id: user.id },
+      {
+        first_name: dto.first_name,
+        last_name: dto.last_name,
+        CCCD: dto.CCCD,
+        phone_number: dto.phone_number,
+        address_line1: dto.address_line1,
+        address_line2: dto.address_line2,
+        role: RoleEnum.SELLER,
+      },
+    );
+
+    if (!seller) {
+      throw new BadRequestException('Không tìm thấy người bán');
+    }
+
+    console.log(seller);
+
+    return seller;
   }
 }

@@ -11,6 +11,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -18,6 +19,9 @@ import {
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: UUID & { __brand: 'userId' };
+
+  @Column({ type: 'varchar', length: 11, nullable: true, default: null })
+  CCCD: string;
 
   @Column({ type: 'uuid', nullable: true })
   account_id!: UUID & { __brand: 'accountId' };

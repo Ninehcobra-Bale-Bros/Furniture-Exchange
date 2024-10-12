@@ -25,16 +25,19 @@ export class PaymentsService {
   }
 
   async createAccount(dto: CreateAccountDto) {
-    // const user = this.userService.findOneById(dto.user_id);
-    // if (!user) {
-    //   throw new BadRequestException('User not found');
-    // }
-    // const account = this.accountRepository
-    //   .save(AccountDto.toEntity(dto))
-    //   .then((account) => {
-    //     return AccountDto.fromEntity(account);
-    //   });
-    // return account;
+    const user = this.findAccountByUserId(dto.user_id);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const account = this.accountRepository
+      .save(AccountDto.toEntity(dto))
+      .then((account) => {
+        return AccountDto.fromEntity(account);
+      });
+
+    return account;
   }
 
   async createTransaction(dto: CreateTransactionDto) {
