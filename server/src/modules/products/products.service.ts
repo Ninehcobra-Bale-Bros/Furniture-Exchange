@@ -11,8 +11,7 @@ import { ProductDto } from 'src/modules/products/dto/product.dto';
 import { User } from '../users/entities/user.entity';
 import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
-import { plainToClass } from 'class-transformer';
-import { Product } from 'src/modules/products/entities/product.entity';
+import { PaymentsService } from 'src/modules/payments/payments.service';
 
 @Injectable()
 export class ProductsService {
@@ -20,6 +19,7 @@ export class ProductsService {
     private readonly productRepository: ProductRepository,
     private readonly discountService: DiscountService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   async create(
@@ -27,8 +27,6 @@ export class ProductsService {
     files: Express.Multer.File[] = [],
     user: User,
   ) {
-    const myWallet = 100000000;
-
     if (
       !(dto?.image_urls && dto.image_urls?.length) &&
       !(files && files?.length)
@@ -45,7 +43,9 @@ export class ProductsService {
 
     const discountProduct = dto.price * appropriateDiscount.discount_percent;
 
-    if (myWallet < discountProduct) {
+    const myAccount = await this.paymentsService.findAccountByUserId(user.id);
+
+    if (myAccount.balance < discountProduct) {
       throw new BadRequestException('Tài khoản không đủ tiền');
     }
 

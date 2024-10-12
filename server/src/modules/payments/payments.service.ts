@@ -66,6 +66,26 @@ export class PaymentsService {
     return transaction;
   }
 
+  async decreaseBalance(account_id: string, amount: number) {
+    const account = await this.accountRepository.findOneBy({
+      where: { id: account_id as any },
+    });
+
+    if (!account) {
+      throw new BadRequestException('Account not found');
+    }
+
+    account.balance -= amount;
+
+    try {
+      await this.accountRepository.save(account);
+    } catch (e) {
+      throw new BadRequestException('Không thể thực hiện giao dịch');
+    }
+
+    return true;
+  }
+
   //
   async deposit(user: UserDto, ip: string, dto: CreateTransactionDto) {
     const account = await this.accountRepository.findOneBy({

@@ -125,8 +125,13 @@ export class UsersService {
       throw new BadRequestException('Không tìm thấy người bán');
     }
 
-    console.log(seller);
+    const result = await this.paymentsService.decreaseBalance(
+      account.id,
+      1200000,
+    );
 
-    return seller;
+    return {
+      success: result,
+    };
   }
 }

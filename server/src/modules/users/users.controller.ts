@@ -47,10 +47,7 @@ export class UsersController {
     summary: 'Register selling',
   })
   @Roles(RoleEnum.BUYER, RoleEnum.SELLER)
-  async registerSelling(
-    @Body() body: RegisterSellingDto,
-    @Req() req: Request,
-  ): Promise<void> {
-    await this.usersService.registerSelling(req.user, body);
+  async registerSelling(@Body() body: RegisterSellingDto, @Req() req: Request) {
+    return await this.usersService.registerSelling(req.user, body);
   }
 }
