@@ -25,14 +25,14 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
-  @Post()
-  @ApiOperation({
-    summary: '[BUYER, SELLER, ADMIN] create a conversation (OPTIONAL)',
-  })
-  @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
-  create(@Body() dto: CreateConversationDto) {
-    return this.conversationsService.create(dto);
-  }
+  // @Post()
+  // @ApiOperation({
+  //   summary: '[BUYER, SELLER, ADMIN] create a conversation (OPTIONAL)',
+  // })
+  // @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
+  // create(@Body() dto: CreateConversationDto) {
+  //   return this.conversationsService.create(dto);
+  // }
 
   // @Post('messages')
   // @ApiOperation({
@@ -49,11 +49,11 @@ export class ConversationsController {
     summary: '[BUYER, SELLER, ADMIN] Get all conversations of the user',
   })
   @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
-  getAllConversations(@Req() req: Request) {
-    return this.conversationsService.GetAllConversations(req.user);
+  getLastMessageOfAllConversation(@Req() req: Request) {
+    return this.conversationsService.getLastMessageOfAllConversation(req.user);
   }
 
-  @Get(':product_id/products')
+  @Get(':product_id')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by product id',
   })
@@ -68,7 +68,7 @@ export class ConversationsController {
     );
   }
 
-  @Get(':other_id/users')
+  @Get(':other_id')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by other user',
   })
@@ -77,7 +77,7 @@ export class ConversationsController {
     @Param('other_id') other_id: string,
     @Req() req: Request,
   ) {
-    return this.conversationsService.GetConversationByOtherId(
+    return this.conversationsService.getConversationWithOther(
       req.user,
       other_id,
     );

@@ -15,7 +15,6 @@ export class GenericRepository<T extends BaseEntity>
   constructor(private readonly repository: Repository<T>) {}
   async findOneWithCondition(options: FindOneOptions<T>): Promise<T> {
     return await this.repository.findOne({
-      ...options,
       where: {
         ...options.where,
         deleted_at: null,

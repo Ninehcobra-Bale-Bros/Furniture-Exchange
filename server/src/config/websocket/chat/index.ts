@@ -11,10 +11,12 @@ import { Server, Socket } from 'socket.io';
 import { ConversationsService } from 'src/modules/conversations/conversations.service';
 import { UsersService } from 'src/modules/users/users.service';
 import { ConversationDto } from 'src/modules/conversations/dto/conversation.dto';
+import { UUID } from 'crypto';
+import { ProductsService } from 'src/modules/products/products.service';
 
 interface Message {
-  product_id: number;
-  other_id: string;
+  product_id: string;
+  other_id: UUID & { __brand: 'userId' };
   content: string;
 }
 
@@ -32,6 +34,7 @@ export class ChatGateway
   constructor(
     private readonly conversationsService: ConversationsService,
     readonly usersService: UsersService,
+    private readonly productsService: ProductsService,
   ) {
     super(usersService);
   }
@@ -47,7 +50,25 @@ export class ChatGateway
   }
 
   @SubscribeMessage('newMessage')
-  async handleMessage(client: Socket, message: Message) {
+  async handleMessageWithProduct(client: Socket, message: Message) {
+    console.log('1');
+
+    const otherUser = await this.usersService.findOneById(message.other_id);
+
+    const otherConversation =
+      await this.conversationsService.getConversationByUserIdWithUpsert(
+        otherUser.id,
+      );
+
+    client.broadcast.emit(otherConversation.name, {
+      ...message,
+    });
+  }
+
+  @SubscribeMessage('newMessage')
+  async handleNewMessage(client: Socket, message: Message) {
+    console.log('2');
+
     const user = await this.authenticate(client);
 
     if (!user) {
@@ -56,33 +77,62 @@ export class ChatGateway
 
     let conversation: ConversationDto | null = null;
 
-    conversation =
-      await this.conversationsService.findByProductIdAndSellerIdAndOtherId(
-        message.product_id,
-        user.id,
-        message.other_id,
-      );
+    const otherUser = await this.usersService.findOneById(message.other_id);
 
-    if (!conversation) {
-      conversation = await this.conversationsService.create({
-        product_id: message.product_id as any,
-        user_id: user.id as any,
-        other_id: message.other_id as any,
-      });
+    if (!otherUser) {
+      return;
     }
 
-    this.conversationsService.createMessage(
-      {
-        content: message.content,
-        conversation_id: conversation.id,
-      },
-      user as any,
-    );
+    try {
+      parseInt(message.product_id);
 
-    client.broadcast.emit(conversation.name, {
-      ...message,
-      conversation_name: conversation.name,
-    });
+      const product = await this.productsService.findById(message.product_id);
+
+      if (!product) {
+        return;
+      }
+
+      conversation =
+        await this.conversationsService.findByProductIdAndSellerIdAndOtherId(
+          Number(message.product_id),
+          user.id,
+          message.other_id,
+        );
+
+      if (!conversation) {
+        conversation = await this.conversationsService.create({
+          product_id: message.product_id as any,
+          user_id: user.id as any,
+          other_id: message.other_id as any,
+        });
+      }
+
+      this.conversationsService.createMessage(
+        {
+          content: message.content,
+          conversation_id: conversation.id,
+        },
+        user as any,
+      );
+    } catch {
+      // without product
+
+      const conversationWithoutProduct = await this.conversationsService.create(
+        {
+          user_id: user.id as any,
+          other_id: message.other_id as any,
+          product_id: null,
+        },
+      );
+
+      this.conversationsService.createMessage(
+        {
+          content: message.content,
+          conversation_id: conversationWithoutProduct.id,
+        },
+        user as any,
+      );
+    }
   }
 
   handleDisconnect(client: any) {

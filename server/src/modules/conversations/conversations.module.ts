@@ -8,9 +8,14 @@ import { Message } from './entities/message.entity';
 import { Conversation } from './entities/conversation.entity';
 import { ProductsService } from 'src/modules/products/products.service';
 import { ProductsModule } from 'src/modules/products/products.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [ProductsModule, TypeOrmModule.forFeature([Conversation, Message])],
+  imports: [
+    ProductsModule,
+    UsersModule,
+    TypeOrmModule.forFeature([Conversation, Message]),
+  ],
   controllers: [ConversationsController],
   providers: [ConversationsService, ConversationRepository, MessageRepository],
   exports: [ConversationsService],

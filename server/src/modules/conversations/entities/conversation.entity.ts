@@ -22,7 +22,7 @@ export class Conversation extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true, default: null })
   product_id!: number & { __brand: 'productId' };
 
   @ManyToOne(() => Product, (product) => product.id)
@@ -45,7 +45,7 @@ export class Conversation extends BaseEntity {
   })
   user!: User;
 
-  @Column({ type: 'uuid', nullable: false })
+  @Column({ type: 'uuid', nullable: true, default: null })
   other_id!: UUID & { __brand: 'userId' };
 
   @ManyToOne(() => User, (user) => user.id)

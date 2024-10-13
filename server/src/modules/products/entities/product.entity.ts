@@ -75,6 +75,7 @@ export class Product extends BaseEntity {
   image_ids!: string[];
 
   @Column({ type: 'bigint', nullable: false })
+  @Transform(({ value }) => Number(value), { toClassOnly: true })
   price!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
