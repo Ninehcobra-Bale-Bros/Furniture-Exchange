@@ -12,6 +12,7 @@ import { User } from '../users/entities/user.entity';
 import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
 import { PaymentsService } from 'src/modules/payments/payments.service';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ProductsService {
@@ -82,8 +83,6 @@ export class ProductsService {
 
     if (files.length) {
       for (const file of files) {
-        console.log('file', file);
-
         const { secure_url, public_id } =
           await this.cloudinaryService.uploadFile(file);
 
@@ -131,6 +130,17 @@ export class ProductsService {
     });
 
     return ProductDto.fromEntity(product);
+  }
+
+  async isProductBelongToSeller(productId: number | string, sellerId: string) {
+    const founded = await this.productRepository.findOneWithCondition({
+      where: {
+        id: productId as any,
+        seller_id: sellerId as any,
+      },
+    });
+
+    return founded;
   }
 
   async writeToFile() {

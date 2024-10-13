@@ -11,6 +11,7 @@ export class ProductDto implements Readonly<ProductDto> {
   name!: string;
   slug: string;
   quantity!: number;
+  kilogram: number;
   description!: string;
 
   @Transform(
@@ -50,6 +51,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.name = dto.name;
     it.slug = dto.slug;
     it.quantity = dto.quantity;
+    it.kilogram = dto.kilogram;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;
@@ -75,6 +77,7 @@ export class ProductDto implements Readonly<ProductDto> {
       name: entity.name,
       slug: entity.slug,
       quantity: entity.quantity,
+      kilogram: entity.kilogram,
       description: entity.description,
       image_urls: entity.image_urls,
       image_ids: entity.image_ids,
@@ -99,6 +102,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.name = dto.name;
     it.slug = slugSerialize(dto.name);
     it.quantity = dto.quantity;
+    it.kilogram = dto.kilogram;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;

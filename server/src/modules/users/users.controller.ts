@@ -42,7 +42,7 @@ export class UsersController {
     await this.usersService.findAllAndWriteToFile();
   }
 
-  @Post('register-selling')
+  @Post('register/selling')
   @ApiOperation({
     summary: 'Register selling',
   })

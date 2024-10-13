@@ -1,10 +1,13 @@
 import { UUID } from 'crypto';
-import { DeliveryStatus } from 'src/common/enums/delivery.enum';
+import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
 import { BaseEntity } from 'src/core/base.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -12,6 +15,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'; // ES 2015
+import timezone from 'dayjs/plugin/timezone'; // ES 2015
+import { Transform } from 'class-transformer';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 @Entity()
 export class Delivery extends BaseEntity {
@@ -31,6 +40,15 @@ export class Delivery extends BaseEntity {
   product_id: number;
 
   @Column({ type: 'text', nullable: false })
+  other_fullname: string;
+
+  @Column({ type: 'text', nullable: false })
+  other_phone: string;
+
+  @Column({ type: 'bool', default: false })
+  other_confirmed: boolean;
+
+  @Column({ type: 'text', nullable: false })
   pickup_address: string;
 
   @Column({ type: 'text', nullable: false })
@@ -39,16 +57,39 @@ export class Delivery extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   amount: number;
 
+  @Column({ type: 'int', nullable: false, default: 1 })
+  quantity: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  shipping_fee: number;
+
+  @Column({ type: 'decimal', nullable: true, default: null })
+  total: number;
+
   @Column({
     type: 'enum',
-    enum: DeliveryStatus,
+    enum: DeliveryStatusEnum,
     name: 'status',
-    default: DeliveryStatus.PENDING,
+    default: DeliveryStatusEnum.PENDING,
   })
-  status: DeliveryStatus;
+  status: DeliveryStatusEnum;
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  expired_at: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  setExpirationDate() {
+    const dateTime = dayjs('2024/10/22 10:35:52 AM', 'YYYY/MM/DD hh:mm:ss A')
+      .add(1, 'day')
+      .tz('Asia/Bangkok')
+      .toDate();
+
+    this.expired_at = dateTime;
+  }
 
   @JoinColumn({ name: 'user_id' })
   @ManyToOne(() => User, (user) => user.id, { nullable: false })
@@ -63,6 +104,6 @@ export class Delivery extends BaseEntity {
   delivery: User;
 
   @JoinColumn({ name: 'product_id' })
-  @OneToOne(() => Product, (product) => product.id, { nullable: false })
+  @ManyToOne(() => Product, (product) => product.id, { nullable: false })
   product: Product;
 }

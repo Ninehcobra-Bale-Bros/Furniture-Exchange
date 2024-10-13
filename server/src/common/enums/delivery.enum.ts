@@ -1,4 +1,4 @@
-export enum DeliveryStatus {
+export enum DeliveryStatusEnum {
   DELIVERED = 'delivered',
   DELIVERING = 'delivering',
   RETURNED = 'returned',

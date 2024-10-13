@@ -50,6 +50,9 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', nullable: false, default: 0 })
   quantity!: number;
 
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  kilogram!: number;
+
   @Column({ type: 'text', nullable: false })
   description!: string;
 
