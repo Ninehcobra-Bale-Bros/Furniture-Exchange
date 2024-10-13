@@ -9,6 +9,7 @@ export class UserDto implements Readonly<UserDto> {
   id: UUID & { __brand: 'userId' };
   _id?: string;
   CCCD: string;
+  account_id: UUID & { __brand: 'accountId' };
   email: string;
   email_verified: boolean;
   password: string;
@@ -54,6 +55,7 @@ export class UserDto implements Readonly<UserDto> {
     it.id = dto.id;
     it._id = dto._id;
     it.CCCD = dto.CCCD;
+    it.account_id = dto.account_id;
     it.email = dto.email;
     it.email_verified = dto.email_verified;
     it.first_name = dto.first_name;
@@ -74,6 +76,7 @@ export class UserDto implements Readonly<UserDto> {
       id: entity.id,
       _id: entity.id,
       CCCD: entity.CCCD,
+      account_id: entity.account_id,
       email: entity.email,
       email_verified: entity.email_verified,
       first_name: entity.first_name,
@@ -93,6 +96,7 @@ export class UserDto implements Readonly<UserDto> {
 
     it.id = dto.id;
     it.CCCD = dto.CCCD;
+    it.account_id = dto.account_id;
     it.email = dto.email;
     it.email_verified = dto.email_verified;
     it.password = dto.password;

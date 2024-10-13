@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Account } from './account.entity';
 import { TransactionStatusEnum } from 'src/common/enums/transaction.enum';
+import { UUID } from 'crypto';
 
 @Entity()
 export class Transaction extends BaseEntity {
@@ -17,7 +18,7 @@ export class Transaction extends BaseEntity {
   id!: string & { __brand: 'transactionId' };
 
   @Column({ type: 'uuid', nullable: false })
-  account_id!: string & { __brand: 'accountId' };
+  account_id!: UUID & { __brand: 'accountId' };
 
   @Column({ type: 'bigint', nullable: false })
   amount!: number;

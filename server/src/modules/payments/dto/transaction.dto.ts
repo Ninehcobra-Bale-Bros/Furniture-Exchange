@@ -6,7 +6,7 @@ import { TransactionStatusEnum } from 'src/common/enums/transaction.enum';
 
 export class TransactionDto implements Readonly<TransactionDto> {
   id: string & { __brand: 'transactionId' };
-  account_id: string & { __brand: 'accountId' };
+  account_id: UUID & { __brand: 'accountId' };
   amount: number;
   status: TransactionStatusEnum;
   created_at!: Date;

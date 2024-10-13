@@ -1,9 +1,11 @@
-import { plainToClass, Transform } from 'class-transformer';
+import { Exclude, plainToClass, Transform } from 'class-transformer';
 import { Account } from '../entities/account.entity';
 import { UUID } from 'crypto';
 
 export class AccountDto implements Readonly<AccountDto> {
-  id!: string & { __brand: 'accountId' };
+  id!: UUID & { __brand: 'accountId' };
+
+  @Exclude()
   user_id!: UUID & { __brand: 'userId' };
 
   @Transform(({ value }) => Number(value))

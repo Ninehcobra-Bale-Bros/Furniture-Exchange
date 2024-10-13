@@ -27,27 +27,27 @@ export class UsersController {
 
   @Get('profile')
   @ApiOperation({
-    summary: 'Get user profile',
+    summary: '[BUYER, SELLER, ADMIN] Get user profile',
   })
-  async profile(@Req() req: Request): Promise<UserDto> {
-    return await this.usersService.findOneById(req.user.id);
-  }
-
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  async writeToFile(): Promise<void> {
-    await this.usersService.findAllAndWriteToFile();
+  async profile(@Req() req: Request) {
+    return await this.usersService.getProfile(req.user);
   }
 
   @Post('register/selling')
   @ApiOperation({
-    summary: 'Register selling',
+    summary: '[BUYER] Register selling',
   })
   @Roles(RoleEnum.BUYER)
   async registerSelling(@Body() body: RegisterSellingDto, @Req() req: Request) {
     return await this.usersService.registerSelling(req.user, body);
   }
+
+  // @Get('write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async writeToFile(): Promise<void> {
+  //   await this.usersService.findAllAndWriteToFile();
+  // }
 }

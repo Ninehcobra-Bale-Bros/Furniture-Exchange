@@ -15,6 +15,9 @@ import { AccountRepository } from '../payments/repository/account.repository';
 import { PaymentsService } from '../payments/payments.service';
 import { RegisterSellingDto } from './dto/register-selling.dto';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { User } from 'src/modules/users/entities/user.entity';
+import { plainToClass } from 'class-transformer';
+import { AccountDto } from 'src/modules/payments/dto/account.dto';
 
 @Injectable()
 export class UsersService {
@@ -55,6 +58,27 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<UserDto> {
     const newUser = await this.userRepository.save(UserDto.toEntity(dto));
 
+    if (!newUser) {
+      throw new BadRequestException('Tạo người dùng thất bại');
+    }
+
+    const account = await this.paymentsService.createAccount({
+      user_id: newUser.id,
+    });
+
+    if (!account) {
+      throw new BadRequestException('Tạo tài khoản thất bại');
+    }
+
+    this.userRepository.update(
+      {
+        id: newUser.id,
+      },
+      {
+        account_id: account.id,
+      },
+    );
+
     return UserDto.fromEntity(newUser);
   }
 
@@ -91,6 +115,36 @@ export class UsersService {
     });
 
     return 'Write to file successfully';
+  }
+
+  async getProfile(user: User) {
+    const profile = await this.userRepository
+      .findOneWithCondition({
+        where: {
+          id: user.id,
+        },
+        relations: ['account'],
+        select: [
+          'id',
+          'first_name',
+          'last_name',
+          'email',
+          'phone_number',
+          'address_line1',
+          'address_line2',
+          'role',
+          'account',
+        ],
+      })
+      .then((u) => {
+        const account = plainToClass(AccountDto, u.account);
+
+        u.account = account as any;
+
+        return u;
+      });
+
+    return profile;
   }
 
   async registerSelling(user: UserDto, dto: RegisterSellingDto) {

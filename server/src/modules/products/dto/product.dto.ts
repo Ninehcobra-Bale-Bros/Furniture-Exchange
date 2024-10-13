@@ -11,8 +11,10 @@ export class ProductDto implements Readonly<ProductDto> {
   name!: string;
   slug: string;
   quantity!: number;
-  kilogram: number;
   description!: string;
+
+  @Transform(({ value }) => Number(value), { toClassOnly: true })
+  kilogram: number;
 
   @Transform(
     ({ value }) => {

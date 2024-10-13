@@ -6,6 +6,8 @@ import { User } from 'src/modules/users/entities/user.entity';
 import { UsersService } from 'src/modules/users/users.service';
 import { ProductsService } from 'src/modules/products/products.service';
 import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import { plainToClass } from 'class-transformer';
+import { ProductDto } from 'src/modules/products/dto/product.dto';
 
 @Injectable()
 export class DeliveryService {
@@ -78,8 +80,37 @@ export class DeliveryService {
     const shipments = await this.deliveryRepository
       .findAll({
         where: { other_id: user.id },
+        relations: ['product'],
+        select: [
+          'id',
+          'user_id',
+          'other_id',
+          'delivery_id',
+          'product_id',
+          'product',
+          'other_fullname',
+          'other_phone',
+          'pickup_address',
+          'delivery_address',
+          'amount',
+          'quantity',
+          'shipping_fee',
+          'total',
+          'status',
+          'other_confirmed',
+          'created_at',
+          'updated_at',
+          'expired_at',
+        ],
       })
-      .then((deliveries) => deliveries.map((d) => DeliveryDto.fromEntity(d)));
+      .then((deliveries) =>
+        deliveries.map((delivery) => {
+          // You can manipulate the product or return it as is
+          const shipment = DeliveryDto.fromEntity(delivery) as any;
+          shipment.product = plainToClass(ProductDto, delivery.product); // Assign product
+          return shipment;
+        }),
+      );
 
     return shipments;
   }

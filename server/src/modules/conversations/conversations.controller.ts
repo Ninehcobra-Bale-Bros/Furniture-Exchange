@@ -34,15 +34,15 @@ export class ConversationsController {
     return this.conversationsService.create(dto);
   }
 
-  @Post('messages')
-  @ApiOperation({
-    summary:
-      '[ADMIN] FOR TESTING ONLY - Create a message will automatically using websocket',
-  })
-  @Roles(RoleEnum.ADMIN)
-  createMessage(@Body() dto: CreateMessageDto, @Req() req: Request) {
-    return this.conversationsService.createMessage(dto, req.user);
-  }
+  // @Post('messages')
+  // @ApiOperation({
+  //   summary:
+  //     '[ADMIN] FOR TESTING ONLY - Create a message will automatically using websocket',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // createMessage(@Body() dto: CreateMessageDto, @Req() req: Request) {
+  //   return this.conversationsService.createMessage(dto, req.user);
+  // }
 
   @Get()
   @ApiOperation({
@@ -83,13 +83,13 @@ export class ConversationsController {
     );
   }
 
-  @Get('write-to-file')
-  @Public()
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  // @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.conversationsService.writeToFile();
-  }
+  // @Get('write-to-file')
+  // @Public()
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // // @Roles(RoleEnum.ADMIN)
+  // writeToFile() {
+  //   return this.conversationsService.writeToFile();
+  // }
 }

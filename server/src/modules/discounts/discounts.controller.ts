@@ -6,15 +6,16 @@ import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('discounts')
 @ApiTags('discounts')
-@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '[ADMIN] Create a discount',
   })
@@ -24,20 +25,20 @@ export class DiscountController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({
-    summary: '[ADMIN] Get all discounts',
+    summary: '[PUBLIC] Get all discounts',
   })
-  @Roles(RoleEnum.ADMIN)
   findAll() {
     return this.discountService.findAll();
   }
 
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.discountService.writeToFile();
-  }
+  // @Get('write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // writeToFile() {
+  //   return this.discountService.writeToFile();
+  // }
 }

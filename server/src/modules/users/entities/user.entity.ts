@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 11, nullable: true, default: null })
   CCCD: string;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid', nullable: true, default: null })
   account_id!: UUID & { __brand: 'accountId' };
 
   @OneToOne(() => Account, (account) => account.user)

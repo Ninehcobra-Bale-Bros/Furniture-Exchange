@@ -16,12 +16,12 @@ import { Transaction } from './transaction.entity';
 @Entity()
 export class Account extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: string & { __brand: 'accountId' };
+  id!: UUID & { __brand: 'accountId' };
 
   @Column({ type: 'uuid', nullable: false })
   user_id!: UUID & { __brand: 'userId' };
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ type: 'decimal', default: 0 })
   balance!: number;
 
   @UpdateDateColumn({ type: 'varchar', nullable: false })

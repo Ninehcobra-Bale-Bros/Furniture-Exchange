@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -16,26 +16,44 @@ import { Roles } from 'src/common/decorators/role.decorator';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('accounts')
+  @Get('accounts')
   @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+    summary: '[ADMIN] Get all accounts',
   })
   @Roles(RoleEnum.ADMIN)
-  createAccount(@Body() dto: CreateAccountDto) {
-    return this.paymentsService.createAccount(dto);
+  getAccounts() {
+    return this.paymentsService.getAccounts();
   }
 
-  @Post('transactions')
+  @Get('transactions')
   @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+    summary: '[ADMIN] Get all transactions',
   })
   @Roles(RoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Create a new transaction' })
-  createTransaction(@Body() dto: CreateTransactionDto) {
-    return this.paymentsService.createTransaction(dto);
+  getTransactions() {
+    return this.paymentsService.getTransactions();
   }
 
-  @Post('transactions/deposit')
+  // @Post('accounts')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // createAccount(@Body() dto: CreateAccountDto) {
+  //   return this.paymentsService.createAccount(dto);
+  // }
+
+  // @Post('transactions')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // @ApiOperation({ summary: 'Create a new transaction' })
+  // createTransaction(@Body() dto: CreateTransactionDto) {
+  //   return this.paymentsService.createTransaction(dto);
+  // }
+
+  @Post('deposit')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] deposit money',
   })
@@ -44,4 +62,20 @@ export class PaymentsController {
   deposit(@Body() dto: CreateTransactionDto, @Req() req: Request) {
     return this.paymentsService.deposit(req.user, req.ip, dto);
   }
+
+  // @Get('account/write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async writeAccountToFile() {
+  //   return await this.paymentsService.writeAccountToFile();
+  // }
+
+  // @Get('transaction/write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async writeTransactionToFile() {}
 }

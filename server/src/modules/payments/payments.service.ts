@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { TransactionDto } from './dto/transaction.dto';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -10,6 +14,8 @@ import { UserDto } from 'src/modules/users/dto/user.dto';
 import { VnpayService } from 'src/config/vnpay/vnpay.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import PaySuccessEvent from 'src/config/events/pay-success.interface';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class PaymentsService {
@@ -18,6 +24,14 @@ export class PaymentsService {
     private readonly transactionRepository: TransactionRepository,
     private readonly vnPayService: VnpayService,
   ) {}
+
+  async getAccounts() {
+    return await this.accountRepository.findAll();
+  }
+
+  async getTransactions() {
+    return await this.transactionRepository.findAll();
+  }
 
   async findAccountByUserId(userId: string) {
     return this.accountRepository.findOneBy({
@@ -88,7 +102,7 @@ export class PaymentsService {
   //
   async deposit(user: UserDto, ip: string, dto: CreateTransactionDto) {
     const account = await this.accountRepository.findOneBy({
-      where: { id: dto.account_id },
+      where: { id: dto.account_id as any },
     });
 
     if (!account) {
@@ -116,8 +130,45 @@ export class PaymentsService {
 
     account.balance += amount;
 
+    this.createTransaction({
+      account_id: account_id as any,
+      amount: amount,
+    });
+
     await this.accountRepository.save(account);
 
     return 'Nạp tiền thành công';
+  }
+
+  async writeAccountToFile() {
+    const accounts = await this.accountRepository.findAll();
+
+    const filePath = path.resolve('db/seeds/payments/accounts.json');
+
+    fs.writeFile(filePath, JSON.stringify(accounts), (err) => {
+      if (err) {
+        throw new InternalServerErrorException(
+          `Error writing to file: ${err.message}`,
+        );
+      }
+    });
+
+    return 'Write to file successfully';
+  }
+
+  async writeTransactionToFile() {
+    const transactions = await this.transactionRepository.findAll();
+
+    const filePath = path.resolve('db/seeds/payments/transactions.json');
+
+    fs.writeFile(filePath, JSON.stringify(transactions), (err) => {
+      if (err) {
+        throw new InternalServerErrorException(
+          `Error writing to file: ${err.message}`,
+        );
+      }
+    });
+
+    return 'Write to file successfully';
   }
 }

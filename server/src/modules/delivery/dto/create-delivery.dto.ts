@@ -8,7 +8,7 @@ import { DeliveryDto } from 'src/modules/delivery/dto/delivery.dto';
 
 export class CreateDeliveryDto extends PartialType(DeliveryDto) {
   @ApiProperty({
-    required: false,
+    required: true,
     type: 'string',
     description: 'buyer id',
     example: '20949d0d-736c-4802-a3e5-3d3db401c1ad',
