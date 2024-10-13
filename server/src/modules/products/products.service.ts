@@ -143,6 +143,29 @@ export class ProductsService {
     return founded;
   }
 
+  async updateQuantity(productId: number, quantity: number): Promise<boolean> {
+    const product = await this.productRepository.findOneBy({
+      where: {
+        id: productId as any,
+      },
+    });
+
+    if (!product) {
+      throw new BadRequestException('Product not found');
+    }
+
+    const updated = await this.productRepository.update(
+      {
+        id: product.id,
+      },
+      {
+        quantity: (product.quantity += quantity),
+      },
+    );
+
+    return updated.affected ? true : false;
+  }
+
   async writeToFile() {
     const products = await this.productRepository.findAll();
 

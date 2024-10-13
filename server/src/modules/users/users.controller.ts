@@ -46,7 +46,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Register selling',
   })
-  @Roles(RoleEnum.BUYER, RoleEnum.SELLER)
+  @Roles(RoleEnum.BUYER)
   async registerSelling(@Body() body: RegisterSellingDto, @Req() req: Request) {
     return await this.usersService.registerSelling(req.user, body);
   }

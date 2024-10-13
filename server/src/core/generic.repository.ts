@@ -72,4 +72,8 @@ export class GenericRepository<T extends BaseEntity>
   ) {
     return await this.repository.update(where, partialEntity);
   }
+
+  async delete(options: FindOptionsWhere<T>) {
+    return await this.repository.delete(options);
+  }
 }
