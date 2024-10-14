@@ -42,12 +42,6 @@ export class PaymentsService {
   }
 
   async createAccount(dto: CreateAccountDto) {
-    const user = this.findAccountByUserId(dto.user_id);
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
     const account = this.accountRepository
       .save(AccountDto.toEntity(dto))
       .then((account) => {
@@ -102,8 +96,10 @@ export class PaymentsService {
   //
   async deposit(user: UserDto, ip: string, dto: CreateTransactionDto) {
     const account = await this.accountRepository.findOneBy({
-      where: { id: dto.account_id as any },
+      where: { user_id: user.id },
     });
+
+    console.log('account', account);
 
     if (!account) {
       throw new BadRequestException('Không tìm thấy tài khoản');
@@ -128,14 +124,14 @@ export class PaymentsService {
       throw new BadRequestException('Không tìm thấy tài khoản');
     }
 
-    account.balance += amount;
+    account.balance = Number(account.balance) + Number(amount);
 
     this.createTransaction({
       account_id: account_id as any,
       amount: amount,
     });
 
-    await this.accountRepository.save(account);
+    this.accountRepository.save(account);
 
     return 'Nạp tiền thành công';
   }
@@ -143,9 +139,9 @@ export class PaymentsService {
   async writeAccountToFile() {
     const accounts = await this.accountRepository.findAll();
 
-    const filePath = path.resolve('db/seeds/payments/accounts.json');
+    const accounts_filePath = path.resolve('db/seeds/payments/accounts.json');
 
-    fs.writeFile(filePath, JSON.stringify(accounts), (err) => {
+    fs.writeFile(accounts_filePath, JSON.stringify(accounts), (err) => {
       if (err) {
         throw new InternalServerErrorException(
           `Error writing to file: ${err.message}`,
@@ -153,15 +149,13 @@ export class PaymentsService {
       }
     });
 
-    return 'Write to file successfully';
-  }
-
-  async writeTransactionToFile() {
     const transactions = await this.transactionRepository.findAll();
 
-    const filePath = path.resolve('db/seeds/payments/transactions.json');
+    const transactions_filePath = path.resolve(
+      'db/seeds/payments/transactions.json',
+    );
 
-    fs.writeFile(filePath, JSON.stringify(transactions), (err) => {
+    fs.writeFile(transactions_filePath, JSON.stringify(transactions), (err) => {
       if (err) {
         throw new InternalServerErrorException(
           `Error writing to file: ${err.message}`,

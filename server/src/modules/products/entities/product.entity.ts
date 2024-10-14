@@ -59,7 +59,13 @@ export class Product extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -68,7 +74,13 @@ export class Product extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -104,6 +116,9 @@ export class Product extends BaseEntity {
     enumName: 'state',
   })
   state!: StateEnum;
+
+  @Column({ type: 'boolean', default: false })
+  is_sold!: boolean;
 
   @UpdateDateColumn({
     type: 'timestamptz',

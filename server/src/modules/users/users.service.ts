@@ -70,15 +70,6 @@ export class UsersService {
       throw new BadRequestException('Tạo tài khoản thất bại');
     }
 
-    this.userRepository.update(
-      {
-        id: newUser.id,
-      },
-      {
-        account_id: account.id,
-      },
-    );
-
     return UserDto.fromEntity(newUser);
   }
 
@@ -123,7 +114,6 @@ export class UsersService {
         where: {
           id: user.id,
         },
-        relations: ['account'],
         select: [
           'id',
           'first_name',
@@ -133,15 +123,16 @@ export class UsersService {
           'address_line1',
           'address_line2',
           'role',
-          'account',
         ],
       })
-      .then((u) => {
-        const account = plainToClass(AccountDto, u.account);
+      .then(async (u) => {
+        const account = await this.paymentsService
+          .findAccountByUserId(user.id)
+          .then((a) => AccountDto.fromEntity(a));
 
         u.account = account as any;
 
-        return u;
+        return plainToClass(UserDto, u);
       });
 
     return profile;

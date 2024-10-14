@@ -46,7 +46,7 @@ export class VnpayController {
   @ApiOperation({
     summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
   })
-  @Roles(RoleEnum.ADMIN)
+  @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
   ipn(@Req() req: Request) {
     console.log(req.query);
 

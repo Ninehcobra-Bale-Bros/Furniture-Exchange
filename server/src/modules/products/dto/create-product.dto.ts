@@ -80,6 +80,16 @@ export class CreateProductDto extends PartialType(ProductDto) {
   @ApiProperty({
     required: true,
     type: 'string',
+    description: 'Product kilogram',
+    example: '10',
+  })
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  kilogram!: number;
+
+  @ApiProperty({
+    required: true,
+    type: 'string',
     description: 'Product origin',
     example: 'Vietnam',
   })

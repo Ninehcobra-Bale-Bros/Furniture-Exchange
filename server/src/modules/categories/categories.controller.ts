@@ -47,12 +47,12 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
-  // @Get('write-to-file')
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // writeToFile() {
-  //   return this.categoriesService.writeToFile();
-  // }
+  @Get('write-to-file')
+  @Public()
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  writeToFile() {
+    return this.categoriesService.writeToFile();
+  }
 }

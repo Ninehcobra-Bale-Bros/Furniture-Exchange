@@ -22,10 +22,12 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { VnpayModule } from './config/vnpay/vnpay.module';
 import { EventModule } from 'src/config/events/event.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     // Configuration environment variables
+    EventModule,
     ConfigModule.forRoot(configurationOptions),
     TypeOrmModule.forRootAsync({
       useClass: TypeormService,
@@ -45,7 +47,6 @@ import { DeliveryModule } from './modules/delivery/delivery.module';
     // Vnpay module
     VnpayModule,
     // other business modules
-    EventModule,
 
     UsersModule,
     AuthModule,

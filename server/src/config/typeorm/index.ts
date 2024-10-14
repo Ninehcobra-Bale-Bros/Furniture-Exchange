@@ -5,6 +5,8 @@ import CategorySeeder from 'db/seeds/categories/category.seed';
 import ConversationSeeder from 'db/seeds/conversations/conversation.seed';
 import MessageSeeder from 'db/seeds/conversations/messages.seed';
 import DiscountSeeder from 'db/seeds/discounts/discount.seed';
+import AccountSeeder from 'db/seeds/payments/account.seed';
+import TransactionSeeder from 'db/seeds/payments/transaction.seed';
 import ProductSeeder from 'db/seeds/products/product.seed';
 import UserSeeder from 'db/seeds/users/user.seed';
 import { POSTGRES_HOST } from 'src/environments';
@@ -28,6 +30,8 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
     ProductSeeder,
     ConversationSeeder,
     MessageSeeder,
+    AccountSeeder,
+    TransactionSeeder,
   ],
   synchronize: false, // Ensure this is set to false in production
 };

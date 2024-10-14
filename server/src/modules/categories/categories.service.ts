@@ -56,6 +56,8 @@ export class CategoriesService {
   }
 
   async writeToFile() {
+    console.log('Writing to file...');
+
     const categories = await this.categoryRepository.findAll();
 
     const filePath = path.resolve('db/seeds/categories/categories.json');

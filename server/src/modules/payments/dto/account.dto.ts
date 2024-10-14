@@ -5,7 +5,6 @@ import { UUID } from 'crypto';
 export class AccountDto implements Readonly<AccountDto> {
   id!: UUID & { __brand: 'accountId' };
 
-  @Exclude()
   user_id!: UUID & { __brand: 'userId' };
 
   @Transform(({ value }) => Number(value))

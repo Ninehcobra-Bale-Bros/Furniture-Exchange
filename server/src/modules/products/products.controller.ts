@@ -87,6 +87,16 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('write-to-file')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  writeToFile() {
+    return this.productsService.writeToFile();
+  }
+
   @Get(':slug')
   @Public()
   @ApiOperation({
@@ -95,13 +105,4 @@ export class ProductsController {
   findOne(@Param('slug') id: string) {
     return this.productsService.findBySlug(id);
   }
-
-  // @Get('write-to-file')
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // writeToFile() {
-  //   return this.productsService.writeToFile();
-  // }
 }

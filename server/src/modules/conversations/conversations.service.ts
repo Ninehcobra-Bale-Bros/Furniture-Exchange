@@ -322,8 +322,13 @@ export class ConversationsService {
   }
 
   async writeToFile() {
+    console.log('write to file');
+
     const conversations = await this.conversationRepository.findAll();
     const messages = await this.messageRepository.findAll();
+
+    console.log('conversations', conversations);
+    console.log('messages', messages);
 
     const filePath_1 = path.resolve(
       'db/seeds/conversations/conversations.json',

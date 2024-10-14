@@ -30,6 +30,7 @@ export class VnpayService {
       info,
       parseFloat(amount),
       createDate,
+      'http://localhost:3001/api/v1/vnpay/ipn',
     );
 
     return vnpUrl;
@@ -43,7 +44,7 @@ export class VnpayService {
       var rspCode = vnp_Params['vnp_ResponseCode'];
       var info = vnp_Params['vnp_OrderInfo'];
       var amount = vnp_Params['vnp_Amount'];
-      const account_id = info.split(' ')[1];
+      const account_id = info.split('+')[1];
 
       let message = '';
       amount = parseFloat(amount) / 100;
@@ -51,10 +52,12 @@ export class VnpayService {
       switch (rspCode) {
         case '00':
           message = VNPAY_RESPONSE_MESSAGE.SUCCESS;
+
           this.eventEmitter.emit(
             'payment.success',
             new PaySuccessEvent(amount, account_id),
           );
+
           break;
         case '01':
           message = VNPAY_RESPONSE_MESSAGE.NOT_COMPLETE;

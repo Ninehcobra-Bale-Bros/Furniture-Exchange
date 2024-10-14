@@ -27,7 +27,7 @@ export class Account extends BaseEntity {
   @UpdateDateColumn({ type: 'varchar', nullable: false })
   updated_at!: Date;
 
-  @OneToOne(() => User, (user) => user.account)
+  @OneToOne(() => User, (user) => user.account, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
