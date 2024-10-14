@@ -8,7 +8,6 @@ import { ProductDto } from 'src/modules/products/dto/product.dto';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; // ES 2015
 import timezone from 'dayjs/plugin/timezone'; // ES 2015
-import { zipAll } from 'rxjs';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -64,8 +63,8 @@ export class CreateProductDto extends PartialType(ProductDto) {
     description: 'Product price',
     example: '500000',
   })
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
   price!: number;
 
   @ApiProperty({
@@ -77,6 +76,16 @@ export class CreateProductDto extends PartialType(ProductDto) {
   @IsNumber()
   @Transform(({ value }) => Number(value))
   quantity!: number;
+
+  @ApiProperty({
+    required: true,
+    type: 'string',
+    description: 'Product kilogram',
+    example: '10',
+  })
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  kilogram!: number;
 
   @ApiProperty({
     required: true,

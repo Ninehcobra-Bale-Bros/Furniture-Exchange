@@ -176,7 +176,7 @@ export class ConversationRepository extends GenericRepository<Conversation> {
         'message.created_at', // Select message creation date
       ])
       .where(
-        'conversation.user_id = :user_id OR conversation.other_id = :user_id',
+        '(conversation.user_id = :user_id AND conversation.other_id is not NULL) OR conversation.other_id = :user_id',
         { user_id },
       )
       .getMany();

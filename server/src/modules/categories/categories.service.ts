@@ -8,6 +8,8 @@ import { CategoryDto } from './dto/category.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CategoryRepository } from './repository/category.repository';
+import { plainToClass } from 'class-transformer';
+import { ProductDto } from 'src/modules/products/dto/product.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -40,24 +42,22 @@ export class CategoriesService {
   }
 
   async getProductsByCategory(slug: string) {
-    // const category = await this.categoryRepository.findOneBy({
-    //   where: { slug },
-    // });
+    const category = await this.categoryRepository
+      .getProductsBySlug(slug)
+      .then((category) => {
+        category.products = category.products.map((product) => {
+          return plainToClass(ProductDto, product) as any;
+        });
 
-    // if (!category) {
-    //   throw new BadRequestException('Category not found');
-    // }
-
-    // if(category.parent_id !== null) {
-
-    // }
-
-    const category = await this.categoryRepository.getProductsBySlug(slug);
+        return category;
+      });
 
     return category;
   }
 
   async writeToFile() {
+    console.log('Writing to file...');
+
     const categories = await this.categoryRepository.findAll();
 
     const filePath = path.resolve('db/seeds/categories/categories.json');

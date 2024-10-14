@@ -11,8 +11,12 @@ import { ProductDto } from 'src/modules/products/dto/product.dto';
 import { User } from '../users/entities/user.entity';
 import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
+import { PaymentsService } from 'src/modules/payments/payments.service';
+import { UUID } from 'crypto';
 import { plainToClass } from 'class-transformer';
-import { Product } from 'src/modules/products/entities/product.entity';
+import { CategoryDto } from '../categories/dto/category.dto';
+import { Product } from './entities/product.entity';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class ProductsService {
@@ -20,6 +24,7 @@ export class ProductsService {
     private readonly productRepository: ProductRepository,
     private readonly discountService: DiscountService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   async create(
@@ -27,8 +32,6 @@ export class ProductsService {
     files: Express.Multer.File[] = [],
     user: User,
   ) {
-    const myWallet = 100000000;
-
     if (
       !(dto?.image_urls && dto.image_urls?.length) &&
       !(files && files?.length)
@@ -45,7 +48,9 @@ export class ProductsService {
 
     const discountProduct = dto.price * appropriateDiscount.discount_percent;
 
-    if (myWallet < discountProduct) {
+    const myAccount = await this.paymentsService.findAccountByUserId(user.id);
+
+    if (myAccount.balance < discountProduct) {
       throw new BadRequestException('Tài khoản không đủ tiền');
     }
 
@@ -58,6 +63,12 @@ export class ProductsService {
       }),
     );
 
+    if (!newProduct) {
+      throw new InternalServerErrorException('Tạo sản phẩm thất bại !');
+    }
+
+    this.paymentsService.decreaseBalance(myAccount.id, discountProduct);
+
     if (dto?.image_urls && dto.image_urls?.length) {
       for (const url of dto.image_urls) {
         const { secure_url, public_id } =
@@ -67,7 +78,7 @@ export class ProductsService {
         newProduct.image_ids.push(public_id);
       }
 
-      await this.productRepository.findOneByAndUpdate(
+      this.productRepository.findOneByAndUpdate(
         {
           where: { id: newProduct.id },
         },
@@ -77,13 +88,11 @@ export class ProductsService {
         },
       );
 
-      await this.productRepository.save(newProduct);
+      // await this.productRepository.save(newProduct);
     }
 
     if (files.length) {
       for (const file of files) {
-        console.log('file', file);
-
         const { secure_url, public_id } =
           await this.cloudinaryService.uploadFile(file);
 
@@ -91,7 +100,7 @@ export class ProductsService {
         newProduct.image_ids.push(public_id);
       }
 
-      await this.productRepository.findOneByAndUpdate(
+      this.productRepository.findOneByAndUpdate(
         {
           where: { id: newProduct.id },
         },
@@ -101,16 +110,31 @@ export class ProductsService {
         },
       );
 
-      await this.productRepository.save(newProduct);
+      // await this.productRepository.save(newProduct);
     }
 
     return ProductDto.fromEntity(newProduct);
   }
 
   async findAll() {
-    const products = await this.productRepository.findAll();
+    const products = await this.productRepository
+      .findAll({
+        relations: ['category'],
+        select: ['category'],
+      })
+      .then((products) => {
+        return products.map((product) => {
+          const category = plainToClass(CategoryDto, product.category);
 
-    return products.map((product) => ProductDto.fromEntity(product));
+          product = plainToClass(ProductDto, product) as Product;
+
+          product.category = category as Category;
+
+          return product;
+        });
+      });
+
+    return products;
   }
 
   async findById(productId: string): Promise<ProductDto> {
@@ -133,7 +157,43 @@ export class ProductsService {
     return ProductDto.fromEntity(product);
   }
 
+  async isProductBelongToSeller(productId: number | string, sellerId: string) {
+    const founded = await this.productRepository.findOneWithCondition({
+      where: {
+        id: productId as any,
+        seller_id: sellerId as any,
+      },
+    });
+
+    return founded;
+  }
+
+  async updateQuantity(productId: number, quantity: number): Promise<boolean> {
+    const product = await this.productRepository.findOneBy({
+      where: {
+        id: productId as any,
+      },
+    });
+
+    if (!product) {
+      throw new BadRequestException('Product not found');
+    }
+
+    const updated = await this.productRepository.update(
+      {
+        id: product.id,
+      },
+      {
+        quantity: (product.quantity += quantity),
+      },
+    );
+
+    return updated.affected ? true : false;
+  }
+
   async writeToFile() {
+    console.log('Write to file');
+
     const products = await this.productRepository.findAll();
 
     const filePath = path.resolve('db/seeds/products/products.json');

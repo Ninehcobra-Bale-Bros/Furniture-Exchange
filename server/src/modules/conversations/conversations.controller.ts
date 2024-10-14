@@ -25,35 +25,46 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
-  @Post()
-  @ApiOperation({
-    summary: '[BUYER, SELLER, ADMIN] create a conversation (OPTIONAL)',
-  })
-  @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
-  create(@Body() dto: CreateConversationDto) {
-    return this.conversationsService.create(dto);
-  }
+  // @Post()
+  // @ApiOperation({
+  //   summary: '[BUYER, SELLER, ADMIN] create a conversation (OPTIONAL)',
+  // })
+  // @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
+  // create(@Body() dto: CreateConversationDto) {
+  //   return this.conversationsService.create(dto);
+  // }
 
-  @Post('messages')
-  @ApiOperation({
-    summary:
-      '[ADMIN] FOR TESTING ONLY - Create a message will automatically using websocket',
-  })
-  @Roles(RoleEnum.ADMIN)
-  createMessage(@Body() dto: CreateMessageDto, @Req() req: Request) {
-    return this.conversationsService.createMessage(dto, req.user);
-  }
+  // @Post('messages')
+  // @ApiOperation({
+  //   summary:
+  //     '[ADMIN] FOR TESTING ONLY - Create a message will automatically using websocket',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // createMessage(@Body() dto: CreateMessageDto, @Req() req: Request) {
+  //   return this.conversationsService.createMessage(dto, req.user);
+  // }
 
   @Get()
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get all conversations of the user',
   })
   @Roles(RoleEnum.BUYER, RoleEnum.SELLER, RoleEnum.ADMIN)
-  getAllConversations(@Req() req: Request) {
-    return this.conversationsService.GetAllConversations(req.user);
+  getLastMessageOfAllConversation(@Req() req: Request) {
+    return this.conversationsService.getLastMessageOfAllConversation(req.user);
   }
 
-  @Get(':product_id/products')
+  @Get('write-to-file')
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  writeToFile() {
+    console.log('write to file');
+
+    return this.conversationsService.writeToFile();
+  }
+
+  @Get(':product_id/product')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by product id',
   })
@@ -68,7 +79,7 @@ export class ConversationsController {
     );
   }
 
-  @Get(':other_id/users')
+  @Get(':other_id/user')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by other user',
   })
@@ -77,19 +88,9 @@ export class ConversationsController {
     @Param('other_id') other_id: string,
     @Req() req: Request,
   ) {
-    return this.conversationsService.GetConversationByOtherId(
+    return this.conversationsService.getConversationWithOther(
       req.user,
       other_id,
     );
-  }
-
-  @Get('write-to-file')
-  @Public()
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  // @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.conversationsService.writeToFile();
   }
 }

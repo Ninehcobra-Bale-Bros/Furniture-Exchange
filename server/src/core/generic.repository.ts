@@ -13,6 +13,15 @@ export class GenericRepository<T extends BaseEntity>
   implements IGenericRepository<T>
 {
   constructor(private readonly repository: Repository<T>) {}
+  async findOneWithCondition(options: FindOneOptions<T>): Promise<T> {
+    return await this.repository.findOne({
+      where: {
+        ...options.where,
+        deleted_at: null,
+      },
+    });
+  }
+
   async findAll(options: FindManyOptions<T> = {}): Promise<T[]> {
     return await this.repository.find({
       ...options,
@@ -61,5 +70,9 @@ export class GenericRepository<T extends BaseEntity>
     partialEntity: QueryDeepPartialEntity<T>,
   ) {
     return await this.repository.update(where, partialEntity);
+  }
+
+  async delete(options: FindOptionsWhere<T>) {
+    return await this.repository.delete(options);
   }
 }

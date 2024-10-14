@@ -13,9 +13,18 @@ export class ProductDto implements Readonly<ProductDto> {
   quantity!: number;
   description!: string;
 
+  @Transform(({ value }) => Number(value), { toClassOnly: true })
+  kilogram: number;
+
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -23,7 +32,13 @@ export class ProductDto implements Readonly<ProductDto> {
 
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -37,6 +52,7 @@ export class ProductDto implements Readonly<ProductDto> {
   province!: string;
   status!: StatusEnum;
   state!: StateEnum;
+  is_sold!: boolean;
   expired_at!: Date;
   created_at!: Date;
   updated_at!: Date;
@@ -50,6 +66,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.name = dto.name;
     it.slug = dto.slug;
     it.quantity = dto.quantity;
+    it.kilogram = dto.kilogram;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;
@@ -60,9 +77,12 @@ export class ProductDto implements Readonly<ProductDto> {
     it.province = dto.province;
     it.status = dto.status;
     it.state = dto.state;
+    it.is_sold = dto.is_sold;
     it.expired_at = dto.expired_at;
     it.created_at = dto.created_at;
     it.updated_at = dto.updated_at;
+
+    console.log(it);
 
     return plainToClass(ProductDto, it);
   }
@@ -75,6 +95,7 @@ export class ProductDto implements Readonly<ProductDto> {
       name: entity.name,
       slug: entity.slug,
       quantity: entity.quantity,
+      kilogram: entity.kilogram,
       description: entity.description,
       image_urls: entity.image_urls,
       image_ids: entity.image_ids,
@@ -85,6 +106,7 @@ export class ProductDto implements Readonly<ProductDto> {
       province: entity.province,
       status: entity.status,
       state: entity.state,
+      is_sold: entity.is_sold,
       expired_at: entity.expired_at,
       created_at: entity.created_at,
       updated_at: entity.updated_at,
@@ -99,6 +121,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.name = dto.name;
     it.slug = slugSerialize(dto.name);
     it.quantity = dto.quantity;
+    it.kilogram = dto.kilogram;
     it.description = dto.description;
     it.image_urls = dto.image_urls;
     it.image_ids = dto.image_ids;
@@ -109,6 +132,7 @@ export class ProductDto implements Readonly<ProductDto> {
     it.province = dto.province;
     it.status = dto.status;
     it.state = dto.state;
+    it.is_sold = dto.is_sold;
     it.expired_at = dto.expired_at;
     it.created_at = dto.created_at;
     it.updated_at = dto.updated_at;

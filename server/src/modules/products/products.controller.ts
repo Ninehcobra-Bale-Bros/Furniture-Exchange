@@ -30,12 +30,12 @@ import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('products')
 @ApiTags('products')
-@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '[SELLER, ADMIN] Create a product',
   })
@@ -87,6 +87,16 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('write-to-file')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  writeToFile() {
+    return this.productsService.writeToFile();
+  }
+
   @Get(':slug')
   @Public()
   @ApiOperation({
@@ -94,13 +104,5 @@ export class ProductsController {
   })
   findOne(@Param('slug') id: string) {
     return this.productsService.findBySlug(id);
-  }
-
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  writeToFile() {
-    return this.productsService.writeToFile();
   }
 }

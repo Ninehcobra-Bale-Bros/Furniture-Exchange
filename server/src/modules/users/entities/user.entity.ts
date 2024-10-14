@@ -3,17 +3,28 @@ import { UUID } from 'crypto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
 import { BaseEntity } from 'src/core/base.entity';
+import { Account } from 'src/modules/payments/entities/account.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: UUID & { __brand: 'userId' };
+
+  @Column({ type: 'varchar', length: 11, nullable: true, default: null })
+  CCCD: string;
+
+  @OneToOne(() => Account, (account) => account.user, { onDelete: 'SET NULL' })
+  account!: Account;
 
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   email!: string;
@@ -41,9 +52,13 @@ export class User extends BaseEntity {
   @Column({ type: 'text', default: '' })
   @Transform(
     ({ value }) => {
-      return value
-        .match(/"([^"]+)"/g)
-        .map((s: string) => s.replace(/"/g, ''))[0];
+      if (value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''))[0];
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -52,9 +67,13 @@ export class User extends BaseEntity {
   @Column({ type: 'text', default: '' })
   @Transform(
     ({ value }) => {
-      return value
-        .match(/"([^"]+)"/g)
-        .map((s: string) => s.replace(/"/g, ''))[0];
+      if (value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''))[0];
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -77,7 +96,7 @@ export class User extends BaseEntity {
   })
   role!: RoleEnum;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',

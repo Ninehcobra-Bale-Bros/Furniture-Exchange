@@ -42,6 +42,11 @@ const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 const CLOUDINARY_FOLDER = process.env.CLOUDINARY_FOLDER || 'nestjs-cloudinary';
 
+// vnpay
+const VNPAY_TMN_CODE = process.env.VNPAY_TMN_CODE;
+const VNPAY_HASH_SECRET = process.env.VNPAY_HASH_SECRET;
+const VNPAY_URL = process.env.VNPAY_URL;
+
 export {
   PORT,
   NODE_ENV,
@@ -64,4 +69,7 @@ export {
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
   CLOUDINARY_FOLDER,
+  VNPAY_TMN_CODE,
+  VNPAY_HASH_SECRET,
+  VNPAY_URL,
 };

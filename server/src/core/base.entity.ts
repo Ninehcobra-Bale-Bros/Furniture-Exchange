@@ -1,8 +1,4 @@
-import {
-  CreateDateColumn,
-  DeleteDateColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { CreateDateColumn, DeleteDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
   id!: string | number;

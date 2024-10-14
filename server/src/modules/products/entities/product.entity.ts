@@ -50,13 +50,22 @@ export class Product extends BaseEntity {
   @Column({ type: 'int', nullable: false, default: 0 })
   quantity!: number;
 
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  kilogram!: number;
+
   @Column({ type: 'text', nullable: false })
   description!: string;
 
   @Column({ type: 'text', nullable: false })
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
@@ -65,13 +74,20 @@ export class Product extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   @Transform(
     ({ value }) => {
-      return value.match(/"([^"]+)"/g).map((s) => s.replace(/"/g, ''));
+      if (typeof value === 'string' && value.match(/"([^"]+)"/g)) {
+        return value
+          .match(/"([^"]+)"/g)
+          .map((s: string) => s.replace(/"/g, ''));
+      }
+
+      return value;
     },
     { toClassOnly: true },
   )
   image_ids!: string[];
 
   @Column({ type: 'bigint', nullable: false })
+  @Transform(({ value }) => Number(value), { toClassOnly: true })
   price!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
@@ -100,6 +116,9 @@ export class Product extends BaseEntity {
     enumName: 'state',
   })
   state!: StateEnum;
+
+  @Column({ type: 'boolean', default: false })
+  is_sold!: boolean;
 
   @UpdateDateColumn({
     type: 'timestamptz',

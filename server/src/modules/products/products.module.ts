@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductRepository } from './repository/product.repository';
 import { DiscountModule } from '../discounts/discounts.module';
 import { CloudinaryModule } from 'src/config/upload/cloudinary.module';
+import { PaymentsModule } from 'src/modules/payments/payments.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]),
     DiscountModule,
     CloudinaryModule,
+    PaymentsModule,
   ],
   controllers: [ProductsController],
   providers: [ProductsService, ProductRepository],

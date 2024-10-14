@@ -2,7 +2,6 @@ import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
 import messages from './messages.json';
-import { Conversation } from 'src/modules/conversations/entities/conversation.entity';
 import { Message } from 'src/modules/conversations/entities/message.entity';
 
 export default class MessageSeeder implements Seeder {

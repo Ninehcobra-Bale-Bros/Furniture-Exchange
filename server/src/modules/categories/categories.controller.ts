@@ -15,7 +15,6 @@ import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('categories')
 @ApiTags('categories')
-@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -38,21 +37,22 @@ export class CategoriesController {
     return this.categoriesService.getProductsByCategory(slug);
   }
 
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.categoriesService.writeToFile();
-  }
-
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '[ADMIN] Create a category',
   })
   @Roles(RoleEnum.ADMIN)
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
+  }
+
+  @Get('write-to-file')
+  @Public()
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  writeToFile() {
+    return this.categoriesService.writeToFile();
   }
 }

@@ -18,10 +18,16 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscountModule } from './modules/discounts/discounts.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { SocketModule } from './config/websocket/socket.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { VnpayModule } from './config/vnpay/vnpay.module';
+import { EventModule } from 'src/config/events/event.module';
+import { DeliveryModule } from './modules/delivery/delivery.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     // Configuration environment variables
+    EventModule,
     ConfigModule.forRoot(configurationOptions),
     TypeOrmModule.forRootAsync({
       useClass: TypeormService,
@@ -38,13 +44,18 @@ import { SocketModule } from './config/websocket/socket.module';
     RedisModule,
     // websocket module
     SocketModule,
+    // Vnpay module
+    VnpayModule,
     // other business modules
+
     UsersModule,
     AuthModule,
     ProductsModule,
     CategoriesModule,
     DiscountModule,
     ConversationsModule,
+    PaymentsModule,
+    DeliveryModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({

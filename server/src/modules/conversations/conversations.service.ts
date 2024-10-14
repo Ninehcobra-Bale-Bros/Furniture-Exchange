@@ -17,6 +17,8 @@ import * as path from 'path';
 import { plainToClass } from 'class-transformer';
 import { UserDto } from 'src/modules/users/dto/user.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { UsersService } from '../users/users.service';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ConversationsService {
@@ -24,6 +26,7 @@ export class ConversationsService {
     private readonly conversationRepository: ConversationRepository,
     private readonly messageRepository: MessageRepository,
     private readonly productService: ProductsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(dto: CreateConversationDto) {
@@ -53,52 +56,6 @@ export class ConversationsService {
         }
 
         return ConversationDto.fromEntity(conversation);
-      });
-  }
-
-  async findByUserIdAndOtherId(user_id: string, other_id: string) {
-    return await this.conversationRepository
-      .findByUserIdAndOtherId(user_id, other_id)
-      .then((conversation) => {
-        if (!conversation) {
-          return null;
-        }
-
-        for (const item of conversation) {
-          for (const message of item.messages) {
-            if (message.sender_id !== user_id) {
-              message.isRead = true;
-            }
-
-            this.messageRepository.update(
-              {
-                conversation_id: item.id,
-                isRead: false,
-              },
-              {
-                isRead: true,
-              },
-            );
-          }
-        }
-
-        console.log('conversation', conversation);
-
-        const final = conversation.reduce((pre, val) => {
-          return [...pre, ...val.messages];
-        }, []);
-
-        const sortMessages = final.sort((a, b) => {
-          return (
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-          );
-        });
-
-        return {
-          user: conversation[0].user,
-          other: conversation[0].other,
-          messages: sortMessages,
-        };
       });
   }
 
@@ -135,7 +92,25 @@ export class ConversationsService {
       });
   }
 
-  async GetAllConversations(user: User) {
+  async getLastMessageOfAllConversation(user: User) {
+    let myConversation = await this.conversationRepository.findOneWithCondition(
+      {
+        where: {
+          user_id: user.id,
+          other_id: null,
+          product_id: null,
+        },
+      },
+    );
+
+    if (!myConversation) {
+      myConversation = await this.conversationRepository.save(
+        ConversationDto.toEntity({
+          user_id: user.id,
+        }),
+      );
+    }
+
     const conversations = await this.conversationRepository
       .findAllConversationsByUserId(user.id)
       .then((conversations) => {
@@ -202,7 +177,10 @@ export class ConversationsService {
           });
       });
 
-    return conversations;
+    return {
+      conversation_name: myConversation.name,
+      conversations: conversations,
+    };
   }
 
   async GetConversationByProductId(product_id: string, user: User) {
@@ -211,6 +189,10 @@ export class ConversationsService {
     }
 
     const product = await this.productService.findById(product_id);
+
+    if (!product) {
+      throw new BadRequestException('Invalid product id');
+    }
 
     if (user.id === product.seller_id) {
       throw new BadRequestException('Can not get conversation with yourself');
@@ -253,9 +235,128 @@ export class ConversationsService {
     }
   }
 
+  async getConversationWithOther(user: User, other_id: any) {
+    const other = await this.usersService.findOneById(other_id);
+
+    if (!other) {
+      throw new BadRequestException('Invalid other_id');
+    }
+
+    const conversation = await this.findByUserIdAndOtherId(user.id, other_id);
+
+    if (!conversation) {
+      const newConversation = await this.create({
+        user_id: user.id,
+        other_id: other_id,
+        product_id: null,
+      });
+
+      return newConversation;
+    }
+
+    return conversation;
+  }
+
+  async findConversationByUserIdWithUpsert(
+    user_id: UUID & { __brand: 'userId' },
+  ) {
+    const conversation = await this.conversationRepository.findOneBy({
+      where: {
+        user_id: user_id,
+        other_id: null,
+        product_id: null,
+      },
+    });
+
+    if (!conversation) {
+      const newConversation = await this.create({
+        user_id: user_id,
+        other_id: null,
+        product_id: null,
+      });
+
+      return newConversation;
+    }
+
+    return conversation;
+  }
+
+  async findConversationByUserIdAndOtherIdWithUpsert(
+    user_id: UUID & { __brand: 'userId' },
+    other_id: UUID & { __brand: 'userId' },
+  ) {
+    const conversation = await this.conversationRepository.findOneBy({
+      where: {
+        user_id: user_id,
+        other_id: other_id,
+      },
+    });
+
+    if (!conversation) {
+      const newConversation = await this.create({
+        user_id: user_id,
+        other_id: other_id,
+        product_id: null,
+      });
+
+      return newConversation;
+    }
+
+    return conversation;
+  }
+
+  private async findByUserIdAndOtherId(user_id: string, other_id: string) {
+    return await this.conversationRepository
+      .findByUserIdAndOtherId(user_id, other_id)
+      .then((conversation) => {
+        if (!conversation) {
+          return null;
+        }
+
+        for (const item of conversation) {
+          for (const message of item.messages) {
+            if (message.sender_id !== user_id) {
+              message.isRead = true;
+            }
+
+            this.messageRepository.update(
+              {
+                conversation_id: item.id,
+                isRead: false,
+              },
+              {
+                isRead: true,
+              },
+            );
+          }
+        }
+
+        const final = conversation.reduce((pre, val) => {
+          return [...pre, ...val.messages];
+        }, []);
+
+        const sortMessages = final.sort((a, b) => {
+          return (
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+        });
+
+        return {
+          user: plainToClass(UserDto, conversation[0].user),
+          other: plainToClass(UserDto, conversation[0].other),
+          messages: sortMessages,
+        };
+      });
+  }
+
   async writeToFile() {
+    console.log('write to file');
+
     const conversations = await this.conversationRepository.findAll();
     const messages = await this.messageRepository.findAll();
+
+    console.log('conversations', conversations);
+    console.log('messages', messages);
 
     const filePath_1 = path.resolve(
       'db/seeds/conversations/conversations.json',
