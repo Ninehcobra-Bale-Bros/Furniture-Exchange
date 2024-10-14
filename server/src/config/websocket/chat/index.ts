@@ -56,7 +56,7 @@ export class ChatGateway
     const otherUser = await this.usersService.findOneById(message.other_id);
 
     const otherConversation =
-      await this.conversationsService.getConversationByUserIdWithUpsert(
+      await this.conversationsService.findConversationByUserIdWithUpsert(
         otherUser.id,
       );
 
@@ -117,13 +117,11 @@ export class ChatGateway
     } catch {
       // without product
 
-      const conversationWithoutProduct = await this.conversationsService.create(
-        {
-          user_id: user.id as any,
-          other_id: message.other_id as any,
-          product_id: null,
-        },
-      );
+      const conversationWithoutProduct =
+        await this.conversationsService.findConversationByUserIdAndOtherIdWithUpsert(
+          user.id,
+          message.other_id,
+        );
 
       this.conversationsService.createMessage(
         {

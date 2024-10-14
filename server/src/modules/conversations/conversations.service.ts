@@ -190,6 +190,10 @@ export class ConversationsService {
 
     const product = await this.productService.findById(product_id);
 
+    if (!product) {
+      throw new BadRequestException('Invalid product id');
+    }
+
     if (user.id === product.seller_id) {
       throw new BadRequestException('Can not get conversation with yourself');
     }
@@ -253,7 +257,7 @@ export class ConversationsService {
     return conversation;
   }
 
-  async getConversationByUserIdWithUpsert(
+  async findConversationByUserIdWithUpsert(
     user_id: UUID & { __brand: 'userId' },
   ) {
     const conversation = await this.conversationRepository.findOneBy({
@@ -268,6 +272,30 @@ export class ConversationsService {
       const newConversation = await this.create({
         user_id: user_id,
         other_id: null,
+        product_id: null,
+      });
+
+      return newConversation;
+    }
+
+    return conversation;
+  }
+
+  async findConversationByUserIdAndOtherIdWithUpsert(
+    user_id: UUID & { __brand: 'userId' },
+    other_id: UUID & { __brand: 'userId' },
+  ) {
+    const conversation = await this.conversationRepository.findOneBy({
+      where: {
+        user_id: user_id,
+        other_id: other_id,
+      },
+    });
+
+    if (!conversation) {
+      const newConversation = await this.create({
+        user_id: user_id,
+        other_id: other_id,
         product_id: null,
       });
 

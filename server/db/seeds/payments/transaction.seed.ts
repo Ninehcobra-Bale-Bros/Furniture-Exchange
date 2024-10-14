@@ -19,9 +19,11 @@ export default class TransactionSeeder implements Seeder {
       await transactionRepository.insert(transaction as unknown as Transaction);
     }
 
-    await dataSource.query(
-      `SELECT setval('transaction_id_seq', (SELECT MAX(id) FROM transaction));`,
-    );
+    if (transactions.length > 0) {
+      await dataSource.query(
+        `SELECT setval('transaction_id_seq', (SELECT MAX(id) FROM transaction));`,
+      );
+    }
 
     const end = new Date();
     const duration = (end.getTime() - now.getTime()) / 1000;

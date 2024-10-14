@@ -47,7 +47,7 @@ export class UsersController {
     summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
   })
   @Roles(RoleEnum.ADMIN)
-  async writeToFile(): Promise<void> {
-    await this.usersService.findAllAndWriteToFile();
+  async writeToFile() {
+    return await this.usersService.findAllAndWriteToFile();
   }
 }

@@ -64,7 +64,7 @@ export class ConversationsController {
     return this.conversationsService.writeToFile();
   }
 
-  @Get(':product_id')
+  @Get(':product_id/product')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by product id',
   })
@@ -79,7 +79,7 @@ export class ConversationsController {
     );
   }
 
-  @Get(':other_id')
+  @Get(':other_id/user')
   @ApiOperation({
     summary: '[BUYER, SELLER, ADMIN] Get conversation by other user',
   })
