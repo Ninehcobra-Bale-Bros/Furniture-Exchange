@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { VNPAY_RESPONSE_MESSAGE } from 'src/common/constants/vnpay.constant';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import PaySuccessEvent from 'src/config/events/pay-success.interface';
+import PaySuccessEvent from 'src/modules/payments/events/pay-success.event';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 

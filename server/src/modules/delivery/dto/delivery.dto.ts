@@ -14,7 +14,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
 
   user_id: UUID & { __brand: 'userId' };
   other_id: UUID & { __brand: 'userId' };
-  delivery_id: UUID & { __brand: 'userId' };
+  deliver_id: UUID & { __brand: 'userId' };
   product_id: number;
   other_fullname: string;
   other_phone: string;
@@ -54,7 +54,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     it._id = dto._id;
     it.user_id = dto.user_id;
     it.other_id = dto.other_id;
-    it.delivery_id = dto.delivery_id;
+    it.deliver_id = dto.deliver_id;
     it.product_id = dto.product_id;
     it.other_fullname = dto.other_fullname;
     it.other_phone = dto.other_phone;
@@ -79,7 +79,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
       _id: entity.id as number,
       user_id: entity.user_id,
       other_id: entity.other_id,
-      delivery_id: entity.delivery_id,
+      deliver_id: entity.deliver_id,
       product_id: entity.product_id,
       other_fullname: entity.other_fullname,
       other_phone: entity.other_phone,

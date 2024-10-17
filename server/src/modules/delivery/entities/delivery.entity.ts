@@ -34,7 +34,7 @@ export class Delivery extends BaseEntity {
   other_id: UUID & { __brand: 'userId' };
 
   @Column({ type: 'uuid', nullable: true })
-  delivery_id: UUID & { __brand: 'userId' };
+  deliver_id: UUID & { __brand: 'userId' };
 
   @Column({ type: 'int', nullable: false })
   product_id: number;
@@ -83,10 +83,9 @@ export class Delivery extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   setExpirationDate() {
-    const dateTime = dayjs('2024/10/22 10:35:52 AM', 'YYYY/MM/DD hh:mm:ss A')
-      .add(1, 'day')
-      .tz('Asia/Bangkok')
-      .toDate();
+    const dateTime = new Date(
+      dayjs().add(1, 'day').tz('Asia/Bangkok').format('YYYY/MM/DD hh:mm:ss A'),
+    );
 
     this.expired_at = dateTime;
   }
@@ -99,9 +98,9 @@ export class Delivery extends BaseEntity {
   @ManyToOne(() => User, (user) => user.id, { nullable: false })
   other: User;
 
-  @JoinColumn({ name: 'delivery_id' })
+  @JoinColumn({ name: 'deliver_id' })
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  delivery: User;
+  deliver: User;
 
   @JoinColumn({ name: 'product_id' })
   @ManyToOne(() => Product, (product) => product.id, { nullable: false })
