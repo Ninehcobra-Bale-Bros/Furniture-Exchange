@@ -11,10 +11,14 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import OnDeliveredEvent from './events/delivery-delivered.event';
 import OnReturnedEvent from './events/delivery-returned.event';
 import OnDeliveringEvent from './events/delivery-delivering.event';
-import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import {
+  DeliveryStatusEnum,
+  UpdateStatusEnum,
+} from 'src/common/enums/delivery.enum';
 import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
 import { PaginationHelper } from 'src/helper/pagination';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class DeliveryService {
@@ -227,6 +231,7 @@ export class DeliveryService {
       );
     }
 
+    // Update product quantity
     this.productsService.updateQuantity(
       delivery.product_id,
       -delivery.quantity,
@@ -291,6 +296,75 @@ export class DeliveryService {
     }
   }
 
+  async updateDeliveryStatus(
+    user: User,
+    deliveryId: string,
+    dto: UpdateStatusDto,
+  ) {
+    const delivery = await this.deliveryRepository.findOneBy({
+      where: { id: deliveryId as any },
+    });
+
+    if (!delivery) {
+      throw new BadRequestException('Không tìm thấy đơn vận chuyển');
+    }
+
+    if (delivery.deliver_id !== user.id) {
+      throw new BadRequestException(
+        'Không phải đơn của bạn, không có quyền thực hiện hành động này',
+      );
+    }
+
+    if (delivery.status === DeliveryStatusEnum.RETURNED) {
+      throw new BadRequestException('Đơn hàng đã được trả lại');
+    }
+
+    if (delivery.status === DeliveryStatusEnum.DELIVERED) {
+      throw new BadRequestException('Đơn hàng đã được giao');
+    }
+
+    switch (dto.status) {
+      case UpdateStatusEnum.DELIVERING:
+        await this.deliveryRepository.update(
+          {
+            id: delivery.id,
+          },
+          {
+            status: DeliveryStatusEnum.DELIVERING,
+          },
+        );
+
+        break;
+      case UpdateStatusEnum.DELIVERED:
+        await this.deliveryRepository.update(
+          {
+            id: delivery.id,
+          },
+          {
+            status: DeliveryStatusEnum.DELIVERED,
+          },
+        );
+
+        this.eventEmitter.emit(DeliveryStatusEnum.DELIVERED, {
+          delivery_id: delivery.id,
+          seller_id: delivery.user_id,
+          buyer_id: delivery.other_id,
+          product_id: delivery.product_id,
+        } as OnDeliveredEvent);
+        break;
+      case UpdateStatusEnum.RETURNED:
+        await this.deliveryRepository.update(
+          {
+            id: delivery.id,
+          },
+          {
+            status: DeliveryStatusEnum.RETURNED,
+          },
+        );
+        break;
+    }
+  }
+
   @OnEvent(DeliveryStatusEnum.DELIVERING)
   async onDelivering({
     shipment_id,
@@ -299,16 +373,16 @@ export class DeliveryService {
     quantity,
   }: OnDeliveringEvent) {}
 
-  @OnEvent('delivery.delivered')
+  @OnEvent(DeliveryStatusEnum.DELIVERED)
   async onDelivered({
-    shipment_id,
+    delivery_id,
     seller_id,
     buyer_id,
     product_id,
     quantity,
   }: OnDeliveredEvent) {}
 
-  @OnEvent('delivery.returned')
+  @OnEvent(DeliveryStatusEnum.RETURNED)
   async onReturned({
     shipment_id,
     seller_id,

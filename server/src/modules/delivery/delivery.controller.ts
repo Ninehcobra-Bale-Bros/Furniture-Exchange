@@ -25,6 +25,8 @@ import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
+import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Controller('delivery')
 @ApiTags('delivery')
@@ -60,6 +62,19 @@ export class DeliveryController {
   @Roles(RoleEnum.BUYER, RoleEnum.SELLER)
   async confirmShipment(@Param('id') id: string, @Req() req: Request) {
     return await this.deliveryService.confirmShipment(req.user, id);
+  }
+
+  @Patch('status/:id')
+  @ApiOperation({
+    summary: '[DELIVER, ADMIN] Update shipment status',
+  })
+  @Roles(RoleEnum.DELIVER, RoleEnum.ADMIN)
+  async updateStatus(
+    @Param('id') id: string,
+    @Query() dto: UpdateStatusDto,
+    @Req() req: Request,
+  ) {
+    return await this.deliveryService.updateDeliveryStatus(req.user, id, dto);
   }
 
   @Patch('shipper')

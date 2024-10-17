@@ -7,11 +7,24 @@ import { Transaction } from './entities/transaction.entity';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountRepository } from './repository/account.repository';
 import { VnpayModule } from 'src/config/vnpay/vnpay.module';
+import { Revenue } from './entities/revenue.entity';
+import { RevenueController } from './revenue.controller';
+import { RevenueService } from './revenue.service';
+import { RevenueRepository } from './repository/revenue.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Account, Transaction]), VnpayModule],
-  controllers: [PaymentsController],
-  providers: [PaymentsService, TransactionRepository, AccountRepository],
+  imports: [
+    TypeOrmModule.forFeature([Account, Transaction, Revenue]),
+    VnpayModule,
+  ],
+  controllers: [PaymentsController, RevenueController],
+  providers: [
+    PaymentsService,
+    RevenueService,
+    TransactionRepository,
+    AccountRepository,
+    RevenueRepository,
+  ],
   exports: [PaymentsService],
 })
 export class PaymentsModule {}

@@ -4,3 +4,9 @@ export enum DeliveryStatusEnum {
   DELIVERED = 'delivered',
   RETURNED = 'returned',
 }
+
+export enum UpdateStatusEnum {
+  DELIVERING = 'delivering',
+  DELIVERED = 'delivered',
+  RETURNED = 'returned',
+}
