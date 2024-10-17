@@ -1,5 +1,5 @@
 import { plainToClass, Transform } from 'class-transformer';
-import { Account } from '../entities/account.entity';
+import { Account } from '../../payments/entities/account.entity';
 import { UUID } from 'crypto';
 import { Revenue } from '../entities/revenue.entity';
 
@@ -14,6 +14,7 @@ export class RevenueDto implements Readonly<RevenueDto> {
   @Transform(({ value }) => Number(value))
   total_sales!: number;
 
+  @Transform(({ value }) => Number(value))
   profit: number;
 
   active!: boolean;

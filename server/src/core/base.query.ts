@@ -21,20 +21,20 @@ export class QueryFilterBase {
   @IsNumber()
   @ApiProperty({
     required: false,
-    example: '0',
+    example: '1',
   })
-  @Min(0)
-  offset: number = 0;
+  @Min(1)
+  offset: number = 1;
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
   @createApiPropertyDecorator({
     required: false,
-    example: '20',
+    example: '5',
   })
   @Min(1)
-  limit: number = 20;
+  limit: number = 5;
 
   //   @Matches(DateRegex)
   //   @ApiPropertyOptional({ required: false, example: '01/01/2024' })

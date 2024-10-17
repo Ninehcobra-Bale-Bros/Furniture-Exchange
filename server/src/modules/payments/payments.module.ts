@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,26 +7,25 @@ import { Transaction } from './entities/transaction.entity';
 import { TransactionRepository } from './repository/transaction.repository';
 import { AccountRepository } from './repository/account.repository';
 import { VnpayModule } from 'src/config/vnpay/vnpay.module';
-import { Revenue } from './entities/revenue.entity';
-import { RevenuesController } from './revenues.controller';
-import { RevenuesService } from './revenues.service';
-import { RevenueRepository } from './repository/revenue.repository';
 import { ProductsModule } from '../products/products.module';
+import { AdminService } from './admin.service';
+import { AdminController } from './admin.controller';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Account, Transaction, Revenue]),
+    TypeOrmModule.forFeature([Account, Transaction]),
     VnpayModule,
     ProductsModule,
+    forwardRef(() => UsersModule),
   ],
-  controllers: [PaymentsController, RevenuesController],
+  controllers: [PaymentsController, AdminController],
   providers: [
     PaymentsService,
-    RevenuesService,
+    AdminService,
     TransactionRepository,
     AccountRepository,
-    RevenueRepository,
   ],
-  exports: [PaymentsService, RevenuesService],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}

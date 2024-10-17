@@ -7,18 +7,15 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; // ES 2015
 import timezone from 'dayjs/plugin/timezone'; // ES 2015
-import { Transform } from 'class-transformer';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -57,6 +54,15 @@ export class Delivery extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   amount: number;
 
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  discount_percent: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  discount_amount: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  total_discount: number;
+
   @Column({ type: 'int', nullable: false, default: 1 })
   quantity: number;
 
@@ -64,7 +70,10 @@ export class Delivery extends BaseEntity {
   shipping_fee: number;
 
   @Column({ type: 'decimal', nullable: true, default: null })
-  total: number;
+  total_after_delivery: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  total_after_discount: number;
 
   @Column({
     type: 'enum',

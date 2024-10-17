@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Delivery } from 'src/modules/delivery/entities/delivery.entity';
 import { FindAllDeliveryQuery } from '../dto/find-all-delivery.query';
+import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
 
 @Injectable()
 export class DeliveryRepository extends GenericRepository<Delivery> {
@@ -49,5 +50,17 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
     const [data, totalRecords] = await this.buildQuery(QueryBuilder, query);
 
     return [data, totalRecords];
+  }
+
+  async getDashboardData() {
+    const deliveries = await this.deliveryRepository
+      .createQueryBuilder('delivery')
+      .where('delivery.status = :status1 OR delivery.status = :status2', {
+        status1: DeliveryStatusEnum.DELIVERED,
+        status2: DeliveryStatusEnum.DELIVERING,
+      })
+      .getMany();
+
+    return deliveries;
   }
 }

@@ -21,24 +21,68 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
   pickup_address: string;
   delivery_address: string;
 
-  @Transform(({ value }) => {
-    return Number(value);
-  })
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   amount: number;
 
-  @Transform(({ value }) => {
-    return Number(value);
-  })
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   quantity: number;
 
-  @Transform(({ value }) => {
-    return Number(value);
-  })
-  total: number;
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
+  discount_percent: number;
 
-  @Transform(({ value }) => {
-    return Number(value);
-  })
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
+  discount_amount: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
+  total_discount: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
+  total_after_delivery: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
+  total_after_discount: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   shipping_fee: number;
 
   status: DeliveryStatusEnum;
@@ -62,8 +106,12 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     it.delivery_address = dto.delivery_address;
     it.amount = dto.amount;
     it.quantity = dto.quantity;
+    it.discount_percent = dto.discount_percent;
+    it.discount_amount = dto.discount_amount;
+    it.total_discount = dto.total_discount;
     it.shipping_fee = dto.shipping_fee;
-    it.total = dto.total;
+    it.total_after_delivery = dto.total_after_delivery;
+    it.total_after_discount = dto.total_after_discount;
     it.status = dto.status;
     it.other_confirmed = dto.other_confirmed;
     it.created_at = dto.created_at;
@@ -87,8 +135,12 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
       delivery_address: entity.delivery_address,
       amount: entity.amount,
       quantity: entity.quantity,
+      discount_percent: entity.discount_percent,
+      discount_amount: entity.discount_amount,
+      total_discount: entity.total_discount,
       shipping_fee: entity.shipping_fee,
-      total: entity.total,
+      total_after_delivery: entity.total_after_delivery,
+      total_after_discount: entity.total_after_discount,
       status: entity.status,
       other_confirmed: entity.other_confirmed,
       created_at: entity.created_at,
@@ -109,8 +161,12 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     it.delivery_address = dto.delivery_address;
     it.amount = dto.amount;
     it.quantity = dto.quantity;
+    it.discount_percent = dto.discount_percent;
+    it.discount_amount = dto.discount_amount;
+    it.total_discount = dto.total_discount;
     it.shipping_fee = dto.shipping_fee;
-    it.total = dto.total;
+    it.total_after_delivery = dto.total_after_delivery;
+    it.total_after_discount = dto.total_after_discount;
 
     return it;
   }

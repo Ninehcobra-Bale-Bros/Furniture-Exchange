@@ -1,14 +1,25 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateRevenueDto } from './dto/create-revenue.dto';
-import { RevenueRepository } from './repository/revenue.repository';
-import { RevenueDto } from './dto/revenue.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { CreateRevenueDto } from './dtos/create-revenue.dto';
+import { RevenueDto } from './dtos/revenue.dto';
+import { Delivery } from '../delivery/entities/delivery.entity';
+import { User } from '../users/entities/user.entity';
+import { plainToClass } from 'class-transformer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { plainToClass } from 'class-transformer';
-import { PaymentsService } from './payments.service';
-import { UUID } from 'crypto';
-import { Delivery } from '../delivery/entities/delivery.entity';
+import { RevenueRepository } from './repository/revenue.repository';
+import { PaymentsService } from '../payments/payments.service';
 import { ProductsService } from '../products/products.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import OnDeliveringEvent from '../delivery/events/delivery-delivering.event';
+import OnDeliveredEvent from '../delivery/events/delivery-delivered.event';
+import OnReturnedEvent from '../delivery/events/delivery-returned.event';
+import { DeliveryService } from '../delivery/delivery.service';
+import { DeliveryDto } from '../delivery/dto/delivery.dto';
 
 @Injectable()
 export class RevenuesService {
@@ -16,6 +27,7 @@ export class RevenuesService {
     private readonly revenueRepository: RevenueRepository,
     private readonly paymentsService: PaymentsService,
     private readonly productsService: ProductsService,
+    private readonly deliveryService: DeliveryService,
   ) {}
 
   async createRevenue(dto: CreateRevenueDto) {
@@ -26,7 +38,7 @@ export class RevenuesService {
     return revenue;
   }
 
-  async updateRevenue(sellerId: string, delivery: Delivery) {
+  async updateRevenue(sellerId: string, delivery: DeliveryDto) {
     const account = await this.paymentsService.findAccountByUserId(sellerId);
 
     if (!account) {
@@ -61,7 +73,7 @@ export class RevenuesService {
     return revenue;
   }
 
-  async updateRevenueAdmin(delivery: Delivery) {
+  async updateRevenueAdmin(delivery: DeliveryDto) {
     const product = await this.productsService.findById(
       delivery.product_id.toString(),
     );
@@ -110,6 +122,33 @@ export class RevenuesService {
     return adminRevenue;
   }
 
+  async getSellerRevenue(user: User) {}
+
+  async getAdminRevenue(user: User) {
+    const account = await this.paymentsService.findAccountByUserId(user.id);
+
+    if (!account) {
+      throw new BadRequestException('Account not found');
+    }
+
+    const revenue = await this.revenueRepository
+      .findOneBy({
+        where: {
+          account_id: account.id as any,
+        },
+      })
+      .then((revenue) => RevenueDto.fromEntity(revenue));
+
+    const deliveries = await this.deliveryService.getSuccessDeliveries();
+
+    return {
+      total_revenue: revenue.total_revenue,
+      total_sales: revenue.total_sales,
+      profit: revenue.profit,
+      delivery_num: deliveries.length,
+    };
+  }
+
   async writeToFile() {
     console.log('Write to file');
 
@@ -128,5 +167,39 @@ export class RevenuesService {
     });
 
     return 'Write to file successfully';
+  }
+
+  @OnEvent(DeliveryStatusEnum.DELIVERING)
+  async onDelivering({
+    shipment_id,
+    seller_id,
+    product_id,
+    quantity,
+  }: OnDeliveringEvent) {
+    console.log('Delivering event');
+  }
+
+  @OnEvent(DeliveryStatusEnum.DELIVERED)
+  async onDelivered({ delivery_id, seller_id }: OnDeliveredEvent) {
+    console.log('Delivered event');
+
+    // Update revenue
+    const delivery = await this.deliveryService.findOneById(delivery_id);
+
+    if (delivery) {
+      this.updateRevenue(seller_id, delivery);
+    } else {
+      console.error('Delivery not found, cannot update revenue');
+    }
+  }
+
+  @OnEvent(DeliveryStatusEnum.RETURNED)
+  async onReturned({
+    shipment_id,
+    seller_id,
+    product_id,
+    quantity,
+  }: OnReturnedEvent) {
+    console.log('Returned event');
   }
 }

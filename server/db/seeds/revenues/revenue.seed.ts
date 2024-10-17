@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
 import revenues from './revenues.json';
-import { Revenue } from 'src/modules/payments/entities/revenue.entity';
+import { Revenue } from 'src/modules/revenues/entities/revenue.entity';
 
 export default class RevenueSeeder implements Seeder {
   async run(

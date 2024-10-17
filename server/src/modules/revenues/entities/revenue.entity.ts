@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/core/base.entity';
+import { Account } from 'src/modules/payments/entities/account.entity';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Account } from './account.entity';
 
 @Entity()
 export class Revenue extends BaseEntity {

@@ -23,6 +23,7 @@ import { VnpayModule } from './config/vnpay/vnpay.module';
 import { EventModule } from 'src/config/events/event.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RevenuesModule } from './modules/revenues/revenues.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     ConversationsModule,
     PaymentsModule,
     DeliveryModule,
+    RevenuesModule,
 
     // internal cache (RAM)
     // CacheModule.registerAsync({

@@ -41,10 +41,11 @@ export class DeliveryController {
     summary: '[ADMIN, DELIVER] Get all shipments',
   })
   @Roles(RoleEnum.DELIVER, RoleEnum.ADMIN)
-  async getShipments(@Query() query: FindAllDeliveryQuery) {
-    console.log(query);
-
-    return await this.deliveryService.getShipments(query);
+  async getShipments(
+    @Query() query: FindAllDeliveryQuery,
+    @Req() req: Request,
+  ) {
+    return await this.deliveryService.getShipments(query, req.user);
   }
 
   @Get('user')

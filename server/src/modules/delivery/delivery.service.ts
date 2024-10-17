@@ -1,4 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { DeliveryRepository } from 'src/modules/delivery/repository/delivery.repository';
 import { DeliveryDto } from 'src/modules/delivery/dto/delivery.dto';
@@ -15,11 +20,11 @@ import {
   DeliveryStatusEnum,
   UpdateStatusEnum,
 } from 'src/common/enums/delivery.enum';
-import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
 import { PaginationHelper } from 'src/helper/pagination';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { RevenuesService } from '../payments/revenues.service';
+import { RoleEnum, RoleViewEnum } from 'src/common/enums/role.enum';
+import { RevenuesService } from '../revenues/revenues.service';
 
 @Injectable()
 export class DeliveryService {
@@ -27,9 +32,18 @@ export class DeliveryService {
     private readonly deliveryRepository: DeliveryRepository,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
-    private readonly revenuesService: RevenuesService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async findOneById(deliveryId: number) {
+    const delivery = await this.deliveryRepository
+      .findOneBy({
+        where: { id: deliveryId as any },
+      })
+      .then((delivery) => DeliveryDto.fromEntity(delivery));
+
+    return delivery;
+  }
 
   async create(seller: User, dto: CreateDeliveryDto) {
     dto = {
@@ -62,6 +76,13 @@ export class DeliveryService {
       throw new BadRequestException('Số lượng sản phẩm không đủ');
     }
 
+    const discount = await this.productsService.findAppropriateDiscount(
+      product.price,
+    );
+
+    const discountAmount = discount.discount_percent * product.price;
+    const totalDiscount = discountAmount * dto.quantity;
+
     let shippingFee = 0;
 
     if (product.kilogram <= 5) {
@@ -76,21 +97,41 @@ export class DeliveryService {
 
     shippingFee *= dto.quantity;
 
+    const totalAfterDelivery =
+      Number(product.price * dto.quantity) + shippingFee;
+    const totalAfterDiscount =
+      Number(product.price * dto.quantity) + totalDiscount;
+
     dto = {
       ...dto,
       amount: product.price,
+      discount_percent: discount.discount_percent,
+      discount_amount: discountAmount,
+      total_discount: totalDiscount,
       shipping_fee: shippingFee,
-      total: Number(product.price * dto.quantity) + shippingFee,
+      total_after_delivery: totalAfterDelivery,
+      total_after_discount: totalAfterDiscount,
     };
 
     const delivery = await this.deliveryRepository
       .save(DeliveryDto.toEntity(dto))
       .then((e) => DeliveryDto.fromEntity(e));
 
+    delete delivery.discount_amount;
+    delete delivery.discount_percent;
+    delete delivery.total_discount;
+
     return delivery;
   }
 
-  async getShipments(queries: FindAllDeliveryQuery) {
+  async getShipments(queries: FindAllDeliveryQuery, user: User) {
+    if (
+      queries.view === RoleViewEnum.ADMIN_VIEW &&
+      user.role !== RoleEnum.ADMIN
+    ) {
+      throw new UnauthorizedException('Bạn không có quyền xem danh sách này');
+    }
+
     const shipments =
       await this.deliveryRepository.paginateWithQueries(queries);
 
@@ -98,6 +139,16 @@ export class DeliveryService {
 
     const transformData = data.map((delivery) => {
       delivery.product = plainToClass(ProductDto, delivery.product) as any;
+
+      if (queries.view === RoleViewEnum.DELIVER_VIEW) {
+        delete delivery.discount_amount;
+        delete delivery.discount_percent;
+        delete delivery.total_discount;
+        delete delivery.total_after_discount;
+      } else {
+        delete delivery.total_after_delivery;
+        delete delivery.shipping_fee;
+      }
 
       return plainToClass(DeliveryDto, delivery);
     });
@@ -133,7 +184,8 @@ export class DeliveryService {
           'amount',
           'quantity',
           'shipping_fee',
-          'total',
+          'total_after_delivery',
+          'total_after_discount',
           'status',
           'other_confirmed',
           'created_at',
@@ -146,6 +198,12 @@ export class DeliveryService {
           // You can manipulate the product or return it as is
           const shipment = DeliveryDto.fromEntity(delivery) as any;
           shipment.product = plainToClass(ProductDto, delivery.product); // Assign product
+
+          delete shipment.discount_amount;
+          delete shipment.discount_percent;
+          delete shipment.total_discount;
+          delete shipment.total_after_discount;
+
           return shipment;
         }),
       );
@@ -396,39 +454,14 @@ export class DeliveryService {
     };
   }
 
-  @OnEvent(DeliveryStatusEnum.DELIVERING)
-  async onDelivering({
-    shipment_id,
-    seller_id,
-    product_id,
-    quantity,
-  }: OnDeliveringEvent) {
-    console.log('Delivering event');
-  }
+  // admin
+  async getSuccessDeliveries() {
+    const deliveries = await this.deliveryRepository
+      .getDashboardData()
+      .then((deliveries) => {
+        return deliveries.map((deli) => DeliveryDto.fromEntity(deli));
+      });
 
-  @OnEvent(DeliveryStatusEnum.DELIVERED)
-  async onDelivered({ delivery_id, seller_id }: OnDeliveredEvent) {
-    console.log('Delivered event');
-
-    // Update revenue
-    const delivery = await this.deliveryRepository.findOneBy({
-      where: { id: delivery_id as any },
-    });
-
-    if (delivery) {
-      this.revenuesService.updateRevenue(seller_id, delivery);
-    } else {
-      console.error('Delivery not found, cannot update revenue');
-    }
-  }
-
-  @OnEvent(DeliveryStatusEnum.RETURNED)
-  async onReturned({
-    shipment_id,
-    seller_id,
-    product_id,
-    quantity,
-  }: OnReturnedEvent) {
-    console.log('Returned event');
+    return deliveries;
   }
 }

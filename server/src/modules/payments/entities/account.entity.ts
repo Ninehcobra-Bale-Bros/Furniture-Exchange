@@ -12,7 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
-import { Revenue } from './revenue.entity';
+import { Revenue } from 'src/modules/revenues/entities/revenue.entity';
 
 @Entity()
 export class Account extends BaseEntity {

@@ -55,6 +55,16 @@ export class UsersService {
     return user;
   }
 
+  async findAllSeller() {
+    return await this.userRepository
+      .findAll({
+        where: {
+          role: RoleEnum.SELLER,
+        },
+      })
+      .then((users) => users.map((user) => UserDto.fromEntity(user)));
+  }
+
   async create(dto: CreateUserDto): Promise<UserDto> {
     const newUser = await this.userRepository.save(UserDto.toEntity(dto));
 
