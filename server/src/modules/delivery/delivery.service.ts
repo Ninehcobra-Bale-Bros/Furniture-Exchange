@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { DeliveryRepository } from 'src/modules/delivery/repository/delivery.repository';
 import { DeliveryDto } from 'src/modules/delivery/dto/delivery.dto';
@@ -19,6 +19,7 @@ import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
 import { PaginationHelper } from 'src/helper/pagination';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { RevenuesService } from '../payments/revenues.service';
 
 @Injectable()
 export class DeliveryService {
@@ -26,6 +27,7 @@ export class DeliveryService {
     private readonly deliveryRepository: DeliveryRepository,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
+    private readonly revenuesService: RevenuesService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -94,12 +96,18 @@ export class DeliveryService {
 
     const [data, totalRecords] = shipments;
 
+    const transformData = data.map((delivery) => {
+      delivery.product = plainToClass(ProductDto, delivery.product) as any;
+
+      return plainToClass(DeliveryDto, delivery);
+    });
+
     const url = `http://localhost:3001/api/v1/delivery`;
 
     const paginationResult = PaginationHelper.generatePagination(
       queries,
       url,
-      data,
+      transformData,
       totalRecords,
     );
 
@@ -109,7 +117,7 @@ export class DeliveryService {
   async getUserShipments(user: User) {
     const shipments = await this.deliveryRepository
       .findAll({
-        where: { other_id: user.id },
+        where: { other_id: user.id, status: DeliveryStatusEnum.PENDING },
         relations: ['product'],
         select: [
           'id',
@@ -145,55 +153,54 @@ export class DeliveryService {
     return shipments;
   }
 
-  async updateShipper(user: User, dto: AssignDeliveryDto) {
-    const ids: string[] = dto.deliver_ids;
+  async updateShipper(user: User, deliveryId: string) {
+    const delivery = await this.deliveryRepository
+      .findOneBy({
+        where: { id: deliveryId as any },
+      })
+      .then((delivery) => DeliveryDto.fromEntity(delivery));
 
-    if (!ids.length) {
-      throw new BadRequestException('Không có đơn hàng nào được chọn');
+    if (!delivery) {
+      throw new BadRequestException('Không tìm thấy đơn hàng');
     }
 
-    type Delivery = {
-      id: number;
-      message: string;
-    }[];
+    if (delivery.deliver_id !== user.id && delivery.deliver_id !== null) {
+      throw new BadRequestException('Đơn hàng đã được nhận bởi shipper khác');
+    }
 
-    const shipments = await this.deliveryRepository
-      .findDeliveryByIds(ids)
-      .then((deliveries) => {
-        return deliveries.map((delivery) => DeliveryDto.fromEntity(delivery));
-      });
-
-    let returnMessage: Delivery = [];
-
-    for (const shipment of shipments) {
-      if (shipment.status !== DeliveryStatusEnum.PENDING) {
-        returnMessage.push({
-          id: shipment.id,
-          message: 'Đơn hàng đã có trạng thái khác',
-        });
-        continue;
-      }
-
-      if (shipment.deliver_id) {
-        returnMessage.push({
-          id: shipment.id,
-          message: 'Đơn hàng đã được giao cho người vận chuyển khác',
-        });
-        continue;
-      }
-
-      this.deliveryRepository.update(
+    if (delivery.deliver_id === user.id && delivery.status == 'delivering') {
+      const cancelDelivery = await this.deliveryRepository.update(
         {
-          id: shipment.id,
+          id: delivery.id,
         },
         {
-          deliver_id: user.id,
-          status: DeliveryStatusEnum.DELIVERING,
+          deliver_id: null,
         },
       );
+
+      return {
+        code: cancelDelivery.affected ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+        message: cancelDelivery.affected
+          ? 'Hủy nhận đơn hàng thành công'
+          : 'Huỷ đơn hàng không thành công',
+      };
     }
 
-    return returnMessage;
+    const approveDelivery = await this.deliveryRepository.update(
+      {
+        id: delivery.id,
+      },
+      {
+        deliver_id: user.id,
+      },
+    );
+
+    return {
+      code: approveDelivery.affected ? HttpStatus.OK : HttpStatus.BAD_REQUEST,
+      message: approveDelivery.affected
+        ? 'Nhận đơn hàng thành công'
+        : 'Nhận đơn hàng không thành công',
+    };
   }
 
   async confirmShipment(user: User, deliveryId: string) {
@@ -221,7 +228,6 @@ export class DeliveryService {
       },
       {
         other_confirmed: true,
-        status: DeliveryStatusEnum.DELIVERING,
       },
     );
 
@@ -323,46 +329,71 @@ export class DeliveryService {
       throw new BadRequestException('Đơn hàng đã được giao');
     }
 
+    let result = null;
+
     switch (dto.status) {
       case UpdateStatusEnum.DELIVERING:
-        await this.deliveryRepository.update(
-          {
-            id: delivery.id,
-          },
-          {
-            status: DeliveryStatusEnum.DELIVERING,
-          },
-        );
-
+        if (delivery.status === DeliveryStatusEnum.PENDING) {
+          result = await this.deliveryRepository.update(
+            {
+              id: delivery.id,
+            },
+            {
+              status: DeliveryStatusEnum.DELIVERING,
+            },
+          );
+        } else {
+          throw new BadRequestException(
+            'Đơn hàng đang ở trạng thái không phải "PENDING"',
+          );
+        }
         break;
       case UpdateStatusEnum.DELIVERED:
-        await this.deliveryRepository.update(
-          {
-            id: delivery.id,
-          },
-          {
-            status: DeliveryStatusEnum.DELIVERED,
-          },
-        );
+        if (delivery.status === DeliveryStatusEnum.DELIVERING) {
+          result = await this.deliveryRepository.update(
+            {
+              id: delivery.id,
+            },
+            {
+              status: DeliveryStatusEnum.DELIVERED,
+            },
+          );
 
-        this.eventEmitter.emit(DeliveryStatusEnum.DELIVERED, {
-          delivery_id: delivery.id,
-          seller_id: delivery.user_id,
-          buyer_id: delivery.other_id,
-          product_id: delivery.product_id,
-        } as OnDeliveredEvent);
+          this.eventEmitter.emit(DeliveryStatusEnum.DELIVERED, {
+            delivery_id: delivery.id,
+            seller_id: delivery.user_id,
+            buyer_id: delivery.other_id,
+            product_id: delivery.product_id,
+          } as OnDeliveredEvent);
+        } else {
+          throw new BadRequestException(
+            'Đơn hàng đang ở trạng thái không phải "DELIVERING"',
+          );
+        }
         break;
       case UpdateStatusEnum.RETURNED:
-        await this.deliveryRepository.update(
-          {
-            id: delivery.id,
-          },
-          {
-            status: DeliveryStatusEnum.RETURNED,
-          },
-        );
+        if (delivery.status === DeliveryStatusEnum.DELIVERING) {
+          result = await this.deliveryRepository.update(
+            {
+              id: delivery.id,
+            },
+            {
+              status: DeliveryStatusEnum.RETURNED,
+            },
+          );
+          this.eventEmitter.emit(DeliveryStatusEnum.RETURNED, {} as any);
+        } else {
+          throw new BadRequestException(
+            'Đơn hàng đang ở trạng thái không phải "DELIVERING"',
+          );
+        }
         break;
     }
+
+    return {
+      code: HttpStatus.OK,
+      message: 'Cập nhật trạng thái đơn hàng thành công',
+    };
   }
 
   @OnEvent(DeliveryStatusEnum.DELIVERING)
@@ -371,16 +402,25 @@ export class DeliveryService {
     seller_id,
     product_id,
     quantity,
-  }: OnDeliveringEvent) {}
+  }: OnDeliveringEvent) {
+    console.log('Delivering event');
+  }
 
   @OnEvent(DeliveryStatusEnum.DELIVERED)
-  async onDelivered({
-    delivery_id,
-    seller_id,
-    buyer_id,
-    product_id,
-    quantity,
-  }: OnDeliveredEvent) {}
+  async onDelivered({ delivery_id, seller_id }: OnDeliveredEvent) {
+    console.log('Delivered event');
+
+    // Update revenue
+    const delivery = await this.deliveryRepository.findOneBy({
+      where: { id: delivery_id as any },
+    });
+
+    if (delivery) {
+      this.revenuesService.updateRevenue(seller_id, delivery);
+    } else {
+      console.error('Delivery not found, cannot update revenue');
+    }
+  }
 
   @OnEvent(DeliveryStatusEnum.RETURNED)
   async onReturned({
@@ -388,5 +428,7 @@ export class DeliveryService {
     seller_id,
     product_id,
     quantity,
-  }: OnReturnedEvent) {}
+  }: OnReturnedEvent) {
+    console.log('Returned event');
+  }
 }

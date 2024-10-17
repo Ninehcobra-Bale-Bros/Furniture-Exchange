@@ -8,23 +8,25 @@ import { TransactionRepository } from './repository/transaction.repository';
 import { AccountRepository } from './repository/account.repository';
 import { VnpayModule } from 'src/config/vnpay/vnpay.module';
 import { Revenue } from './entities/revenue.entity';
-import { RevenueController } from './revenue.controller';
-import { RevenueService } from './revenue.service';
+import { RevenuesController } from './revenues.controller';
+import { RevenuesService } from './revenues.service';
 import { RevenueRepository } from './repository/revenue.repository';
+import { ProductsModule } from '../products/products.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Account, Transaction, Revenue]),
     VnpayModule,
+    ProductsModule,
   ],
-  controllers: [PaymentsController, RevenueController],
+  controllers: [PaymentsController, RevenuesController],
   providers: [
     PaymentsService,
-    RevenueService,
+    RevenuesService,
     TransactionRepository,
     AccountRepository,
     RevenueRepository,
   ],
-  exports: [PaymentsService],
+  exports: [PaymentsService, RevenuesService],
 })
 export class PaymentsModule {}

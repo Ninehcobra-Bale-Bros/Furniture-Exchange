@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
@@ -77,13 +78,17 @@ export class DeliveryController {
     return await this.deliveryService.updateDeliveryStatus(req.user, id, dto);
   }
 
-  @Patch('shipper')
+  @Patch('deliver/:id')
   @ApiOperation({
     summary: '[DELIVER] Update shipment who is delivering',
   })
   @Roles(RoleEnum.DELIVER)
-  async updateShipment(@Body() dto: AssignDeliveryDto, @Req() req: Request) {
-    return await this.deliveryService.updateShipper(req.user, dto);
+  async updateShipment(@Param('id') deliveryId: string, @Req() req: Request) {
+    if (!Number(deliveryId)) {
+      throw new BadRequestException('Delivery id must be a number');
+    }
+
+    return await this.deliveryService.updateShipper(req.user, deliveryId);
   }
 
   @Patch('user/cancel/:id')

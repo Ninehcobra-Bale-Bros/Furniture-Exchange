@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -8,7 +8,7 @@ import {
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { CreateRevenueDto } from './dto/create-revenue.dto';
-import { RevenueService } from './revenue.service';
+import { RevenuesService } from './revenues.service';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 
@@ -16,8 +16,8 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 @ApiTags('revenue')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RoleGuard)
-export class RevenueController {
-  constructor(private readonly revenueService: RevenueService) {}
+export class RevenuesController {
+  constructor(private readonly revenuesService: RevenuesService) {}
 
   @Post()
   @ApiOperation({
@@ -26,6 +26,16 @@ export class RevenueController {
   })
   @Roles(RoleEnum.ADMIN)
   async createRevenue(@Body() dto: CreateRevenueDto) {
-    return await this.revenueService.createRevenue(dto);
+    return await this.revenuesService.createRevenue(dto);
+  }
+
+  @Get('write-to-file')
+  @ApiOperation({
+    summary: 'Write to file',
+    description: 'Write to file',
+  })
+  @Roles(RoleEnum.ADMIN)
+  async writeToFile() {
+    return await this.revenuesService.writeToFile();
   }
 }

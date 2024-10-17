@@ -10,8 +10,6 @@ export class AssignDeliveryDto {
     example: ['27', '28'],
   }) // Add this line
   @Transform(({ value }) => {
-    console.log(value);
-
     if (Array.isArray(value)) {
       return value.map((v) => Number(v));
     }

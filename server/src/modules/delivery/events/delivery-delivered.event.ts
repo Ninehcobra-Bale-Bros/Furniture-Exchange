@@ -2,8 +2,8 @@ import { UUID } from 'crypto';
 
 export default class OnDeliveredEvent {
   delivery_id: number & { __brand: 'deliveryId' };
-  seller_id: (UUID & { __brand: 'userId' }) | (string & { __brand: 'userId' });
-  buyer_id: (UUID & { __brand: 'userId' }) | (string & { __brand: 'userId' });
+  seller_id: (UUID & { __brand: 'userId' }) | string;
+  buyer_id: (UUID & { __brand: 'userId' }) | string;
   product_id: number & { __brand: 'productId' };
   quantity: number;
 

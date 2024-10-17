@@ -23,13 +23,27 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
 
   async paginateWithQueries(
     query: FindAllDeliveryQuery,
+    relation: string = '',
   ): Promise<[Delivery[], number]> {
-    let QueryBuilder = this.deliveryRepository.createQueryBuilder('delivery');
+    let QueryBuilder = this.deliveryRepository
+      .createQueryBuilder('delivery')
+      .leftJoin('delivery.product', 'product')
+      .addSelect([
+        'product.name', // Select only the 'name' field
+        'product.price', // Example: selecting 'price' field
+        'product.image_urls', // Example: selecting 'image_urls' field
+        'product.id', // Example: selecting 'id' field
+        'product.kilogram',
+      ]);
 
     if (query.status) {
-      QueryBuilder = QueryBuilder.andWhere('delivery.status = :status', {
-        status: query.status,
-      });
+      QueryBuilder = QueryBuilder.andWhere(
+        'delivery.status = :status AND delivery.other_confirmed = :other_confirmed',
+        {
+          status: query.status,
+          other_confirmed: true,
+        },
+      );
     }
 
     const [data, totalRecords] = await this.buildQuery(QueryBuilder, query);

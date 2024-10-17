@@ -12,11 +12,11 @@ import { User } from '../users/entities/user.entity';
 import { DiscountService } from '../discounts/discounts.service';
 import { CloudinaryService } from 'src/config/upload/cloudinary.service';
 import { PaymentsService } from 'src/modules/payments/payments.service';
-import { UUID } from 'crypto';
 import { plainToClass } from 'class-transformer';
 import { CategoryDto } from '../categories/dto/category.dto';
 import { Product } from './entities/product.entity';
 import { Category } from '../categories/entities/category.entity';
+import { DiscountDto } from '../discounts/dto/discount.dto';
 
 @Injectable()
 export class ProductsService {
@@ -39,8 +39,7 @@ export class ProductsService {
       throw new BadRequestException('Chưa có ảnh sản phẩm');
     }
 
-    const appropriateDiscount =
-      await this.discountService.findCompatibleDiscountByPrice(dto.price);
+    const appropriateDiscount = await this.findAppropriateDiscount(dto.price);
 
     if (!appropriateDiscount) {
       throw new BadRequestException('Không tìm thấy chiết khấu phù hợp');
@@ -114,6 +113,13 @@ export class ProductsService {
     }
 
     return ProductDto.fromEntity(newProduct);
+  }
+
+  async findAppropriateDiscount(price: number): Promise<DiscountDto> {
+    const appropriateDiscount =
+      await this.discountService.findCompatibleDiscountByPrice(price);
+
+    return appropriateDiscount;
   }
 
   async findAll() {
