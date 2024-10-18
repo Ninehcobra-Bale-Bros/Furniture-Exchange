@@ -42,13 +42,13 @@ export class DiscountController {
     return this.discountService.findCompatibleDiscountByPrice(price);
   }
 
-  @Get('write-to-file')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.discountService.writeToFile();
-  }
+  // @Get('write-to-file')
+  // @ApiBearerAuth()
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // writeToFile() {
+  //   return this.discountService.writeToFile();
+  // }
 }

@@ -63,12 +63,12 @@ export class PaymentsController {
     return this.paymentsService.deposit(req.user, req.ip, dto);
   }
 
-  @Get('account/write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  async writeAccountToFile() {
-    return await this.paymentsService.writeAccountToFile();
-  }
+  // @Get('account/write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async writeAccountToFile() {
+  //   return await this.paymentsService.writeAccountToFile();
+  // }
 }

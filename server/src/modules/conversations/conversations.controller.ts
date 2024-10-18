@@ -53,16 +53,16 @@ export class ConversationsController {
     return this.conversationsService.getLastMessageOfAllConversation(req.user);
   }
 
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    console.log('write to file');
+  // @Get('write-to-file')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // writeToFile() {
+  //   console.log('write to file');
 
-    return this.conversationsService.writeToFile();
-  }
+  //   return this.conversationsService.writeToFile();
+  // }
 
   @Get(':product_id/product')
   @ApiOperation({

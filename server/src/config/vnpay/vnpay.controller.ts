@@ -29,18 +29,18 @@ import { RoleEnum } from 'src/common/enums/role.enum';
 export class VnpayController {
   constructor(private readonly VnpayService: VnpayService) {}
 
-  @Get('create/url')
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  getUrl(@Req() req: Request, @Query('amount') amount: string) {
-    return this.VnpayService.createPaymentUrl(
-      req.ip,
-      amount,
-      '5bb8bc66-a1a8-42bb-b6b5-24a5d426bc47',
-    );
-  }
+  // @Get('create/url')
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // getUrl(@Req() req: Request, @Query('amount') amount: string) {
+  //   return this.VnpayService.createPaymentUrl(
+  //     req.ip,
+  //     amount,
+  //     '5bb8bc66-a1a8-42bb-b6b5-24a5d426bc47',
+  //   );
+  // }
 
   @Get('ipn')
   @ApiOperation({

@@ -71,13 +71,13 @@ export class RevenuesController {
     return await this.revenuesService.getAdminChart(queries, req.user);
   }
 
-  @Get('write-to-file')
-  @ApiOperation({
-    summary: 'Write to file',
-    description: 'Write to file',
-  })
-  @Roles(RoleEnum.ADMIN)
-  async writeToFile() {
-    return await this.revenuesService.writeToFile();
-  }
+  // @Get('write-to-file')
+  // @ApiOperation({
+  //   summary: 'Write to file',
+  //   description: 'Write to file',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async writeToFile() {
+  //   return await this.revenuesService.writeToFile();
+  // }
 }

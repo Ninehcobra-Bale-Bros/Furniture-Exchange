@@ -97,15 +97,15 @@ export class ProductsController {
     return this.productsService.getProductOfSeller(req.user);
   }
 
-  @Get('write-to-file')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  })
-  @Roles(RoleEnum.ADMIN)
-  writeToFile() {
-    return this.productsService.writeToFile();
-  }
+  // @Get('write-to-file')
+  // @ApiBearerAuth()
+  // @ApiOperation({
+  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // writeToFile() {
+  //   return this.productsService.writeToFile();
+  // }
 
   @Get(':slug')
   @Public()
