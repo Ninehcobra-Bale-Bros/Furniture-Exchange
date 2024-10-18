@@ -1,7 +1,12 @@
 export enum DeliveryStatusEnum {
-  DELIVERED = 'delivered',
-  DELIVERING = 'delivering',
-  RETURNED = 'returned',
-  CANCELLED = 'cancelled',
   PENDING = 'pending',
+  DELIVERING = 'delivering',
+  DELIVERED = 'delivered',
+  RETURNED = 'returned',
+}
+
+export enum UpdateStatusEnum {
+  DELIVERING = 'delivering',
+  DELIVERED = 'delivered',
+  RETURNED = 'returned',
 }

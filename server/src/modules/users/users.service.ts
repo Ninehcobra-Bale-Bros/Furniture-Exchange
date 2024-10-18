@@ -11,13 +11,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { UserRepository } from './repository/user.repository';
 import { UUID } from 'crypto';
-import { AccountRepository } from '../payments/repository/account.repository';
 import { PaymentsService } from '../payments/payments.service';
 import { RegisterSellingDto } from './dto/register-selling.dto';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { User } from 'src/modules/users/entities/user.entity';
 import { plainToClass } from 'class-transformer';
 import { AccountDto } from 'src/modules/payments/dto/account.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +25,7 @@ export class UsersService {
     private readonly userRepository: UserRepository, // Inject Repository
     private readonly paymentsService: PaymentsService, // Inject AccountRepository
     private readonly redis: RedisService, // Inject RedisService
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(): Promise<UserDto[]> {
@@ -53,6 +54,16 @@ export class UsersService {
       .then((u) => UserDto.fromEntity(u));
 
     return user;
+  }
+
+  async findAllSeller() {
+    return await this.userRepository
+      .findAll({
+        where: {
+          role: RoleEnum.SELLER,
+        },
+      })
+      .then((users) => users.map((user) => UserDto.fromEntity(user)));
   }
 
   async create(dto: CreateUserDto): Promise<UserDto> {
@@ -150,7 +161,9 @@ export class UsersService {
     }
 
     if (account.balance < 1200000) {
-      throw new BadRequestException('Số dư không đủ');
+      throw new BadRequestException(
+        'Số dư không đủ, giá đăng kí là 1.200.000 VND',
+      );
     }
 
     const seller = await this.userRepository.update(
@@ -170,10 +183,18 @@ export class UsersService {
       throw new BadRequestException('Không tìm thấy người bán');
     }
 
+    this.eventEmitter.emit('create.revenue', { account_id: account.id });
+
     const result = await this.paymentsService.decreaseBalance(
       account.id,
       1200000,
     );
+
+    if (!result) {
+      throw new BadRequestException('Không thể trừ tiền');
+    }
+
+    this.eventEmitter.emit('update.admin.revenue', { amount: 1200000 });
 
     return {
       success: result,

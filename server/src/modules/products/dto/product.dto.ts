@@ -82,8 +82,6 @@ export class ProductDto implements Readonly<ProductDto> {
     it.created_at = dto.created_at;
     it.updated_at = dto.updated_at;
 
-    console.log(it);
-
     return plainToClass(ProductDto, it);
   }
 

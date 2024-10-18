@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
+import { Revenue } from 'src/modules/revenues/entities/revenue.entity';
 
 @Entity()
 export class Account extends BaseEntity {
@@ -20,6 +21,9 @@ export class Account extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: false })
   user_id!: UUID & { __brand: 'userId' };
+
+  @Column({ type: 'int', nullable: true, default: null })
+  revenue_id!: number & { __brand: 'revenueId' };
 
   @Column({ type: 'decimal', default: 0 })
   balance!: number;
@@ -30,6 +34,12 @@ export class Account extends BaseEntity {
   @OneToOne(() => User, (user) => user.account, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user!: User;
+
+  @OneToOne(() => Revenue, (revenue) => revenue.account, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'revenue_id' })
+  revenue!: Revenue;
 
   @OneToMany(() => Transaction, (transaction) => transaction.account_id, {
     onDelete: 'CASCADE',

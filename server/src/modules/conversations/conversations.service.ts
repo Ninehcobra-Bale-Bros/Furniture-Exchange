@@ -64,10 +64,6 @@ export class ConversationsService {
     user_id: string,
     other_id: string,
   ) {
-    console.log('product_id', product_id);
-    console.log('user_id', user_id);
-    console.log('other_id', other_id);
-
     return await this.conversationRepository
       .findByProductIdAndSellerIdAndOtherId(product_id, user_id, other_id)
       .then((conversation) => {

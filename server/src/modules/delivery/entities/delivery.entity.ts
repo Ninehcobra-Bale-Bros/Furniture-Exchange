@@ -7,18 +7,15 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc'; // ES 2015
 import timezone from 'dayjs/plugin/timezone'; // ES 2015
-import { Transform } from 'class-transformer';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -34,7 +31,7 @@ export class Delivery extends BaseEntity {
   other_id: UUID & { __brand: 'userId' };
 
   @Column({ type: 'uuid', nullable: true })
-  delivery_id: UUID & { __brand: 'userId' };
+  deliver_id: UUID & { __brand: 'userId' };
 
   @Column({ type: 'int', nullable: false })
   product_id: number;
@@ -57,14 +54,29 @@ export class Delivery extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   amount: number;
 
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  discount_percent: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  discount_amount: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  total_discount: number;
+
   @Column({ type: 'int', nullable: false, default: 1 })
   quantity: number;
 
   @Column({ type: 'decimal', nullable: false, default: 0 })
   shipping_fee: number;
 
-  @Column({ type: 'decimal', nullable: true, default: null })
+  @Column({ type: 'decimal', nullable: false, default: 0 })
   total: number;
+
+  @Column({ type: 'decimal', nullable: true, default: null })
+  total_after_delivery: number;
+
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  total_after_discount: number;
 
   @Column({
     type: 'enum',
@@ -83,10 +95,9 @@ export class Delivery extends BaseEntity {
   @BeforeInsert()
   @BeforeUpdate()
   setExpirationDate() {
-    const dateTime = dayjs('2024/10/22 10:35:52 AM', 'YYYY/MM/DD hh:mm:ss A')
-      .add(1, 'day')
-      .tz('Asia/Bangkok')
-      .toDate();
+    const dateTime = new Date(
+      dayjs().add(1, 'day').tz('Asia/Bangkok').format('YYYY/MM/DD hh:mm:ss A'),
+    );
 
     this.expired_at = dateTime;
   }
@@ -99,9 +110,9 @@ export class Delivery extends BaseEntity {
   @ManyToOne(() => User, (user) => user.id, { nullable: false })
   other: User;
 
-  @JoinColumn({ name: 'delivery_id' })
+  @JoinColumn({ name: 'deliver_id' })
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  delivery: User;
+  deliver: User;
 
   @JoinColumn({ name: 'product_id' })
   @ManyToOne(() => Product, (product) => product.id, { nullable: false })

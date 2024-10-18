@@ -4,3 +4,8 @@ export enum RoleEnum {
   SELLER = 'seller',
   DELIVER = 'deliver',
 }
+
+export enum RoleViewEnum {
+  ADMIN_VIEW = 'admin_view',
+  DELIVER_VIEW = 'deliver_view',
+}

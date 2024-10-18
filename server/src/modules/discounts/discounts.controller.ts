@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import { DiscountService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -33,7 +33,17 @@ export class DiscountController {
     return this.discountService.findAll();
   }
 
+  @Get('appropriate-price')
+  @Public()
+  @ApiOperation({
+    summary: '[PUBLIC] Get the appropriate discount with price',
+  })
+  getAppropriatePrice(@Query('price') price: number) {
+    return this.discountService.findCompatibleDiscountByPrice(price);
+  }
+
   // @Get('write-to-file')
+  // @ApiBearerAuth()
   // @ApiOperation({
   //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
   // })

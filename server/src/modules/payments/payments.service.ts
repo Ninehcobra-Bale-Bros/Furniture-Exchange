@@ -13,9 +13,9 @@ import { UUID } from 'crypto';
 import { UserDto } from 'src/modules/users/dto/user.dto';
 import { VnpayService } from 'src/config/vnpay/vnpay.service';
 import { OnEvent } from '@nestjs/event-emitter';
-import PaySuccessEvent from 'src/config/events/pay-success.interface';
 import * as fs from 'fs';
 import * as path from 'path';
+import PaySuccessEvent from './events/pay-success.event';
 
 @Injectable()
 export class PaymentsService {
