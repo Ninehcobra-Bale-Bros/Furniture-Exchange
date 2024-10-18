@@ -67,6 +67,14 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     },
     { toClassOnly: true },
   )
+  total: number;
+
+  @Transform(
+    ({ value }) => {
+      return Number(value);
+    },
+    { toClassOnly: true },
+  )
   total_after_delivery: number;
 
   @Transform(
@@ -110,6 +118,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     it.discount_amount = dto.discount_amount;
     it.total_discount = dto.total_discount;
     it.shipping_fee = dto.shipping_fee;
+    it.total = dto.total;
     it.total_after_delivery = dto.total_after_delivery;
     it.total_after_discount = dto.total_after_discount;
     it.status = dto.status;
@@ -139,6 +148,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
       discount_amount: entity.discount_amount,
       total_discount: entity.total_discount,
       shipping_fee: entity.shipping_fee,
+      total: entity.total,
       total_after_delivery: entity.total_after_delivery,
       total_after_discount: entity.total_after_discount,
       status: entity.status,
@@ -165,6 +175,7 @@ export class DeliveryDto implements Readonly<DeliveryDto> {
     it.discount_amount = dto.discount_amount;
     it.total_discount = dto.total_discount;
     it.shipping_fee = dto.shipping_fee;
+    it.total = dto.total;
     it.total_after_delivery = dto.total_after_delivery;
     it.total_after_discount = dto.total_after_discount;
 

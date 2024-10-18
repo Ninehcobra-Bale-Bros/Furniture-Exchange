@@ -57,6 +57,15 @@ export class DeliveryController {
     return await this.deliveryService.getUserShipments(req.user);
   }
 
+  @Get('shipper')
+  @ApiOperation({
+    summary: '[DELIVER] Get all shipments of the user',
+  })
+  @Roles(RoleEnum.DELIVER)
+  async getShipperShipments(@Req() req: Request) {
+    return await this.deliveryService.getShipperShipments(req.user);
+  }
+
   @Patch('user/confirm/:id')
   @ApiOperation({
     summary: '[BUYER] Confirm shipment',
@@ -108,5 +117,14 @@ export class DeliveryController {
   })
   create(@Body() createDeliveryDto: CreateDeliveryDto, @Req() req: Request) {
     return this.deliveryService.create(req.user, createDeliveryDto);
+  }
+
+  @Get('write-to-file')
+  @Roles(RoleEnum.ADMIN)
+  @ApiOperation({
+    summary: 'Write to file',
+  })
+  async writeToFile() {
+    return await this.deliveryService.writeToFile();
   }
 }

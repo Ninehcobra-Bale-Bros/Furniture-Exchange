@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
@@ -12,10 +13,8 @@ import { UsersService } from 'src/modules/users/users.service';
 import { ProductsService } from 'src/modules/products/products.service';
 import { plainToClass } from 'class-transformer';
 import { ProductDto } from 'src/modules/products/dto/product.dto';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import OnDeliveredEvent from './events/delivery-delivered.event';
-import OnReturnedEvent from './events/delivery-returned.event';
-import OnDeliveringEvent from './events/delivery-delivering.event';
 import {
   DeliveryStatusEnum,
   UpdateStatusEnum,
@@ -24,7 +23,9 @@ import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
 import { PaginationHelper } from 'src/helper/pagination';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { RoleEnum, RoleViewEnum } from 'src/common/enums/role.enum';
-import { RevenuesService } from '../revenues/revenues.service';
+import { GetRevenueChartDto } from '../revenues/dtos/get-revenue-chart.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class DeliveryService {
@@ -34,6 +35,143 @@ export class DeliveryService {
     private readonly productsService: ProductsService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async getShipments(queries: FindAllDeliveryQuery, user: User) {
+    if (
+      queries.view === RoleViewEnum.ADMIN_VIEW &&
+      user.role !== RoleEnum.ADMIN
+    ) {
+      throw new UnauthorizedException('Bạn không có quyền xem danh sách này');
+    }
+
+    const shipments =
+      await this.deliveryRepository.paginateWithQueries(queries);
+
+    const [data, totalRecords] = shipments;
+
+    const transformData = data.map((delivery) => {
+      delivery.product = plainToClass(ProductDto, delivery.product) as any;
+
+      if (queries.view === RoleViewEnum.DELIVER_VIEW) {
+        delete delivery.discount_amount;
+        delete delivery.discount_percent;
+        delete delivery.total_discount;
+        delete delivery.total_after_discount;
+      } else {
+        delete delivery.total_after_delivery;
+        delete delivery.shipping_fee;
+      }
+
+      return plainToClass(DeliveryDto, delivery);
+    });
+
+    const url = `/api/v1/delivery`;
+
+    const paginationResult = PaginationHelper.generatePagination(
+      queries,
+      url,
+      transformData,
+      totalRecords,
+    );
+
+    return paginationResult;
+  }
+
+  async getShipperShipments(user: User) {
+    const shipments = await this.deliveryRepository
+      .findAll({
+        where: { deliver_id: user.id },
+        relations: ['product'],
+      })
+      .then((deliveries) =>
+        deliveries.map((delivery) => {
+          // You can manipulate the product or return it as is
+          const shipment = DeliveryDto.fromEntity(delivery) as any;
+          shipment.product = plainToClass(ProductDto, delivery.product); // Assign product
+
+          delete shipment.discount_amount;
+          delete shipment.discount_percent;
+          delete shipment.total_discount;
+          delete shipment.total_after_discount;
+
+          return shipment;
+        }),
+      );
+
+    return shipments;
+  }
+
+  async getShipmentsByDate(queries: GetRevenueChartDto, sellerId: string) {
+    if (queries.year && queries.month_from && queries.month_to) {
+      console.log('condition 1');
+
+      const shipments = await this.deliveryRepository.getShipmentsByDate(
+        queries.month_from,
+        queries.month_to,
+        queries.year,
+        sellerId,
+      );
+
+      // Generate all months in the selected range
+      const allMonths = [];
+      for (
+        let month = parseInt(queries.month_from);
+        month <= parseInt(queries.month_to);
+        month++
+      ) {
+        const formattedMonth = `${queries.year}-${month.toString().padStart(2, '0')}`;
+        allMonths.push({
+          month: formattedMonth,
+          totalRevenue: 0,
+          totalQuantity: 0,
+        });
+      }
+
+      // Merge actual data with all months to fill missing months with 0 revenue and 0 quantity
+      const result = allMonths.map((monthObj) => {
+        const found = shipments.find(
+          (shipment) => shipment.month === monthObj.month,
+        );
+        return found
+          ? {
+              ...monthObj,
+              totalRevenue: Number(found.totalRevenue),
+              totalQuantity: Number(found.totalQuantity),
+            }
+          : monthObj;
+      });
+
+      return result;
+    } else if (queries.year && !queries.month_from && !queries.month_to) {
+      console.log('condition 2');
+
+      const shipments = await this.deliveryRepository.getShipmentsByYear(
+        queries.year,
+        sellerId,
+      );
+
+      // Generate a list of all months for the year
+      const allMonths = Array.from({ length: 12 }, (_, i) => {
+        const month = i + 1; // Month index (1 for January, 12 for December)
+        return {
+          month: `${2024}-${month.toString().padStart(2, '0')}`, // Format month as YYYY-MM
+          totalRevenue: 0, // Default to 0
+        };
+      });
+
+      // Merge the actual results with all months, filling in missing months with 0
+      const result = allMonths.map((monthObj) => {
+        const found = shipments.find(
+          (shipment) => shipment.month === monthObj.month,
+        );
+        return found
+          ? { ...monthObj, totalRevenue: Number(found.totalRevenue) }
+          : monthObj;
+      });
+
+      return result;
+    }
+  }
 
   async findOneById(deliveryId: number) {
     const delivery = await this.deliveryRepository
@@ -109,6 +247,7 @@ export class DeliveryService {
       discount_amount: discountAmount,
       total_discount: totalDiscount,
       shipping_fee: shippingFee,
+      total: product.price * dto.quantity,
       total_after_delivery: totalAfterDelivery,
       total_after_discount: totalAfterDiscount,
     };
@@ -120,49 +259,9 @@ export class DeliveryService {
     delete delivery.discount_amount;
     delete delivery.discount_percent;
     delete delivery.total_discount;
+    delete delivery.total_after_discount;
 
     return delivery;
-  }
-
-  async getShipments(queries: FindAllDeliveryQuery, user: User) {
-    if (
-      queries.view === RoleViewEnum.ADMIN_VIEW &&
-      user.role !== RoleEnum.ADMIN
-    ) {
-      throw new UnauthorizedException('Bạn không có quyền xem danh sách này');
-    }
-
-    const shipments =
-      await this.deliveryRepository.paginateWithQueries(queries);
-
-    const [data, totalRecords] = shipments;
-
-    const transformData = data.map((delivery) => {
-      delivery.product = plainToClass(ProductDto, delivery.product) as any;
-
-      if (queries.view === RoleViewEnum.DELIVER_VIEW) {
-        delete delivery.discount_amount;
-        delete delivery.discount_percent;
-        delete delivery.total_discount;
-        delete delivery.total_after_discount;
-      } else {
-        delete delivery.total_after_delivery;
-        delete delivery.shipping_fee;
-      }
-
-      return plainToClass(DeliveryDto, delivery);
-    });
-
-    const url = `http://localhost:3001/api/v1/delivery`;
-
-    const paginationResult = PaginationHelper.generatePagination(
-      queries,
-      url,
-      transformData,
-      totalRecords,
-    );
-
-    return paginationResult;
   }
 
   async getUserShipments(user: User) {
@@ -278,6 +377,10 @@ export class DeliveryService {
 
     if (delivery.status !== 'pending') {
       throw new BadRequestException('Đơn hàng đã có trạng thái khác');
+    }
+
+    if (delivery.other_confirmed) {
+      throw new BadRequestException('Đơn hàng đã được bạn xác nhận');
     }
 
     const updatedDelivery = await this.deliveryRepository.update(
@@ -452,6 +555,28 @@ export class DeliveryService {
       code: HttpStatus.OK,
       message: 'Cập nhật trạng thái đơn hàng thành công',
     };
+  }
+
+  async writeToFile() {
+    console.log('Write to file');
+
+    const deliveries = await this.deliveryRepository
+      .findAll()
+      .then((deliveries) =>
+        deliveries.map((delivery) => DeliveryDto.fromEntity(delivery)),
+      );
+
+    const filePath = path.resolve('db/seeds/deliveries/deliveries.json');
+
+    fs.writeFile(filePath, JSON.stringify(deliveries), (err) => {
+      if (err) {
+        throw new InternalServerErrorException(
+          `Error writing to file: ${err.message}`,
+        );
+      }
+    });
+
+    return 'Write to file successfully';
   }
 
   // admin

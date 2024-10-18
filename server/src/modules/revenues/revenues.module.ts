@@ -17,5 +17,6 @@ import { DeliveryModule } from '../delivery/delivery.module';
   ],
   controllers: [RevenuesController],
   providers: [RevenuesService, RevenueRepository],
+  exports: [RevenuesService],
 })
 export class RevenuesModule {}

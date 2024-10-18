@@ -69,6 +69,9 @@ export class Delivery extends BaseEntity {
   @Column({ type: 'decimal', nullable: false, default: 0 })
   shipping_fee: number;
 
+  @Column({ type: 'decimal', nullable: false, default: 0 })
+  total: number;
+
   @Column({ type: 'decimal', nullable: true, default: null })
   total_after_delivery: number;
 

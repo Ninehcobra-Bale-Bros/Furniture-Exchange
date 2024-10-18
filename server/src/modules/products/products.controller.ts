@@ -87,6 +87,16 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('seller')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[SELLER] Get all products of a seller',
+  })
+  @Roles(RoleEnum.SELLER)
+  findAllBySeller(@Req() req: Request) {
+    return this.productsService.getProductOfSeller(req.user);
+  }
+
   @Get('write-to-file')
   @ApiBearerAuth()
   @ApiOperation({

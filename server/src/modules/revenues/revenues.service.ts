@@ -20,6 +20,7 @@ import OnDeliveredEvent from '../delivery/events/delivery-delivered.event';
 import OnReturnedEvent from '../delivery/events/delivery-returned.event';
 import { DeliveryService } from '../delivery/delivery.service';
 import { DeliveryDto } from '../delivery/dto/delivery.dto';
+import { GetRevenueChartDto } from './dtos/get-revenue-chart.dto';
 
 @Injectable()
 export class RevenuesService {
@@ -107,22 +108,44 @@ export class RevenuesService {
 
     let profit = product.price * discount.discount_percent * delivery.quantity;
 
-    console.log('Product Price: ', product.price);
-    console.log('Discount Percent: ', discount.discount_percent);
-    console.log('Quantity: ', delivery.quantity);
-    console.log('Total Revenue: ', totalRevenue);
-    console.log('Profit: ', profit);
-
     this.revenueRepository.update(adminRevenue.id as any, {
       total_revenue: Number(adminRevenue.total_revenue) + Number(totalRevenue),
       total_sales: Number(adminRevenue.total_sales) + Number(delivery.quantity),
-      profit: adminRevenue.profit + Number(profit),
+      profit: Number(adminRevenue.profit) + Number(profit),
     });
 
     return adminRevenue;
   }
 
-  async getSellerRevenue(user: User) {}
+  async getSellerRevenue(user: User) {
+    const account = await this.paymentsService.findAccountByUserId(user.id);
+
+    if (!account) {
+      throw new BadRequestException('Account not found');
+    }
+
+    const revenue = await this.revenueRepository
+      .findOneBy({
+        where: {
+          account_id: account.id as any,
+        },
+      })
+      .then((revenue) => RevenueDto.fromEntity(revenue));
+
+    return {
+      total_revenue: revenue.total_revenue,
+      total_sales: revenue.total_sales,
+    };
+  }
+
+  async getSellerChart(queries: GetRevenueChartDto, user: User) {
+    const data = await this.deliveryService.getShipmentsByDate(
+      queries,
+      user.id,
+    );
+
+    return data;
+  }
 
   async getAdminRevenue(user: User) {
     const account = await this.paymentsService.findAccountByUserId(user.id);
@@ -147,6 +170,12 @@ export class RevenuesService {
       profit: revenue.profit,
       delivery_num: deliveries.length,
     };
+  }
+
+  async getAdminChart(queries: GetRevenueChartDto, user: User) {
+    const data = await this.deliveryService.getShipmentsByDate(queries, null);
+
+    return data;
   }
 
   async writeToFile() {
@@ -201,5 +230,38 @@ export class RevenuesService {
     quantity,
   }: OnReturnedEvent) {
     console.log('Returned event');
+  }
+
+  @OnEvent('create.revenue')
+  async onCreateRevenue({ account_id }) {
+    console.log('emit event: create.revenue');
+
+    await this.revenueRepository.save(RevenueDto.toEntity({ account_id }));
+  }
+
+  @OnEvent('update.admin.revenue')
+  async updateAdminRevenue({ amount }) {
+    console.log('emit event: update.admin.revenue');
+
+    const admin_id = '7bf27eea-ede2-418f-ad32-8c75115b075d';
+    const admin_account_id = 'cfb77620-51eb-4c75-a857-5f9c4208cc03';
+    const admin_revenue_id = '1';
+
+    const adminRevenue = await this.revenueRepository.findOneBy({
+      where: {
+        account_id: admin_account_id as any,
+      },
+    });
+
+    if (!adminRevenue) {
+      throw new InternalServerErrorException('Admin revenue not found');
+    }
+
+    this.revenueRepository.update(adminRevenue.id as any, {
+      total_revenue: Number(adminRevenue.total_revenue) + Number(amount),
+      profit: Number(adminRevenue.profit) + Number(amount),
+    });
+
+    return adminRevenue;
   }
 }

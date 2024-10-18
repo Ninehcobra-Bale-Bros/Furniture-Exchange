@@ -57,10 +57,10 @@ export class RevenueDto implements Readonly<RevenueDto> {
     const it = new Revenue();
 
     it.account_id = dto.account_id;
-    it.total_revenue = dto.total_revenue;
-    it.total_sales = dto.total_sales;
-    it.profit = dto.profit;
-    it.active = dto.active;
+    it.total_revenue = 0;
+    it.total_sales = 0;
+    it.profit = 0;
+    it.active = true;
 
     return it;
   }

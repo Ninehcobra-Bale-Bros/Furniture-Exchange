@@ -17,15 +17,20 @@ export class AdminService {
     const users = await this.usersService.findAll();
     const products = await this.productsService.findAll();
 
+    const product_quantity = products.reduce(
+      (acc, product) => acc + product.quantity,
+      0,
+    );
+
     const sellers_num = users.filter(
       (seller) => seller.role === RoleEnum.SELLER,
     ).length;
 
     return {
       users_num: users.length,
-      seller_num: sellers_num,
+      sellers_num: sellers_num,
       products_num: products.length,
-      accesses_num: randomAccess(2000, 5000),
+      accesses_num: randomAccess(3000, 3500),
     };
   }
 }

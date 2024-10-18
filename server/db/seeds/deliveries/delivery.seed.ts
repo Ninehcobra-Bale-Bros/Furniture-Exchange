@@ -1,22 +1,22 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { Logger } from '@nestjs/common';
-import revenues from './revenues.json';
-import { Revenue } from 'src/modules/revenues/entities/revenue.entity';
+import deliveries from './deliveries.json';
+import { Delivery } from 'src/modules/delivery/entities/delivery.entity';
 
-export default class RevenueSeeder implements Seeder {
+export default class DeliverySeeder implements Seeder {
   async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<void> {
-    const revenueRepository = dataSource.getRepository(Revenue);
+    const deliveryRepository = dataSource.getRepository(Delivery);
 
     const now = new Date();
 
-    Logger.warn('Seeding Revenue...');
+    Logger.warn('Seeding deliveries...');
 
-    for (const revenue of revenues) {
-      await revenueRepository.insert(revenue as unknown as Revenue);
+    for (const delivery of deliveries) {
+      await deliveryRepository.insert(delivery as unknown as Delivery);
     }
 
     const end = new Date();

@@ -197,6 +197,20 @@ export class ProductsService {
     return updated.affected ? true : false;
   }
 
+  async getProductOfSeller(user: User) {
+    const products = await this.productRepository
+      .findAll({
+        where: {
+          seller_id: user.id,
+        },
+      })
+      .then((products) => {
+        return products.map((product) => ProductDto.fromEntity(product));
+      });
+
+    return products;
+  }
+
   async writeToFile() {
     console.log('Write to file');
 

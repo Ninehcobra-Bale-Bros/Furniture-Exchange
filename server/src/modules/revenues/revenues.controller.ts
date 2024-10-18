@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { RevenuesService } from './revenues.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -7,6 +15,7 @@ import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { CreateRevenueDto } from './dtos/create-revenue.dto';
 import { Request } from 'express';
+import { GetRevenueChartDto } from './dtos/get-revenue-chart.dto';
 
 @Controller('revenues')
 @ApiTags('revenues')
@@ -15,15 +24,15 @@ import { Request } from 'express';
 export class RevenuesController {
   constructor(private readonly revenuesService: RevenuesService) {}
 
-  @Post()
-  @ApiOperation({
-    summary: 'Create a new revenue',
-    description: 'Create a new revenue',
-  })
-  @Roles(RoleEnum.ADMIN)
-  async createRevenue(@Body() dto: CreateRevenueDto) {
-    return await this.revenuesService.createRevenue(dto);
-  }
+  // @Post()
+  // @ApiOperation({
+  //   summary: 'Create a new revenue',
+  //   description: 'Create a new revenue',
+  // })
+  // @Roles(RoleEnum.ADMIN)
+  // async createRevenue(@Body() dto: CreateRevenueDto) {
+  //   return await this.revenuesService.createRevenue(dto);
+  // }
 
   @Get('seller')
   @ApiOperation({
@@ -35,14 +44,31 @@ export class RevenuesController {
     return await this.revenuesService.getSellerRevenue(req.user);
   }
 
+  @Get('seller/chart')
   @Get('admin')
+  @ApiOperation({
+    summary: '[SELLER] get revenues',
+    description: 'Get all revenues',
+  })
+  @Roles(RoleEnum.SELLER)
+  async getAdminRevenue(
+    @Query() queries: GetRevenueChartDto,
+    @Req() req: Request,
+  ) {
+    return await this.revenuesService.getSellerChart(queries, req.user);
+  }
+
+  @Get('admin/chart')
   @ApiOperation({
     summary: '[ADMIN] get revenues',
     description: 'Get all revenues',
   })
   @Roles(RoleEnum.ADMIN)
-  async getAdminRevenue(@Req() req: Request) {
-    return await this.revenuesService.getAdminRevenue(req.user);
+  async getAdminChart(
+    @Query() queries: GetRevenueChartDto,
+    @Req() req: Request,
+  ) {
+    return await this.revenuesService.getAdminChart(queries, req.user);
   }
 
   @Get('write-to-file')

@@ -19,20 +19,20 @@ export class QueryFilterBase {
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
-  @ApiProperty({
-    required: false,
-    example: '1',
-  })
+  // @ApiProperty({
+  //   required: false,
+  //   example: '1',
+  // })
   @Min(1)
   offset: number = 1;
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
-  @createApiPropertyDecorator({
-    required: false,
-    example: '5',
-  })
+  // @ApiProperty({
+  //   required: false,
+  //   example: '5',
+  // })
   @Min(1)
   limit: number = 5;
 

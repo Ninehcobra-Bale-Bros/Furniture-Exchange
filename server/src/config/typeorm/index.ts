@@ -4,10 +4,12 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import CategorySeeder from 'db/seeds/categories/category.seed';
 import ConversationSeeder from 'db/seeds/conversations/conversation.seed';
 import MessageSeeder from 'db/seeds/conversations/messages.seed';
+import DeliverySeeder from 'db/seeds/deliveries/delivery.seed';
 import DiscountSeeder from 'db/seeds/discounts/discount.seed';
 import AccountSeeder from 'db/seeds/payments/account.seed';
 import TransactionSeeder from 'db/seeds/payments/transaction.seed';
 import ProductSeeder from 'db/seeds/products/product.seed';
+import RevenueSeeder from 'db/seeds/revenues/revenue.seed';
 import UserSeeder from 'db/seeds/users/user.seed';
 import { POSTGRES_HOST } from 'src/environments';
 import { EnvVariables } from 'src/environments/env.interface';
@@ -32,6 +34,8 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
     MessageSeeder,
     AccountSeeder,
     TransactionSeeder,
+    DeliverySeeder,
+    RevenueSeeder,
   ],
   synchronize: false, // Ensure this is set to false in production
 };
@@ -56,7 +60,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
       migrations: ['dist/db/migrations/*{.ts,.js}'],
       autoLoadEntities: true,
       // synchronize: this.config.get('NODE_ENV') === 'development' ? true : false,
-      synchronize: true,
+      synchronize: false,
     };
   }
 }
