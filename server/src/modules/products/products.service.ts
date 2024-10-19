@@ -1,8 +1,3 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductRepository } from './repository/product.repository';
 import * as fs from 'fs';
@@ -17,6 +12,11 @@ import { CategoryDto } from '../categories/dto/category.dto';
 import { Product } from './entities/product.entity';
 import { Category } from '../categories/entities/category.entity';
 import { DiscountDto } from '../discounts/dto/discount.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 @Injectable()
 export class ProductsService {
@@ -161,6 +161,20 @@ export class ProductsService {
     });
 
     return ProductDto.fromEntity(product);
+  }
+
+  async findAllOfSeller(user: User) {
+    const products = await this.productRepository
+      .findAll({
+        where: {
+          seller_id: user.id,
+        },
+      })
+      .then((products) => {
+        return products.map((product) => ProductDto.fromEntity(product));
+      });
+
+    return products;
   }
 
   async isProductBelongToSeller(productId: number | string, sellerId: string) {

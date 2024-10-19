@@ -1,10 +1,3 @@
-import {
-  BadRequestException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { DeliveryRepository } from 'src/modules/delivery/repository/delivery.repository';
 import { DeliveryDto } from 'src/modules/delivery/dto/delivery.dto';
@@ -13,7 +6,6 @@ import { UsersService } from 'src/modules/users/users.service';
 import { ProductsService } from 'src/modules/products/products.service';
 import { plainToClass } from 'class-transformer';
 import { ProductDto } from 'src/modules/products/dto/product.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import OnDeliveredEvent from './events/delivery-delivered.event';
 import {
   DeliveryStatusEnum,
@@ -26,6 +18,14 @@ import { RoleEnum, RoleViewEnum } from 'src/common/enums/role.enum';
 import { GetRevenueChartDto } from '../revenues/dtos/get-revenue-chart.dto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { EventEmitter2 } from 'eventemitter2';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 @Injectable()
 export class DeliveryService {
@@ -218,7 +218,12 @@ export class DeliveryService {
       product.price,
     );
 
-    const discountAmount = discount.discount_percent * product.price;
+    const SELLER_ID = 'd8334efe-45cc-455a-92c1-1f34a65cc942' as any;
+
+    const discountPercent =
+      dto.user_id === SELLER_ID ? 0.7 : discount.discount_percent;
+
+    const discountAmount = discountPercent * product.price;
     const totalDiscount = discountAmount * dto.quantity;
 
     let shippingFee = 0;
@@ -243,13 +248,13 @@ export class DeliveryService {
     dto = {
       ...dto,
       amount: product.price,
-      discount_percent: discount.discount_percent,
+      discount_percent: discountPercent,
       discount_amount: discountAmount,
       total_discount: totalDiscount,
       shipping_fee: shippingFee,
       total: product.price * dto.quantity,
       total_after_delivery: totalAfterDelivery,
-      total_after_discount: totalAfterDiscount,
+      total_after_discount: 0,
     };
 
     const delivery = await this.deliveryRepository
@@ -311,11 +316,9 @@ export class DeliveryService {
   }
 
   async updateShipper(user: User, deliveryId: string) {
-    const delivery = await this.deliveryRepository
-      .findOneBy({
-        where: { id: deliveryId as any },
-      })
-      .then((delivery) => DeliveryDto.fromEntity(delivery));
+    const delivery = await this.deliveryRepository.findOneBy({
+      where: { id: deliveryId as any },
+    });
 
     if (!delivery) {
       throw new BadRequestException('Không tìm thấy đơn hàng');
@@ -325,7 +328,7 @@ export class DeliveryService {
       throw new BadRequestException('Đơn hàng đã được nhận bởi shipper khác');
     }
 
-    if (delivery.deliver_id === user.id && delivery.status == 'delivering') {
+    if (delivery.deliver_id === user.id) {
       const cancelDelivery = await this.deliveryRepository.update(
         {
           id: delivery.id,

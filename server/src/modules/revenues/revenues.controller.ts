@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { RevenuesService } from './revenues.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -44,6 +36,16 @@ export class RevenuesController {
     return await this.revenuesService.getSellerRevenue(req.user);
   }
 
+  @Get('admin')
+  @ApiOperation({
+    summary: '[ADMIN] get revenues',
+    description: 'Get revenues',
+  })
+  @Roles(RoleEnum.ADMIN)
+  async getAdminRevenue(@Req() req: Request) {
+    return await this.revenuesService.getAdminRevenue(req.user);
+  }
+
   @Get('seller/chart')
   @Get('admin')
   @ApiOperation({
@@ -51,7 +53,7 @@ export class RevenuesController {
     description: 'Get all revenues',
   })
   @Roles(RoleEnum.SELLER)
-  async getAdminRevenue(
+  async getAdminRevenueChart(
     @Query() queries: GetRevenueChartDto,
     @Req() req: Request,
   ) {
@@ -71,13 +73,13 @@ export class RevenuesController {
     return await this.revenuesService.getAdminChart(queries, req.user);
   }
 
-  // @Get('write-to-file')
-  // @ApiOperation({
-  //   summary: 'Write to file',
-  //   description: 'Write to file',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // async writeToFile() {
-  //   return await this.revenuesService.writeToFile();
-  // }
+  @Get('write-to-file')
+  @ApiOperation({
+    summary: 'Write to file',
+    description: 'Write to file',
+  })
+  @Roles(RoleEnum.ADMIN)
+  async writeToFile() {
+    return await this.revenuesService.writeToFile();
+  }
 }

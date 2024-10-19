@@ -29,12 +29,21 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
     let QueryBuilder = this.deliveryRepository
       .createQueryBuilder('delivery')
       .leftJoin('delivery.product', 'product')
+      .leftJoin('delivery.user', 'user')
       .addSelect([
         'product.name', // Select only the 'name' field
         'product.price', // Example: selecting 'price' field
         'product.image_urls', // Example: selecting 'image_urls' field
         'product.id', // Example: selecting 'id' field
         'product.kilogram',
+        'product.quantity',
+        'user.first_name',
+        'user.last_name',
+        'user.email',
+        'user.phone_number',
+        'user.id',
+        'user.address_line1',
+        'user.address_line2',
       ]);
 
     if (query.status) {
@@ -99,7 +108,7 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
       .createQueryBuilder('delivery')
       .select("TO_CHAR(delivery.created_at, 'YYYY-MM')", 'month') // Group by month
       .addSelect(
-        `SUM(${seller_id ? 'delivery.total' : 'delivery.total_after_discount'})`,
+        `SUM(${seller_id ? 'delivery.total' : 'delivery.total_discount'})`,
         'totalRevenue',
       ) // Sum total_after_discount for revenue
       .addSelect('SUM(delivery.quantity)', 'totalQuantity') // Sum the quantity for total items
@@ -128,7 +137,7 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
       .createQueryBuilder('delivery')
       .select("TO_CHAR(delivery.created_at, 'YYYY-MM')", 'month') // Group by month
       .addSelect(
-        `SUM(${seller_id ? 'delivery.total' : 'delivery.total_after_discount'})`,
+        `SUM(${seller_id ? 'delivery.total' : 'delivery.total_discount'})`,
         'totalRevenue',
       ) // Sum total_after_discount for revenue
       .addSelect('SUM(delivery.quantity)', 'totalQuantity') // Sum the quantity for total items

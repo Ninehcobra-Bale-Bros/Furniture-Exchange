@@ -119,12 +119,12 @@ export class DeliveryController {
     return this.deliveryService.create(req.user, createDeliveryDto);
   }
 
-  // @Get('write-to-file')
-  // @Roles(RoleEnum.ADMIN)
-  // @ApiOperation({
-  //   summary: 'Write to file',
-  // })
-  // async writeToFile() {
-  //   return await this.deliveryService.writeToFile();
-  // }
+  @Get('write-to-file')
+  @Roles(RoleEnum.ADMIN)
+  @ApiOperation({
+    summary: 'Write to file',
+  })
+  async writeToFile() {
+    return await this.deliveryService.writeToFile();
+  }
 }

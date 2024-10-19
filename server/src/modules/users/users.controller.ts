@@ -42,12 +42,12 @@ export class UsersController {
     return await this.usersService.registerSelling(req.user, body);
   }
 
-  // @Get('write-to-file')
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // async writeToFile() {
-  //   return await this.usersService.findAllAndWriteToFile();
-  // }
+  @Get('write-to-file')
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  async writeToFile() {
+    return await this.usersService.findAllAndWriteToFile();
+  }
 }

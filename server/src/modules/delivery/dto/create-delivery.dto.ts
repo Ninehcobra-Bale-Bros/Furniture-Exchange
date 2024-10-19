@@ -1,9 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNumber, IsPhoneNumber } from 'class-validator';
 import { UUID } from 'crypto';
-import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import { ApiProperty } from '@nestjs/swagger';
 import { DeliveryDto } from 'src/modules/delivery/dto/delivery.dto';
 
 export class CreateDeliveryDto extends PartialType(DeliveryDto) {

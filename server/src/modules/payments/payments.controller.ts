@@ -1,7 +1,6 @@
 import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateAccountDto } from './dto/create-account.dto';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -63,12 +62,12 @@ export class PaymentsController {
     return this.paymentsService.deposit(req.user, req.ip, dto);
   }
 
-  // @Get('account/write-to-file')
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // async writeAccountToFile() {
-  //   return await this.paymentsService.writeAccountToFile();
-  // }
+  @Get('account/write-to-file')
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  async writeAccountToFile() {
+    return await this.paymentsService.writeAccountToFile();
+  }
 }

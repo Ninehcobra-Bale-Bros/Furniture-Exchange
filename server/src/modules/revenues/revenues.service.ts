@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateRevenueDto } from './dtos/create-revenue.dto';
+import { OnEvent } from '@nestjs/event-emitter';
 import { RevenueDto } from './dtos/revenue.dto';
 import { Delivery } from '../delivery/entities/delivery.entity';
 import { User } from '../users/entities/user.entity';
@@ -13,7 +14,6 @@ import * as path from 'path';
 import { RevenueRepository } from './repository/revenue.repository';
 import { PaymentsService } from '../payments/payments.service';
 import { ProductsService } from '../products/products.service';
-import { OnEvent } from '@nestjs/event-emitter';
 import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
 import OnDeliveringEvent from '../delivery/events/delivery-delivering.event';
 import OnDeliveredEvent from '../delivery/events/delivery-delivered.event';
@@ -75,6 +75,8 @@ export class RevenuesService {
   }
 
   async updateRevenueAdmin(delivery: DeliveryDto) {
+    const SELLER_ID = 'd8334efe-45cc-455a-92c1-1f34a65cc942' as any;
+
     const product = await this.productsService.findById(
       delivery.product_id.toString(),
     );
@@ -102,11 +104,14 @@ export class RevenuesService {
     }
 
     let totalRevenue =
-      (Number(product.price) +
-        Number(product.price) * discount.discount_percent) *
+      Number(product.price) *
+      (delivery.user_id === SELLER_ID ? 0.7 : discount.discount_percent) *
       delivery.quantity;
 
-    let profit = product.price * discount.discount_percent * delivery.quantity;
+    let profit =
+      product.price *
+      (delivery.user_id === SELLER_ID ? 0.7 : discount.discount_percent) *
+      delivery.quantity;
 
     this.revenueRepository.update(adminRevenue.id as any, {
       total_revenue: Number(adminRevenue.total_revenue) + Number(totalRevenue),

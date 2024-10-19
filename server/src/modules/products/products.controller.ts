@@ -87,25 +87,25 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
-  // @Get('write-to-file')
-  // @ApiBearerAuth()
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // writeToFile() {
-  //   return this.productsService.writeToFile();
-  // }
+  @Get('seller')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[SELLER] Get all products of a seller',
+  })
+  @Roles(RoleEnum.SELLER)
+  findAllBySeller(@Req() req: Request) {
+    return this.productsService.findAllOfSeller(req.user);
+  }
 
-  // @Get('write-to-file')
-  // @ApiBearerAuth()
-  // @ApiOperation({
-  //   summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
-  // })
-  // @Roles(RoleEnum.ADMIN)
-  // writeToFile() {
-  //   return this.productsService.writeToFile();
-  // }
+  @Get('write-to-file')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[ADMIN] DO NOT USE THIS ENDPOINT',
+  })
+  @Roles(RoleEnum.ADMIN)
+  writeToFile() {
+    return this.productsService.writeToFile();
+  }
 
   @Get(':slug')
   @Public()
