@@ -136,8 +136,8 @@
     "deleted_at": null,
     "id": 3,
     "account_id": "1a645d3f-ca0c-4929-8d40-148dee0e877a",
-    "total_revenue": 5000000,
-    "total_sales": 1,
+    "total_revenue": 0,
+    "total_sales": 0,
     "profit": 0,
     "active": true,
     "updated_at": "2024-10-18 15:44:07.327723+00"
@@ -147,9 +147,9 @@
     "deleted_at": null,
     "id": 1,
     "account_id": "cfb77620-51eb-4c75-a857-5f9c4208cc03",
-    "total_revenue": 6600000,
-    "total_sales": 1,
-    "profit": 1600000,
+    "total_revenue": 0,
+    "total_sales": 0,
+    "profit": 0,
     "active": true,
     "updated_at": "2024-10-18 16:44:20.706607+00"
   }
