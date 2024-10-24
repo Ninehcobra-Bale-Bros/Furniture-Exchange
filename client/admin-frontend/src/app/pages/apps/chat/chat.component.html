@@ -1,0 +1,225 @@
+<mat-card class="mat-card-top chat-app cardWithShadow m-b-0">
+  <mat-sidenav-container
+    [ngClass]="{
+      'side-panel-opened': sidePanelOpened,
+      'side-panel-closed': !sidePanelOpened
+    }"
+  >
+    <!-- ---------------------------------------------------- -->
+    <!-- sidebar -->
+    <!-- ---------------------------------------------------- -->
+    <mat-sidenav
+      #chatnav
+      [mode]="isOver() ? 'over' : 'side'"
+      [opened]="!isOver()"
+      (open)="sidePanelOpened = true"
+      (close)="sidePanelOpened = false"
+      class="w-100"
+    >
+      <ng-scrollbar class="position-relative" style="height: 100%">
+        <div class="d-flex align-items-center p-24 w-100">
+          <img
+            src="{{ user.image_url }}"
+            class="rounded-circle"
+            width="54"
+            height="54"
+          />
+
+          <div class="m-l-16">
+            <h4 class="mat-subtitle-1 f-s-16 f-w-600">
+              {{ user.last_name + " " + user.first_name }}
+            </h4>
+            <span class="f-s-12">
+              {{ user.email }}
+            </span>
+          </div>
+        </div>
+
+        <div class="p-x-24">
+          <!-- search -->
+          <mat-form-field appearance="outline">
+            <input matInput placeholder="Tìm liên hệ" />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
+          <!-- dropdown -->
+          <button mat-button [matMenuTriggerFor]="menu">
+            <div class="d-flex align-items-center">
+              Trò chuyện gần đây
+              <i-tabler name="chevron-down" class="icon-20 m-l-4"></i-tabler>
+            </div>
+          </button>
+          <mat-menu #menu="matMenu" class="cardWithShadow">
+            <button mat-menu-item>
+              <span>Sắp xếp theo thời gian</span>
+            </button>
+            <button mat-menu-item>
+              <span>Sắp xếp theo Chưa đọc</span>
+            </button>
+            <button mat-menu-item>
+              <span>Đánh dấu là tất cả Đã đọc</span>
+            </button>
+          </mat-menu>
+        </div>
+
+        <mat-nav-list class="chat-listing">
+          @for(conversation of conversations; track conversation.user.id) {
+          <mat-list-item
+            [class.bg-light-primary]="true"
+            (click)="onSelect(conversation)"
+            role="listitem"
+            lines="2"
+            style="max-width: 322px"
+          >
+            <div
+              class="d-flex align-items-center p-x-16 p-b-4 h-100"
+              matListItemTitle
+            >
+              <img
+                src="{{ conversation.user.image_url }}"
+                alt=""
+                width="42"
+                height="42"
+                class="rounded-circle"
+              />
+              <div class="m-l-16">
+                <h3 class="f-w-600 mat-subtitle-1 f-s-16 lh-sm">
+                  {{
+                    conversation.user.last_name +
+                      " " +
+                      conversation.user.first_name
+                  }}
+                </h3>
+                <p class="f-s-14 m-t-4 m-b-0 overflow-hidden">
+                  {{ conversation.last_message.content }}
+                </p>
+              </div>
+            </div>
+          </mat-list-item>
+          }
+        </mat-nav-list>
+      </ng-scrollbar>
+    </mat-sidenav>
+    <!-- ------------------------------------------- -->
+    <!-- details -->
+    <!-- ------------------------------------------- -->
+    <mat-toolbar
+      class="no-shadow chat-right-panel bg-white d-flex align-items-center p-y-8 b-b-1"
+    >
+      <button (click)="chatnav.toggle()" class="m-r-10" mat-icon-button>
+        <mat-icon>short_text</mat-icon>
+      </button>
+      <div class="d-flex align-items-center">
+        <img
+          [src]="selectedConversation.data?.user?.image_url"
+          width="40"
+          height="40"
+          class="rounded-circle"
+        />
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-b-0 m-l-16">
+          {{
+            (selectedConversation.info?.user?.last_name || "") +
+              " " +
+              (selectedConversation.info?.user?.first_name || "")
+          }}
+        </div>
+      </div>
+      <button [matMenuTriggerFor]="moredd" class="m-l-auto" mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #moredd="matMenu" x-position="before" class="cardWithShadow">
+        <button mat-menu-item>Thông tin</button>
+        <button mat-menu-item>Tắt tiếng</button>
+        <button mat-menu-item>Xóa cuộc hội thoại</button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <!-- ------------------------------------------- -->
+    <!-- chat content -->
+    <!-- ------------------------------------------- -->
+
+    <div>
+      <div
+        #chatContainer
+        style="height: calc(100vh - 390px); overflow-y: scroll"
+        class="position-relative"
+      >
+        <mat-card-content class="chat-middle-box p-24 chat-container">
+          <ng-container
+            *ngIf="selectedConversation?.data?.messages ?? [] as items"
+          >
+            <ng-container *ngIf="items.length > 0">
+              @for(chat of items.slice(); track chat.id) {
+              <ng-template
+                [ngIf]="chat.sender_id !== user.id"
+                [ngIfElse]="evenblock"
+              >
+                <div class="chat-list odd">
+                  <div class="chat-message m-b-15">
+                    <div
+                      class="chat-block bg-light-primary p-10 rounded d-flex align-items-center"
+                    >
+                      <span>
+                        <img
+                          src="{{ selectedConversation.data?.user?.image_url }}"
+                          class="rounded-circle"
+                          width="40"
+                          height="40"
+                        />
+                      </span>
+                      <span
+                        class="m-l-16 mat-subheading-1 m-b-0 f-w-400 lh-md"
+                        >{{ chat.content }}</span
+                      >
+                    </div>
+                    <p class="chat-date text-muted mat-h5 m-0">
+                      {{ DateFormat(chat.created_at) }}
+                    </p>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #evenblock>
+                <div class="chat-list even">
+                  <div class="chat-message m-b-15">
+                    <div
+                      class="chat-block bg-light-accent lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0"
+                    >
+                      {{ chat.content }}
+                    </div>
+                    <p class="chat-date text-muted mat-h5 m-0">
+                      {{ DateFormat(chat.created_at) }}
+                    </p>
+                  </div>
+                </div>
+              </ng-template>
+              }
+            </ng-container>
+          </ng-container>
+        </mat-card-content>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="p-t-20 p-l-30 p-r-30">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Message</mat-label>
+          <input
+            matInput
+            placeholder="Send message"
+            [(ngModel)]="msg"
+            #myInput
+            (keyup.enter)="OnAddMsg()"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            color="primary"
+            (click)="OnAddMsg()"
+            [disabled]="!msg"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-sidenav-container>
+</mat-card>

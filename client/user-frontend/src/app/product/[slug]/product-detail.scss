@@ -1,0 +1,144 @@
+@import '../../../common/styles/common/common';
+
+.detail-container {
+  margin-bottom: 20px;
+}
+
+.ads-container {
+  height: 250px;
+  object-fit: cover;
+}
+
+.product-image {
+  height: 412px !important;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.product-image-slider {
+  height: 104px !important;
+  width: 104px !important;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.slider-button {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 7px;
+  margin-left: 4px;
+
+  &:last-child {
+    margin-left: 0px;
+    margin-right: 4px;
+  }
+}
+
+.product-description {
+  background-color: white;
+  border-radius: 7px;
+}
+
+.text-description {
+  text-align: justify;
+}
+.btn-more {
+  border: 1px solid $neutralColorDark_5;
+  cursor: pointer;
+  border-radius: 7px;
+  &:hover {
+    background-color: $neutralColorDark_5;
+  }
+}
+
+.description-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--max-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-info {
+  background-color: $neutralColorLight_5;
+  border-radius: 7px;
+}
+
+.category-text {
+  color: $neutralColorDark_5;
+}
+
+.dashed-text {
+  border-bottom: 1px dashed $neutralColorDark_5;
+}
+
+.btn-link {
+  z-index: 9;
+  background-color: $neutralColorLight_5 !important;
+  height: 35px;
+  width: 35px;
+  border-radius: 50% !important;
+  text-decoration: none !important;
+}
+
+.btn-contact {
+  background-color: $highlightColor_1;
+  color: $neutralColorLight_5;
+  border-radius: 7px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:last-child {
+    background-color: $neutralColorLight_5;
+    color: $highlightColor_1;
+    border: 1px solid $highlightColor_1;
+  }
+}
+
+.sample-chat {
+  background-color: #f4f4f4;
+  border-radius: 20px;
+  cursor: pointer;
+  &:hover {
+    background-color: $neutralColorDark_5;
+  }
+}
+
+.same-product-image {
+  height: 175px;
+  object-fit: cover;
+}
+
+.product-same-card {
+  cursor: pointer;
+  height: 316px;
+  border-top: 1px solid #f4f4f4;
+  border-left: 1px solid #f4f4f4;
+  border-bottom: 1px solid #f4f4f4;
+
+  &:last-child {
+    border-right: 1px solid #f4f4f4;
+  }
+
+  &:hover {
+    border: 1px solid $neutralColorDark_5;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.product-same {
+  margin-bottom: 60px; // Adjust this value as needed
+}
+
+.state-badge {
+  background-color: $warningColor_1;
+}
