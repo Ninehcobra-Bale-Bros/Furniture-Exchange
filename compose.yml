@@ -49,11 +49,13 @@ services:
     container_name: "furniture-fe-user"
     build:
       context: ./client/user-frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.test
     ports:
       - "3000:3000"
     expose:
       - 3000
+    depends_on:
+      - backend
 
   nginx:
     container_name: furniture-nginx
