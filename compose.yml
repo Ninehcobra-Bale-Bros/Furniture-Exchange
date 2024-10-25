@@ -44,12 +44,14 @@ services:
     depends_on:
       - redis
       - postgres
+    expose:
+      - 3001
 
   fe-user:
     container_name: "furniture-fe-user"
     build:
       context: ./client/user-frontend
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     expose:
