@@ -7,12 +7,15 @@ import Link from 'next/link'
 import { useGetUserProfileQuery } from '@/services/user.service'
 import { useCookies } from 'react-cookie'
 import { ReactNode, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Dropdown, Menu } from 'antd'
+import { removeCookieFromClient } from '@/types/cookie'
 
 export default function Header(): ReactNode {
   const [cookies] = useCookies(['access-token'])
   const accessToken = cookies['access-token']
+
+  const router = useRouter()
 
   const pathname = usePathname()
 
@@ -35,7 +38,11 @@ export default function Header(): ReactNode {
     return <div>Loading...</div>
   }
 
-  const handleLogout = (): void => {}
+  const handleLogout = (): void => {
+    removeCookieFromClient('access-token')
+    removeCookieFromClient('refresh-token')
+    router.push('/sign-in')
+  }
 
   const menu = (
     <Menu>
@@ -102,7 +109,7 @@ export default function Header(): ReactNode {
         <div className='search-bar-wrapper mt-3'>
           <div className='row align-items-center'>
             <div className='col-md-1 logo-btn'>
-              <Link href={'/'}>
+              <Link href={'/home'}>
                 <img src='/images/logo-light.png' alt='Logo' height={70} />
               </Link>
             </div>

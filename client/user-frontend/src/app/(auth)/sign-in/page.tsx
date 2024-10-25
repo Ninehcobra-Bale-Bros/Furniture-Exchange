@@ -74,13 +74,7 @@ export default function SignIn(): React.ReactNode {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         })
 
-        setCookie('refresh-token', loginData.refreshToken, {
-          path: '/',
-          sameSite: 'strict',
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        })
-
-        router.push('/home')
+        router.replace('/home')
       } else if (loginData?.message && loginData?.url) {
         toastService.error(loginData.message)
         router.push(loginData.url)
@@ -91,7 +85,8 @@ export default function SignIn(): React.ReactNode {
     if (isLoginError && loginError) {
       handleErrorService.handleHttpError(loginError as IErrorResponse)
     }
-  }, [isLoginError, isLoginSuccess, loginData, loginError, router, toastService, handleErrorService])
+  }, [isLoginError, isLoginSuccess, loginData, loginError])
+
   const randomString = (): string => Math.random().toString(36).substring(7)
 
   return (
