@@ -16,6 +16,11 @@ import { AppTopProjectsComponent } from '../../../components/dashboard1/top-proj
 import { AppProjectsComponent } from '../../../components/dashboard1/projects/projects.component';
 import { RevenueService } from 'src/app/services/revenue.service';
 import { IChartRevenue, ITotalRevenue } from 'src/app/models/revenue.model';
+import { Observable } from 'rxjs';
+import { IUser } from 'src/app/models/user.model';
+import { UserService } from 'src/app/services/user.service';
+import { IAdminDashboard } from 'src/app/models/admin.model.';
+import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
   selector: 'app-dashboard1',
@@ -38,8 +43,12 @@ import { IChartRevenue, ITotalRevenue } from 'src/app/models/revenue.model';
   templateUrl: './dashboard1.component.html',
 })
 export class AppDashboard1Component implements OnInit {
+  user: Observable<IUser | null>;
+
   totalRevenue: ITotalRevenue;
   chartRevenue: IChartRevenue[];
+
+  adminDashboardData: IAdminDashboard | null = null;
 
   topCardsData: any;
   revenueUpdatesData: any;
@@ -53,24 +62,54 @@ export class AppDashboard1Component implements OnInit {
   weeklyStatsData: any;
   topProjectsData: any;
 
-  constructor(private revenueService: RevenueService) {}
-
-  ngOnInit(): void {
-    this.fetchRevenueData();
+  constructor(
+    private revenueService: RevenueService,
+    private userService: UserService,
+    private adminService: AdminService
+  ) {
+    this.user = this.userService.user$;
   }
 
-  fetchRevenueData() {
+  ngOnInit(): void {
+    this.user.subscribe((user) => {
+      if (user) {
+        if (user.role === 'seller') {
+          this.fetchSellerRevenueData();
+        } else if (user.role === 'admin') {
+          this.fetchAdminRevenueData();
+        }
+      }
+    });
+  }
+
+  fetchSellerRevenueData() {
     this.revenueService.getSellerReevenue().subscribe((data: ITotalRevenue) => {
       this.totalRevenue = data;
       this.updateTopCards();
     });
-
     this.revenueService
       .getSellerChartRevenue()
       .subscribe((data: IChartRevenue[]) => {
         this.chartRevenue = data;
         this.updateCharts();
       });
+  }
+
+  fetchAdminRevenueData() {
+    this.revenueService.getAdminRevenue().subscribe((data: ITotalRevenue) => {
+      this.totalRevenue = data;
+      this.updateTopCards();
+    });
+    this.revenueService
+      .getAdminChartRevenue()
+      .subscribe((data: IChartRevenue[]) => {
+        this.chartRevenue = data;
+        this.updateCharts();
+      });
+    this.adminService.getAdminDashboard().subscribe((data: IAdminDashboard) => {
+      this.adminDashboardData = data;
+      this.updateTopCards();
+    });
   }
 
   updateTopCards() {

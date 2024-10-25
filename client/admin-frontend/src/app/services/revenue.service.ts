@@ -17,4 +17,12 @@ export class RevenueService extends BaseService {
   getSellerChartRevenue(): Observable<IChartRevenue[]> {
     return this.get(`${this.url}/seller/chart`);
   }
+
+  getAdminRevenue(): Observable<ITotalRevenue> {
+    return this.get(`${this.url}/admin`);
+  }
+
+  getAdminChartRevenue(): Observable<IChartRevenue[]> {
+    return this.get(`${this.url}/admin/chart`);
+  }
 }
