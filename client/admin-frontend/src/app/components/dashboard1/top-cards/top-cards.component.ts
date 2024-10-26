@@ -56,7 +56,7 @@ export class AppTopCardsComponent implements OnChanges {
       id: 5,
       color: 'success',
       img: '/assets/images/svgs/icon-speech-bubble.svg',
-      title: 'Danh thu',
+      title: 'Doanh thu',
       subtitle: '0',
     },
     {

@@ -19,6 +19,7 @@ import { AppInvoiceViewComponent } from './invoice/invoice-view/invoice-view.com
 import { AppEditInvoiceComponent } from './invoice/edit-invoice/edit-invoice.component';
 import { AppBlogsComponent } from './blogs/blogs.component';
 import { AppBlogDetailsComponent } from './blogs/details/details.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
 
 export const AppsRoutes: Routes = [
   {
@@ -206,12 +207,14 @@ export const AppsRoutes: Routes = [
       {
         path: 'addInvoice',
         component: AppAddInvoiceComponent,
+        canActivate: [AuthGuard],
         data: {
           title: 'Tạo đơn hàng',
           urls: [
             { title: 'Trang chủ', url: '/dashboards/dashboard1' },
             { title: 'Tạo đơn hàng' },
           ],
+          roles: ['admin', 'manager', 'deliver'],
         },
       },
       {
