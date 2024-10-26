@@ -1,5 +1,5 @@
 # Stage 1: Build the Angular application
-FROM node:14 AS build
+FROM node:20 AS build
 
 # Set the working directory
 WORKDIR /app
@@ -32,6 +32,8 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
 # lệnh chạy docker
-# docker build -t your-angular-app .
-# docker run -d -p 80:80 your-angular-app
+# docker build -t admin-frontend .
+
+# docker run -d -p 80:80 admin-frontend
+
 
