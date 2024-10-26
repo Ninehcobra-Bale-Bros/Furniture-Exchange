@@ -19,7 +19,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/pages.module').then((m) => m.PagesModule),
         canActivate: [AuthGuard],
-        data: { roles: ['admin', 'seller'] },
+        data: { roles: ['admin', 'seller', 'deliver'] },
       },
       {
         path: 'dashboards',
@@ -58,7 +58,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/apps/apps.module').then((m) => m.AppsModule),
         canActivate: [AuthGuard],
-        data: { roles: ['admin', 'seller'] },
+        data: { roles: ['admin', 'seller', 'deliver'] },
       },
       {
         path: 'widgets',
