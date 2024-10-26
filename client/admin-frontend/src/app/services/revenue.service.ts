@@ -15,7 +15,9 @@ export class RevenueService extends BaseService {
   }
 
   getSellerChartRevenue(): Observable<IChartRevenue[]> {
-    return this.get(`${this.url}/seller/chart`);
+    return this.get(
+      `${this.url}/seller/chart?year=2024&month_from=01&month_to=12`
+    );
   }
 
   getAdminRevenue(): Observable<ITotalRevenue> {
@@ -23,6 +25,8 @@ export class RevenueService extends BaseService {
   }
 
   getAdminChartRevenue(): Observable<IChartRevenue[]> {
-    return this.get(`${this.url}/admin/chart`);
+    return this.get(
+      `${this.url}/admin/chart?year=2024&month_from=01&month_to=12`
+    );
   }
 }

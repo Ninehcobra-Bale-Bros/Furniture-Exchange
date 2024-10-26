@@ -22,6 +22,23 @@ import { UserService } from 'src/app/services/user.service';
 import { IAdminDashboard } from 'src/app/models/admin.model.';
 import { AdminService } from 'src/app/services/admin.service';
 import { CommonModule } from '@angular/common';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexFill,
+  ApexGrid,
+  ApexMarkers,
+  ApexPlotOptions,
+  ApexStroke,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+  NgApexchartsModule,
+} from 'ng-apexcharts';
+import { AppGredientChartComponent } from '../../charts/gredient/gredient.component';
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-dashboard1',
@@ -41,14 +58,30 @@ import { CommonModule } from '@angular/common';
     AppWeeklyStatsComponent,
     AppTopProjectsComponent,
     AppProjectsComponent,
+    AppGredientChartComponent,
+    NgApexchartsModule,
+    MaterialModule,
   ],
   templateUrl: './dashboard1.component.html',
 })
 export class AppDashboard1Component implements OnInit {
   user: Observable<IUser | null>;
 
+  public chartOptions: {
+    series: ApexAxisChartSeries;
+    chart: ApexChart;
+    xaxis: ApexXAxis;
+    yaxis: ApexYAxis;
+    title: ApexTitleSubtitle;
+    dataLabels: ApexDataLabels;
+    stroke: ApexStroke;
+    grid: ApexGrid;
+    fill: ApexFill;
+  };
+
   totalRevenue: ITotalRevenue;
   chartRevenue: IChartRevenue[];
+  monthlyCosts: number[] = [];
 
   adminDashboardData: IAdminDashboard | null = null;
 
@@ -70,6 +103,75 @@ export class AppDashboard1Component implements OnInit {
     private adminService: AdminService
   ) {
     this.user = this.userService.user$;
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Tổng doanh thu',
+          data: [],
+        },
+      ],
+      chart: {
+        height: 350,
+        type: 'line',
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        foreColor: '#adb0bb',
+        toolbar: {
+          show: false,
+        },
+        dropShadow: {
+          enabled: true,
+          color: 'rgba(0,0,0,0.2)',
+          top: 12,
+          left: 4,
+          blur: 3,
+          opacity: 0.4,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        width: 7,
+        curve: 'smooth',
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark',
+          gradientToColors: ['#5D87FF'],
+          shadeIntensity: 1,
+          type: 'horizontal',
+          opacityFrom: 1,
+          opacityTo: 0.9,
+          stops: [0, 100, 100, 100],
+        },
+      },
+      title: {
+        text: 'Doanh thu theo tháng',
+        align: 'left',
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'],
+          opacity: 0.5,
+        },
+      },
+      xaxis: {
+        categories: [],
+        labels: {
+          formatter: function (value: string) {
+            return 'Tháng ' + value;
+          },
+        }, // Initialize with empty categories
+      },
+      yaxis: {
+        labels: {
+          formatter: function (value: number) {
+            return value.toLocaleString() + ' VNĐ';
+          },
+        },
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -83,6 +185,18 @@ export class AppDashboard1Component implements OnInit {
       }
     });
   }
+  gredientChartOptions: {
+    series: ApexAxisChartSeries;
+    chart: ApexChart;
+    xaxis: ApexXAxis;
+    stroke: ApexStroke;
+    fill: ApexFill;
+    markers: ApexMarkers;
+    yaxis: ApexYAxis;
+    plotOptions: ApexPlotOptions;
+    tooltip: ApexTooltip;
+    grid: ApexGrid;
+  };
 
   fetchSellerRevenueData() {
     this.revenueService.getSellerReevenue().subscribe((data: ITotalRevenue) => {
@@ -93,7 +207,18 @@ export class AppDashboard1Component implements OnInit {
       .getSellerChartRevenue()
       .subscribe((data: IChartRevenue[]) => {
         this.chartRevenue = data;
-        this.updateCharts();
+        const categories = data.map((item) => `Tháng ${item.month}`);
+        const seriesData = data.map((item) => item.totalRevenue);
+
+        this.chartOptions.series = [
+          {
+            name: 'Tổng doanh thu',
+            data: seriesData,
+          },
+        ];
+        this.chartOptions.xaxis.categories = categories;
+
+        this.monthlyCosts = data.map((item) => item.totalRevenue * 0.15);
       });
   }
 
@@ -106,7 +231,18 @@ export class AppDashboard1Component implements OnInit {
       .getAdminChartRevenue()
       .subscribe((data: IChartRevenue[]) => {
         this.chartRevenue = data;
-        this.updateCharts();
+        const categories = data.map((item) => `Tháng ${item.month}`);
+        const seriesData = data.map((item) => item.totalRevenue);
+
+        this.chartOptions.series = [
+          {
+            name: 'Tổng doanh thu',
+            data: seriesData,
+          },
+        ];
+        this.chartOptions.xaxis.categories = categories;
+
+        this.monthlyCosts = data.map((item) => item.totalRevenue * 0.15);
       });
     this.adminService.getAdminDashboard().subscribe((data: IAdminDashboard) => {
       this.adminDashboardData = data;
@@ -122,46 +258,5 @@ export class AppDashboard1Component implements OnInit {
         this.totalRevenue.total_revenue / this.totalRevenue.total_sales,
       conversionRate: 3.5, // Fake data
     };
-  }
-
-  updateCharts() {
-    this.revenueUpdatesData = this.chartRevenue.map((item) => ({
-      month: item.month,
-      revenue: item.total_revenue,
-      sales: item.totalQuantity,
-    }));
-
-    this.yearlyBreakupData = this.chartRevenue.reduce((acc: number[], item) => {
-      acc.push(item.total_revenue);
-      return acc;
-    }, []);
-
-    this.monthlyEarningsData = this.chartRevenue.map((item) => ({
-      month: item.month,
-      earnings: item.total_revenue,
-    }));
-
-    // Fake data for other charts
-    this.employeeSalaryData = [
-      /* Fake employee salary data */
-    ];
-    this.customersData = [
-      /* Fake customers data */
-    ];
-    this.projectsData = [
-      /* Fake projects data */
-    ];
-    this.socialCardData = [
-      /* Fake social card data */
-    ];
-    this.sellingProductData = [
-      /* Fake selling product data */
-    ];
-    this.weeklyStatsData = [
-      /* Fake weekly stats data */
-    ];
-    this.topProjectsData = [
-      /* Fake top projects data */
-    ];
   }
 }

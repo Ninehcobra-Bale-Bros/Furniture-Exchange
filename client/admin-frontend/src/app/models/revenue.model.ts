@@ -6,7 +6,8 @@ export interface ITotalRevenue {
 }
 
 export interface IChartRevenue {
+  value: number;
   month: string;
-  total_revenue: number;
+  totalRevenue: number;
   totalQuantity: number;
 }

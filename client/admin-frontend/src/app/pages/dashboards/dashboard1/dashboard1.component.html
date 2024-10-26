@@ -3,7 +3,22 @@
   [adminDashboard]="adminDashboardData"
   [user]="user | async"
 ></app-top-cards>
-
+<div
+  class="cardWithShadow"
+  style="padding: 12px; margin-bottom: 12px"
+  id="chart"
+>
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis"
+    [yaxis]="chartOptions.yaxis"
+    [title]="chartOptions.title"
+    [dataLabels]="chartOptions.dataLabels"
+    [stroke]="chartOptions.stroke"
+    [grid]="chartOptions.grid"
+  ></apx-chart>
+</div>
 <div class="row">
   <div class="col-lg-8">
     <app-revenue-updates></app-revenue-updates>
