@@ -167,6 +167,8 @@ export class ChatbotDialogContentComponent implements OnInit {
     public dialogRef: MatDialogRef<ChatbotDialogContentComponent>,
     private productService: ProductService,
     private categoryService: CategoryService,
+    private toastService: ToastService,
+    private router: Router,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.productForm = this.fb.group({
@@ -234,9 +236,11 @@ export class ChatbotDialogContentComponent implements OnInit {
         (response) => {
           console.log('Server response:', response);
           this.dialogRef.close({ event: 'Add', data: response });
+          this.toastService.showSuccess('Product created successfully');
+          this.router.navigate([this.router.url]);
         },
         (error) => {
-          console.error('Error creating product:', error);
+          this.toastService.showError('Failed to create product');
         }
       );
     }
