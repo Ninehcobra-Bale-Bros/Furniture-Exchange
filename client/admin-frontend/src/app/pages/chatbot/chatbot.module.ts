@@ -15,6 +15,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {
   ChatbotManagementComponent,
   ChatbotDialogContentComponent,
+  ShipmentDialogContentComponent,
 } from './management/chatbot-management.component';
 import { ChatbotRoutes } from './chatbot.routing';
 
@@ -31,7 +32,11 @@ import { ChatbotRoutes } from './chatbot.routing';
     NgScrollbarModule,
   ],
   exports: [TablerIconsModule],
-  declarations: [ChatbotManagementComponent, ChatbotDialogContentComponent],
+  declarations: [
+    ChatbotManagementComponent,
+    ChatbotDialogContentComponent,
+    ShipmentDialogContentComponent,
+  ],
   providers: [DatePipe],
 })
 export class ChatbotModule {}

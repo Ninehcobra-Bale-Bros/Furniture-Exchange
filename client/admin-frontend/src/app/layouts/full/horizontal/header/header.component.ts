@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { MatDialog } from '@angular/material/dialog';
-import { navItems } from '../../vertical/sidebar/sidebar-data';
+import { getNavItemsByRole } from '../../vertical/sidebar/sidebar-data';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -12,8 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { IUser } from 'src/app/models/user.model';
 import { LocalStorageUtil } from 'src/app/utils/local-storage.util';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { NavItem } from '../../vertical/sidebar/nav-item/nav-item';
 
 interface notifications {
   id: number;
@@ -302,11 +303,26 @@ export class AppHorizontalHeaderComponent {
   templateUrl: 'search-dialog.component.html',
 })
 export class AppHorizontalSearchDialogComponent {
+  user: Observable<IUser | null>;
   searchText: string = '';
-  navItems = navItems;
+  navItems: NavItem[] = [];
+  private userSubscription: Subscription = Subscription.EMPTY;
+  navItemsData: any;
 
-  navItemsData = navItems.filter((navitem) => navitem.displayName);
-
+  constructor(private userService: UserService) {}
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
+  ngOnInit(): void {
+    this.userSubscription = this.userService.user$.subscribe((user) => {
+      if (user && user.role) {
+        this.navItems = getNavItemsByRole(user.role);
+        this.navItemsData = this.navItems.filter((item) => item.displayName);
+      }
+    });
+  }
   // filtered = this.navItemsData.find((obj) => {
   //   return obj.displayName == this.searchinput;
   // });

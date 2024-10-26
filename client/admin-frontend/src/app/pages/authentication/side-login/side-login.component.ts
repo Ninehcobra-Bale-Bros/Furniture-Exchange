@@ -77,7 +77,7 @@ export class AppSideLoginComponent {
             this.userService.setUser(response);
             this.toastService.showSuccess('Login success');
             this.ngZone.run(() => {
-              this.router.navigate(['/dashboards/dashboard1']).then(() => {
+              this.router.navigate(['/starter']).then(() => {
                 this.cdr.detectChanges();
               });
             });

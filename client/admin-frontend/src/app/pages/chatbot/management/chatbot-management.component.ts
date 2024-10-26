@@ -34,6 +34,8 @@ import { IUser } from 'src/app/models/user.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ICategory } from 'src/app/models/category.model';
 import { CategoryService } from 'src/app/services/category.service';
+import { ICreateShipmenPayload } from 'src/app/models/delivery.model';
+import { DeliveryService } from 'src/app/services/delivery.service';
 
 @Component({
   templateUrl: './chatbot-management.component.html',
@@ -126,6 +128,29 @@ export class ChatbotManagementComponent implements AfterViewInit, OnInit {
     });
   }
 
+  openShipmentDialog(action: string, product?: IProduct): void {
+    if (product) {
+      if (product.quantity > 0) {
+        const dialogRef = this.dialog.open(ShipmentDialogContentComponent, {
+          data: { action, product },
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            if (result.action === 'Add') {
+              this.addProduct(result.data);
+            } else if (result.action === 'Update') {
+              this.updateProduct(result.data);
+            } else if (result.action === 'Delete') {
+              this.deleteProduct(result.data);
+            }
+          }
+        });
+      } else {
+        this.toastService.showError('Đã hết hàng không thể lên đơn');
+      }
+    }
+  }
+
   addProduct(productData: ICreateProductPayload): void {
     this.productService.createProduct(productData).subscribe(
       (response) => {
@@ -167,6 +192,8 @@ export class ChatbotDialogContentComponent implements OnInit {
     public dialogRef: MatDialogRef<ChatbotDialogContentComponent>,
     private productService: ProductService,
     private categoryService: CategoryService,
+    private toastService: ToastService,
+    private router: Router,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.productForm = this.fb.group({
@@ -234,11 +261,84 @@ export class ChatbotDialogContentComponent implements OnInit {
         (response) => {
           console.log('Server response:', response);
           this.dialogRef.close({ event: 'Add', data: response });
+          this.toastService.showSuccess('Product created successfully');
+          this.router.navigate([this.router.url]);
         },
         (error) => {
-          console.error('Error creating product:', error);
+          this.toastService.showError('Failed to create product');
         }
       );
+    }
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close({ event: 'Cancel' });
+  }
+}
+
+@Component({
+  selector: 'app-shipment-dialog-content',
+  templateUrl: 'shipment-dialog-content.html',
+  styleUrls: ['shipment-dialog-content.scss'],
+})
+export class ShipmentDialogContentComponent implements OnInit {
+  shipmentForm: FormGroup;
+  maxQuantity: number;
+
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<ShipmentDialogContentComponent>,
+    private toastService: ToastService,
+    private router: Router,
+    private deliveryService: DeliveryService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.maxQuantity = data.product.quantity; // Set max quantity from product data
+
+    this.shipmentForm = this.fb.group({
+      other_id: ['', Validators.required],
+      product_id: [data.product.id, Validators.required],
+      other_fullname: ['', Validators.required],
+      other_phone: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{10}$/)],
+      ],
+      quantity: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(this.maxQuantity),
+        ],
+      ],
+      pickup_address: ['', Validators.required],
+      delivery_address: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {}
+
+  doAction(): void {
+    if (this.shipmentForm.valid) {
+      const shipmentData: ICreateShipmenPayload = this.shipmentForm.value;
+      this.deliveryService
+        .createShipment({
+          ...shipmentData,
+          product_id: shipmentData.product_id,
+        })
+        .subscribe(
+          (response) => {
+            console.log('Server response:', response);
+            this.dialogRef.close({ event: 'Add', data: response });
+            this.toastService.showSuccess('Shipment created successfully');
+            this.router.navigate([this.router.url]);
+          },
+          (error) => {
+            this.toastService.showError('Failed to create shipment');
+          }
+        );
+    } else {
+      this.toastService.showError('Please fill in all required fields');
     }
   }
 

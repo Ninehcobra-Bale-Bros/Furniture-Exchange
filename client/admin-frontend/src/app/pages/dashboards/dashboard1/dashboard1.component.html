@@ -1,5 +1,27 @@
-<app-top-cards></app-top-cards>
-
+<app-top-cards
+  [revenueData]="totalRevenue"
+  [adminDashboard]="adminDashboardData"
+  [user]="user | async"
+></app-top-cards>
+<div
+  class="cardWithShadow"
+  style="padding: 12px; margin-bottom: 12px"
+  id="chart"
+>
+  <mat-card-title style="margin-left: 10px"
+    >Doanh thu theo từng tháng</mat-card-title
+  >
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis"
+    [yaxis]="chartOptions.yaxis"
+    [title]="chartOptions.title"
+    [dataLabels]="chartOptions.dataLabels"
+    [stroke]="chartOptions.stroke"
+    [grid]="chartOptions.grid"
+  ></apx-chart>
+</div>
 <div class="row">
   <div class="col-lg-8">
     <app-revenue-updates></app-revenue-updates>

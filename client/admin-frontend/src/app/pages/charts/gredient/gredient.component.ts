@@ -1,20 +1,28 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
-  ChartComponent,
   ApexDataLabels,
-  ApexYAxis,
-  ApexLegend,
-  ApexXAxis,
-  ApexTooltip,
-  ApexTheme,
-  ApexGrid,
-  ApexPlotOptions,
   ApexFill,
+  ApexGrid,
+  ApexLegend,
+  ApexPlotOptions,
+  ApexTheme,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+  ChartComponent,
   NgApexchartsModule,
 } from 'ng-apexcharts';
-import { MaterialModule } from '../../../material.module';
+import { MaterialModule } from 'src/app/material.module';
+import { IChartRevenue } from 'src/app/models/revenue.model';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -33,22 +41,49 @@ export type ChartOptions = {
   fill: ApexFill;
   labels: string[];
 };
+
 @Component({
   selector: 'app-gredient',
   standalone: true,
   imports: [NgApexchartsModule, MaterialModule],
   templateUrl: './gredient.component.html',
 })
-export class AppGredientChartComponent {
+export class AppGredientChartComponent implements OnInit, OnChanges {
+  @Input() chartRevenue: IChartRevenue[];
+
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
-  public gredientChartOptions: Partial<ChartOptions> | any;
-  constructor() {
-    //Column chart.
+  public gredientChartOptions: Partial<ChartOptions> | any = {
+    series: [],
+    chart: {},
+    xaxis: {},
+    stroke: {},
+    fill: {},
+    markers: {},
+    yaxis: {},
+    tooltip: {},
+    grid: {},
+  };
+
+  ngOnInit() {
+    this.initializeChartOptions();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['chartRevenue'] && changes['chartRevenue'].currentValue) {
+      this.initializeChartOptions();
+    }
+  }
+
+  private initializeChartOptions() {
+    if (!this.chartRevenue) {
+      return;
+    }
+
     this.gredientChartOptions = {
       series: [
         {
-          name: 'Likes',
-          data: [4, 3, 10, 9, 35, 19, 22, 9, 12, 7, 19, 5, 13, 9, 17, 2, 7, 5],
+          name: 'Total Revenue',
+          data: this.chartRevenue.map((item) => item.totalRevenue),
         },
       ],
       chart: {
@@ -76,24 +111,24 @@ export class AppGredientChartComponent {
       xaxis: {
         type: 'datetime',
         categories: [
-          '1/11/2000',
-          '2/11/2000',
-          '3/11/2000',
-          '4/11/2000',
-          '5/11/2000',
-          '6/11/2000',
-          '7/11/2000',
-          '8/11/2000',
-          '9/11/2000',
-          '10/11/2000',
-          '11/11/2000',
-          '12/11/2000',
-          '1/11/2001',
-          '2/11/2001',
-          '3/11/2001',
-          '4/11/2001',
-          '5/11/2001',
-          '6/11/2001',
+          '01/2024',
+          '01/2024',
+          '01/2024',
+          '01/2024',
+          '01/2024',
+          '01/2024',
+          ,
+          '01/2024',
+          ,
+          '01/2024',
+          ,
+          '01/2024',
+          ,
+          '01/2024',
+          ,
+          '01/2024',
+          ,
+          '01/2024',
         ],
       },
       fill: {

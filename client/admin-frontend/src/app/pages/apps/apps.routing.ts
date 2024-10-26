@@ -19,6 +19,7 @@ import { AppInvoiceViewComponent } from './invoice/invoice-view/invoice-view.com
 import { AppEditInvoiceComponent } from './invoice/edit-invoice/edit-invoice.component';
 import { AppBlogsComponent } from './blogs/blogs.component';
 import { AppBlogDetailsComponent } from './blogs/details/details.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
 
 export const AppsRoutes: Routes = [
   {
@@ -196,32 +197,34 @@ export const AppsRoutes: Routes = [
         path: 'invoice',
         component: AppInvoiceListComponent,
         data: {
-          title: 'Invoice',
+          title: 'Đơn hàng',
           urls: [
-            { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'Invoice' },
+            { title: 'Trang chủ', url: '/dashboards/dashboard1' },
+            { title: 'Đơn hàng' },
           ],
         },
       },
       {
         path: 'addInvoice',
         component: AppAddInvoiceComponent,
+        canActivate: [AuthGuard],
         data: {
-          title: 'Add Invoice',
+          title: 'Tạo đơn hàng',
           urls: [
-            { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'Add Invoice' },
+            { title: 'Trang chủ', url: '/dashboards/dashboard1' },
+            { title: 'Tạo đơn hàng' },
           ],
+          roles: ['admin', 'manager', 'deliver'],
         },
       },
       {
         path: 'viewInvoice/:id',
         component: AppInvoiceViewComponent,
         data: {
-          title: 'View Invoice',
+          title: 'Xem đơn hàng',
           urls: [
-            { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'View Invoice' },
+            { title: 'Trang chủ', url: '/dashboards/dashboard1' },
+            { title: 'Xem đơn hàng' },
           ],
         },
       },
@@ -229,10 +232,10 @@ export const AppsRoutes: Routes = [
         path: 'editinvoice/:id',
         component: AppEditInvoiceComponent,
         data: {
-          title: 'Edit Invoice',
+          title: 'Chỉnh sửa đơn hàng',
           urls: [
-            { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'Edit Invoice' },
+            { title: 'Trang chủ', url: '/dashboards/dashboard1' },
+            { title: 'Chỉnh sửa đơn hàng' },
           ],
         },
       },

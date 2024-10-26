@@ -1,0 +1,68 @@
+<div style="width: 550px">
+  <h2 mat-dialog-title>Tạo đơn hàng</h2>
+  <mat-dialog-content class="mat-typography m-t-16">
+    <form [formGroup]="shipmentForm" class="form-container">
+      <mat-form-field appearance="outline" class="w-100 m-t-16">
+        <mat-label>ID người mua</mat-label>
+        <input
+          matInput
+          formControlName="other_id"
+          placeholder="Nhập id người mua"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Họ và tên</mat-label>
+        <input
+          matInput
+          formControlName="other_fullname"
+          placeholder="Nhập họ và tên người mua"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Số điện thoại</mat-label>
+        <input
+          matInput
+          formControlName="other_phone"
+          placeholder="Nhập số điện thoại người mua"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Số lượng</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="quantity"
+          placeholder="Nhập số lượng"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Địa chỉ lấy hàng</mat-label>
+        <input
+          matInput
+          formControlName="pickup_address"
+          placeholder="Nhập địa chỉ lấy hàng"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Địa chỉ giao hàng</mat-label>
+        <input
+          matInput
+          formControlName="delivery_address"
+          placeholder="Nhập địa chỉ giao hàng"
+        />
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Hủy</button>
+    <button mat-raised-button color="primary" (click)="doAction()">
+      Lên đơn
+    </button>
+  </mat-dialog-actions>
+</div>
