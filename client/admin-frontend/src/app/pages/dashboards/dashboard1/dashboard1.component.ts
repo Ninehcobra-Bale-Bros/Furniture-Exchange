@@ -21,11 +21,13 @@ import { IUser } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
 import { IAdminDashboard } from 'src/app/models/admin.model.';
 import { AdminService } from 'src/app/services/admin.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard1',
   standalone: true,
   imports: [
+    CommonModule,
     TablerIconsModule,
     AppTopCardsComponent,
     AppRevenueUpdatesComponent,

@@ -1,4 +1,8 @@
-<app-top-cards [revenueData]="totalRevenue"></app-top-cards>
+<app-top-cards
+  [revenueData]="totalRevenue"
+  [adminDashboard]="adminDashboardData"
+  [user]="user | async"
+></app-top-cards>
 
 <div class="row">
   <div class="col-lg-8">

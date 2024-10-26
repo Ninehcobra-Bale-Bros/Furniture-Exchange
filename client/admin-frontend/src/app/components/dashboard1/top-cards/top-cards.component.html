@@ -1,8 +1,10 @@
 <div class="row">
-  @for(topcard of topcards; track topcard.color) {
-  <div class="col-lg-2 col-sm-4 col-6">
+  <div
+    *ngFor="let topcard of getFilteredCards(); trackBy: trackById"
+    class="col-lg-2 col-sm-4 col-6"
+  >
     <mat-card
-      class="shadow-none text-center bg-light-{{ topcard.color }}  shadow-none"
+      class="shadow-none text-center bg-light-{{ topcard.color }} shadow-none"
     >
       <mat-card-content class="p-32">
         <img
@@ -20,5 +22,4 @@
       </mat-card-content>
     </mat-card>
   </div>
-  }
 </div>
