@@ -59,6 +59,20 @@ services:
     depends_on:
       - backend
 
+  fe-admin:
+    container_name: "furniture-fe-admin"
+    build:
+      context: ./client/admin-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    expose:
+      - 4200
+    volumes:
+      - ./:/angular-app # Adjust this path if needed
+    depends_on:
+      - backend
+
   nginx:
     container_name: furniture-nginx
     image: nginx:alpine
@@ -66,9 +80,11 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      # - fe-admin-nginx:/FEApp # Mount to nginx HTML folder
     depends_on:
       - backend
       - fe-user
+      - fe-admin
 
 volumes:
   redis-data:
@@ -77,3 +93,5 @@ volumes:
   postgres-data:
     name: postgres-data
     driver: local
+  # fe-admin-nginx: # Shared volume for fe-admin and nginx
+  #   driver: local
