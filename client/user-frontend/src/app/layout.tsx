@@ -42,16 +42,15 @@ export default function RootLayout({
           strategy='lazyOnload'
         />
       </head>
-      <GoogleAdUnitClient>
-        <Provider store={store}>
-          <AntdRegistry>
-            <ConfigProvider theme={theme}>
-              <body className={poppins.className}>{children}</body>
-            </ConfigProvider>
-          </AntdRegistry>
-          <ToastContainer />
-        </Provider>
-      </GoogleAdUnitClient>
+
+      <Provider store={store}>
+        <AntdRegistry>
+          <ConfigProvider theme={theme}>
+            <body className={poppins.className}>{children}</body>
+          </ConfigProvider>
+        </AntdRegistry>
+        <ToastContainer />
+      </Provider>
     </html>
   )
 }
