@@ -42,11 +42,14 @@ export class ChatGateway
   async handleConnection(@ConnectedSocket() client: Socket) {
     const user = await this.authenticate(client);
 
+    console.log('Client connected:', client.id);
+
     if (!user) {
+      console.log('Unauthorized, auto disconnecting...');
       return;
     }
 
-    console.log('Client connected:', client.id);
+    console.log('User authenticated id:', user.id);
   }
 
   @SubscribeMessage('newMessage')
