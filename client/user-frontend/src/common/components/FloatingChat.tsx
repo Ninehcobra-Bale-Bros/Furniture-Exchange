@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'antd'
 import { SendOutlined, MessageOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import 'moment/locale/vi'
 import './FloatingChat.scss'
+import { IUser } from '@/types/user'
+import { IProduct } from '@/types/product'
+import socketService from '@/services/socket.service'
+import { useGetUserConversationsQuery } from '@/services/conversation.service'
 
 interface Message {
   sender: 'user' | 'recipient'
@@ -11,14 +15,38 @@ interface Message {
   timestamp: string
 }
 
-const FloatingChat: React.FC = () => {
-  const [visible, setVisible] = useState<boolean>(false)
+const FloatingChat = ({
+  isVisible,
+  toggleChat,
+  user,
+  product,
+  accessToken
+}: {
+  isVisible: boolean
+  toggleChat: () => void
+  user: IUser
+  product: IProduct
+  accessToken: string
+}): React.ReactNode => {
   const [message, setMessage] = useState<string>('')
   const [messages, setMessages] = useState<Message[]>([])
+  const [isSocketConnect, setIsSocketConnect] = useState<boolean>(false)
 
-  const toggleChat = (): void => {
-    setVisible(!visible)
-  }
+  const { data: conversations, isSuccess, isError, error } = useGetUserConversationsQuery()
+
+  useEffect(() => {
+    socketService.connect()
+
+    if (conversations?.conversation_name) {
+      socketService.listen(conversations.conversation_name, (data) => {
+        console.log(data)
+      })
+    }
+
+    return (): void => {
+      socketService.disconnect()
+    }
+  }, [isSuccess, conversations?.conversation_name])
 
   const handleSendMessage = (): void => {
     if (message.trim()) {
@@ -38,11 +66,11 @@ const FloatingChat: React.FC = () => {
   }
 
   return (
-    <div className={`floating-chat ${visible ? 'open' : ''}`}>
+    <div className={`floating-chat ${isVisible ? 'open' : ''}`}>
       <div className='chat-bubble' onClick={toggleChat}>
         <MessageOutlined />
       </div>
-      {visible && (
+      {isVisible && (
         <div className='chat-window'>
           <div className='chat-header'>
             <span>Tin nhắn</span>

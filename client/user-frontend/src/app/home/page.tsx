@@ -32,7 +32,6 @@ export default function Home(): React.ReactNode {
           ''
         )}
       </div>{' '}
-      <FloatingChat />
       <Footer />
     </div>
   )

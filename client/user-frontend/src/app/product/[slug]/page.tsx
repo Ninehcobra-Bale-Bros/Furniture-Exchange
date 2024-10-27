@@ -13,9 +13,13 @@ import { useRouter } from 'next/navigation'
 import { useGetCategoriesQuery, useGetProductByCategorySlugQuery } from '@/services/category.service'
 import { IProduct } from '@/types/product'
 import { ICategory } from '@/types/category'
-import Image from 'next/image'
+
 import moment from 'moment'
-import GoogleAdUnit from 'nextjs13_google_adsense'
+
+import FloatingChat from '@/common/components/FloatingChat'
+import { useCookies } from 'react-cookie'
+import { useGetUserProfileQuery } from '@/services/user.service'
+import { ToastService } from '@/services/toast.service'
 
 export default function Page({ params }: { params: { slug: string } }): React.ReactNode {
   const [activeSlide, setActiveSlide] = useState<number>(0)
@@ -31,6 +35,33 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
   const router = useRouter()
   const { data: categories } = useGetCategoriesQuery()
   const { data: product, isLoading, error } = useGetProductBySlugQuery(params.slug)
+
+  const toastService = useMemo<ToastService>(() => new ToastService(), [])
+
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const handleToggleChat = (): void => {
+    setIsVisible(!isVisible)
+  }
+
+  const [cookies] = useCookies(['access-token'])
+  const accessToken = cookies['access-token']
+
+  const {
+    data: userProfile,
+    isSuccess: isUserProfileSuccess,
+    error: userProfileError,
+    isLoading: userProfileLoading,
+    isError: isUserProfileError,
+    refetch: refetchUserProfile
+  } = useGetUserProfileQuery(undefined, {
+    skip: !accessToken
+  })
+
+  useEffect(() => {
+    if (isUserProfileError) {
+      console.log('userProfileError', userProfileError)
+    }
+  }, [isUserProfileError])
 
   const categoryName: string = useMemo<string>(() => {
     if (product && categories) {
@@ -144,6 +175,8 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
       return urlString
     }
   }
+
+  // Chat
 
   return (
     <div className='detail-container container mb-3'>
@@ -285,7 +318,14 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
                 <i className='fa-solid fa-phone me-2'></i>
                 Gọi điện
               </div>
-              <div className='w-100 py-2 text-center btn-contact fw-bold mt-2'>
+              <div
+                onClick={() => {
+                  if (!accessToken || accessToken === '') {
+                    toastService.warning('Bạn cần đăng nhập để có thể chat với người bán')
+                  } else setIsVisible(true)
+                }}
+                className='w-100 py-2 text-center btn-contact fw-bold mt-2'
+              >
                 <i className='fa-solid fa-message me-2'></i>
                 Chat
               </div>
@@ -354,6 +394,16 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
         style={{ objectFit: 'cover', border: '1px solid #e0e0e0' }}
         alt='banner-ads-1'
       />
+
+      {accessToken && userProfile && (
+        <FloatingChat
+          accessToken={accessToken}
+          product={product}
+          user={userProfile}
+          isVisible={isVisible}
+          toggleChat={handleToggleChat}
+        />
+      )}
     </div>
   )
 }

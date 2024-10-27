@@ -66,9 +66,7 @@ export default function LandingPage(): React.ReactNode {
         </Header>
         <Content>
           {/* Banner section */}
-          <GoogleAdUnitClient>
-            <AdBanner dataAdSlot='5832681765' dataAdFormat='auto' dataFullWidthResponsive={true} />
-          </GoogleAdUnitClient>
+
           <div className='h-100 w-100 banner-section overflow-hidden'>
             <div className='container'>
               <div className='row'>
