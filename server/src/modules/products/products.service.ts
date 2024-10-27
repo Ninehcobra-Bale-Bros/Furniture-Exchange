@@ -17,6 +17,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { UserDto } from '../users/dto/user.dto';
 
 @Injectable()
 export class ProductsService {
@@ -154,13 +155,21 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string): Promise<ProductDto> {
-    const product = await this.productRepository.findOneBy({
-      where: {
-        slug,
-      },
-    });
+    let product = await this.productRepository
+      .findOneBy({
+        relations: ['seller'],
+        where: {
+          slug,
+        },
+        select: ['seller'],
+      })
+      .then((product) => {
+        return plainToClass(ProductDto, product) as Product;
+      });
 
-    return ProductDto.fromEntity(product);
+    product.seller = plainToClass(UserDto, product.seller) as User;
+
+    return product;
   }
 
   async findAllOfSeller(user: User) {

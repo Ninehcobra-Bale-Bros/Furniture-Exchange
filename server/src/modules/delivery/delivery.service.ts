@@ -101,6 +101,30 @@ export class DeliveryService {
     return shipments;
   }
 
+  async getSellerShipments(user: User) {
+    const shipments = await this.deliveryRepository
+      .findAll({
+        where: { user_id: user.id },
+        relations: ['product'],
+      })
+      .then((deliveries) =>
+        deliveries.map((delivery) => {
+          // You can manipulate the product or return it as is
+          const shipment = DeliveryDto.fromEntity(delivery) as any;
+          shipment.product = plainToClass(ProductDto, delivery.product); // Assign product
+
+          delete shipment.discount_amount;
+          delete shipment.discount_percent;
+          delete shipment.total_discount;
+          delete shipment.total_after_discount;
+
+          return shipment;
+        }),
+      );
+
+    return shipments;
+  }
+
   async getShipmentsByDate(queries: GetRevenueChartDto, sellerId: string) {
     if (queries.year && queries.month_from && queries.month_to) {
       console.log('condition 1');

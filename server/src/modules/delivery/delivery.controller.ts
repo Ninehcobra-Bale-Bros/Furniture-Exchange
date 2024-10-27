@@ -12,21 +12,13 @@ import {
 } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { Request } from 'express';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
-import { AssignDeliveryDto } from './dto/assign-delivery.dto';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
-import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
 import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Controller('delivery')
@@ -64,6 +56,15 @@ export class DeliveryController {
   @Roles(RoleEnum.DELIVER)
   async getShipperShipments(@Req() req: Request) {
     return await this.deliveryService.getShipperShipments(req.user);
+  }
+
+  @Get('seller')
+  @ApiOperation({
+    summary: '[SELLER] Get all shipments of the user',
+  })
+  @Roles(RoleEnum.SELLER)
+  async getSellerShipments(@Req() req: Request) {
+    return await this.deliveryService.getSellerShipments(req.user);
   }
 
   @Patch('user/confirm/:id')

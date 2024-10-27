@@ -2,7 +2,7 @@ import { IsBoolean, IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
 import { User } from '../entities/user.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { SexEnum } from 'src/common/enums/sex.enum';
-import { plainToClass, Transform } from 'class-transformer';
+import { Exclude, plainToClass, Transform } from 'class-transformer';
 import { UUID } from 'crypto';
 
 export class UserDto implements Readonly<UserDto> {
@@ -11,6 +11,10 @@ export class UserDto implements Readonly<UserDto> {
   CCCD: string;
   email: string;
   email_verified: boolean;
+
+  @Exclude({
+    toClassOnly: true,
+  })
   password: string;
   first_name: string;
   last_name: string;

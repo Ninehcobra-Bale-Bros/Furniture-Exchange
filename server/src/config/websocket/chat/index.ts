@@ -13,12 +13,7 @@ import { UsersService } from 'src/modules/users/users.service';
 import { ConversationDto } from 'src/modules/conversations/dto/conversation.dto';
 import { UUID } from 'crypto';
 import { ProductsService } from 'src/modules/products/products.service';
-
-interface Message {
-  product_id: string;
-  other_id: UUID & { __brand: 'userId' };
-  content: string;
-}
+import { Message, MessageType } from '../interfaces';
 
 @WebSocketGateway(3002, {
   cors: {
@@ -64,6 +59,7 @@ export class ChatGateway
       );
 
     client.broadcast.emit(otherConversation.name, {
+      type: MessageType.NEW_MESSAGE,
       ...message,
     });
   }
@@ -134,6 +130,31 @@ export class ChatGateway
         user as any,
       );
     }
+  }
+
+  @SubscribeMessage('shipmentAlert')
+  async handleShipmentAlert(client: Socket, message: Message) {
+    const user = await this.authenticate(client);
+
+    if (!user) {
+      return;
+    }
+
+    const otherUser = await this.usersService.findOneById(message.other_id);
+
+    if (!otherUser) {
+      return;
+    }
+
+    const conversation =
+      await this.conversationsService.findConversationByUserIdWithUpsert(
+        otherUser.id,
+      );
+
+    client.broadcast.emit(conversation.name, {
+      type: MessageType.SHIPMENT_ALERT,
+      ...message,
+    });
   }
 
   handleDisconnect(client: any) {
