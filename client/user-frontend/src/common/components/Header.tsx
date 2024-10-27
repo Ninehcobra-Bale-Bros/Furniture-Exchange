@@ -24,15 +24,17 @@ export default function Header(): ReactNode {
     isSuccess: isUserProfileSuccess,
     error: userProfileError,
     isLoading: userProfileLoading,
+    isError: isUserProfileError,
     refetch: refetchUserProfile
   } = useGetUserProfileQuery(undefined, {
     skip: !accessToken
   })
 
-  if (userProfileError) {
-    console.error('Error fetching user profile:', userProfileError)
-    return <div>Error loading header data</div>
-  }
+  useEffect(() => {
+    if (isUserProfileError) {
+      console.log('userProfileError', userProfileError)
+    }
+  }, [isUserProfileError])
 
   if (userProfileLoading) {
     return <div>Loading...</div>
@@ -41,7 +43,7 @@ export default function Header(): ReactNode {
   const handleLogout = (): void => {
     removeCookieFromClient('access-token')
     removeCookieFromClient('refresh-token')
-    router.push('/sign-in')
+    router.refresh()
   }
 
   const menu = (

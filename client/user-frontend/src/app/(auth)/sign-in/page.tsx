@@ -10,7 +10,6 @@ import { ILoginPayload } from '@/types/auth'
 import { ToastService } from '@/services/toast.service'
 import { HandleErrorService } from '@/services/handle-error.service'
 import { IErrorResponse } from '@/types/error'
-import { setCookieFromClient } from '@/types/cookie'
 import { useCookies } from 'react-cookie'
 
 export default function SignIn(): React.ReactNode {
@@ -74,7 +73,7 @@ export default function SignIn(): React.ReactNode {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         })
 
-        router.replace('/home')
+        router.push('/home')
       } else if (loginData?.message && loginData?.url) {
         toastService.error(loginData.message)
         router.push(loginData.url)
@@ -165,12 +164,7 @@ export default function SignIn(): React.ReactNode {
             </div>
           </div>
 
-          <button
-            disabled={!isPayloadValid}
-            onClick={() => router.push('/home')}
-            type='submit'
-            className='btn btn-primary w-100 mt-5 py-2'
-          >
+          <button disabled={!isPayloadValid} type='submit' className='btn btn-primary w-100 mt-5 py-2'>
             Đăng nhập
           </button>
         </form>

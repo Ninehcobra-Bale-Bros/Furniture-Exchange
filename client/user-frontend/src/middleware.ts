@@ -6,6 +6,7 @@ const privateRoutes = ['/profile', '/settings']
 
 export function middleware(request: NextRequest): NextResponse {
   const authToken = request.cookies.get('access-token')
+  console.log('authToken', authToken)
 
   const isAuthorized = !!authToken
   const path = request.nextUrl.pathname

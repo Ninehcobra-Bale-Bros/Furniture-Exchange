@@ -276,7 +276,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
                 width={40}
               />
               <div>
-                <div className='body-m fw-bold'>Seller Name</div>
+                <div className='body-m fw-bold'>Công Chính</div>
                 <div className='body-s  body-xs pb-1'>Hoạt động gần đây</div>
               </div>
             </div>
