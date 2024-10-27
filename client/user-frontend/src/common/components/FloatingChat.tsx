@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Input } from 'antd'
 import { SendOutlined, MessageOutlined } from '@ant-design/icons'
@@ -21,13 +22,17 @@ const FloatingChat = ({
   toggleChat,
   user,
   product,
-  accessToken
+  accessToken,
+  instanceMsg,
+  setInstanceMsg
 }: {
   isVisible: boolean
   toggleChat: () => void
   user: IUser
   product: IProduct
   accessToken: string
+  instanceMsg: string
+  setInstanceMsg: React.Dispatch<React.SetStateAction<string>>
 }): React.ReactNode => {
   const [message, setMessage] = useState<string>('')
   const [messages, setMessages] = useState<Message[]>([])
@@ -62,21 +67,13 @@ const FloatingChat = ({
   }, [isConversationMessagesSuccess, conversationMessages, user.id])
 
   useEffect(() => {
-    setTimeout(() => {
-      if (chatContentRef.current) {
-        chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight
-      }
-    }, 1)
-  }, [isVisible])
-
-  useEffect(() => {
     socketService.connect()
 
     if (conversations?.conversation_name) {
       socketService.listen(conversations.conversation_name, (data: { other_id: string; content: string }) => {
         console.log(data)
         const newMessage: Message = {
-          sender: data.other_id === user.id ? 'user' : 'recipient',
+          sender: 'recipient',
           content: data.content,
           timestamp: moment().locale('vi').fromNow()
         }
@@ -95,6 +92,14 @@ const FloatingChat = ({
     }
   }, [messages])
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (chatContentRef.current) {
+        chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight
+      }
+    }, 1)
+  }, [isVisible])
+
   const handleSendMessage = (): void => {
     if (message.trim()) {
       const newMessage: Message = { sender: 'user', content: message, timestamp: moment().locale('vi').fromNow() }
@@ -105,6 +110,26 @@ const FloatingChat = ({
       })
       setMessages([...messages, newMessage])
       setMessage('')
+      // Simulate a response from the recipient
+    }
+  }
+
+  useEffect(() => {
+    if (instanceMsg && instanceMsg.trim()) {
+      handlleSendInstanceMessage(instanceMsg)
+      setInstanceMsg('')
+    }
+  }, [instanceMsg])
+
+  const handlleSendInstanceMessage = (msg: string): void => {
+    if (msg.trim()) {
+      const newMessage: Message = { sender: 'user', content: msg, timestamp: moment().locale('vi').fromNow() }
+      socketService.sendMessage({
+        content: msg,
+        other_id: product.seller_id,
+        product: product.id
+      })
+      setMessages([...messages, newMessage])
     }
   }
 
@@ -116,23 +141,43 @@ const FloatingChat = ({
       {isVisible && (
         <div className='chat-window'>
           <div className='chat-header'>
-            <span>Tin nhắn với người bán</span>
+            <img
+              style={{ height: 30, width: 30, objectFit: 'cover' }}
+              src={selectedConversation?.other?.image_url}
+              alt='User Avatar'
+              className='user-avatar rounded-circle'
+            />
+            <span>
+              {selectedConversation?.other?.first_name} {selectedConversation?.other?.last_name}
+            </span>
             <Button type='text' onClick={toggleChat}>
               <i style={{ fontSize: '24px' }} className='fa-regular fa-circle-xmark text-error-2'></i>
             </Button>
           </div>
           <div className='chat-content' ref={chatContentRef}>
             {messages.map((msg, index) => (
-              <div key={index} className={`chat-message ${msg.sender}`}>
-                <div className='message-content'>{msg.content}</div>
-                <div className='message-timestamp'>{msg.timestamp}</div>
+              <div key={index} className={`chat-message  ${msg.sender}`}>
+                {msg.sender === 'recipient' ? (
+                  <img
+                    style={{ height: 30, width: 30, objectFit: 'cover' }}
+                    src={selectedConversation?.other?.image_url}
+                    alt='User Avatar'
+                    className='user-avatar rounded-circle'
+                  />
+                ) : (
+                  ''
+                )}
+                <div>
+                  <div className='message-content'>{msg.content}</div>
+                  <div className='message-timestamp'>{msg.timestamp}</div>
+                </div>
               </div>
             ))}
           </div>
 
           <div className='chat-input'>
             <Input
-              placeholder='Type a message...'
+              placeholder='Nhập tin nhắn...'
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onPressEnter={handleSendMessage}
@@ -144,5 +189,4 @@ const FloatingChat = ({
     </div>
   )
 }
-
 export default FloatingChat

@@ -10,13 +10,13 @@ export const deliveryApi = createApi({
   endpoints: (builder) => ({
     getAllUserShipment: builder.query<IGetUserAllShipmentResponse, void>({
       query: () => ({
-        url: '/shipments/user',
+        url: '/delivery/user',
         method: 'GET'
       })
     }),
     confirmUserShipment: builder.mutation<void, { id: string }>({
       query: ({ id }) => ({
-        url: `/shipments/confirm/${id}`,
+        url: `/delivery/confirm/${id}`,
         method: 'PATCH'
       })
     })

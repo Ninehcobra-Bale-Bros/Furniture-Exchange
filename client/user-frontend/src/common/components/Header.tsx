@@ -49,7 +49,7 @@ export default function Header(): ReactNode {
   const menu = (
     <Menu>
       <Menu.Item key='1'>
-        <Link href='/profile'>Thông tin cá nhân</Link>
+        <Link href='#'>Thông tin cá nhân</Link>
       </Menu.Item>
       <Menu.Item key='2' onClick={handleLogout}>
         Đăng xuất
@@ -115,21 +115,27 @@ export default function Header(): ReactNode {
                 <img src='/images/logo-light.png' alt='Logo' height={70} />
               </Link>
             </div>
-            <div className='col-md-10 ps-5 body-m'>
-              <div className='input-group'>
-                <input type='text' className='form-control p-2 body-m' placeholder='Tìm kiếm sản phẩm...' />
-                <button className='btn btn-outline-primary ' type='button'>
-                  <i className='fa-solid fa-search text-neutral-light-5'></i>
-                </button>
+            <div className='col-md-10 ps-5 body-m d-flex align-items-center justify-content-between'>
+              <div className='d-flex align-items-center flex-grow-1 flex-column'>
+                <div className='input-group'>
+                  <input type='text' className='form-control p-2 body-m' placeholder='Tìm kiếm sản phẩm...' />
+                  <button className='btn btn-outline-primary ' type='button'>
+                    <i className='fa-solid fa-search text-neutral-light-5'></i>
+                  </button>
+                </div>
+                <div className='mt-2 body-xs text-neutral-light-5 d-flex align-items-center'>
+                  <div className='pe-3 recommend-product'>Tai nghe Bose QuietComfort Ultra</div>
+                  <div className='pe-3 recommend-product'>Tecno Pova 5</div>
+                  <div className='pe-3 recommend-product'>Bàn phím cơ Yuki</div>
+                  <div className='pe-3 recommend-product'>Mặt nạ anh bưởi</div>
+                  <div className='pe-3 recommend-product'>Moondrop</div>
+                  <div className='pe-3 recommend-product'>Iphone 15</div>
+                </div>
               </div>
-              <div className='mt-2 body-xs text-neutral-light-5 d-flex align-items-center'>
-                <div className='pe-3 recommend-product'>Tai nghe Bose QuietComfort Ultra</div>
-                <div className='pe-3 recommend-product'>Tecno Pova 5</div>
-                <div className='pe-3 recommend-product'>Bàn phím cơ Yuki</div>
-                <div className='pe-3 recommend-product'>Mặt nạ anh bưởi</div>
-                <div className='pe-3 recommend-product'>Moondrop</div>
-                <div className='pe-3 recommend-product'>Iphone 15</div>
-              </div>
+              <i
+                style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
+                className='fa-solid fa-cart-flatbed ms-4'
+              ></i>
             </div>
           </div>
         </div>

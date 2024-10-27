@@ -28,6 +28,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
   const [startIndex, setStartIndex] = useState<number>(0)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
+  const [instanceMsg, setInstanceMsg] = useState<string>('')
   const descriptionRef = useRef<HTMLDivElement>(null)
   const visibleImages: number = 8
   const maxLines: number = 6
@@ -332,8 +333,24 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
             </div>
 
             <div className='mt-2 mb-2 d-flex'>
-              <div className='body-s px-3 py-2 sample-chat d-inline-block'>Tôi muốn mua mặt hàng này?</div>
-              <div className='body-s px-3 py-2 sample-chat d-inline-block ms-2'>Bạn có đó không?</div>
+              <div
+                onClick={() => {
+                  setInstanceMsg('Tôi muốn mua mặt hàng này?')
+                  setIsVisible(true)
+                }}
+                className='body-s px-3 py-2 sample-chat d-inline-block'
+              >
+                Tôi muốn mua mặt hàng này?
+              </div>
+              <div
+                onClick={() => {
+                  setInstanceMsg('  Bạn có đó không?')
+                  setIsVisible(true)
+                }}
+                className='body-s px-3 py-2 sample-chat d-inline-block ms-2'
+              >
+                Bạn có đó không?
+              </div>
             </div>
           </div>
           <img
@@ -397,6 +414,8 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
 
       {accessToken && userProfile && (
         <FloatingChat
+          setInstanceMsg={setInstanceMsg}
+          instanceMsg={instanceMsg}
           accessToken={accessToken}
           product={product}
           user={userProfile}
