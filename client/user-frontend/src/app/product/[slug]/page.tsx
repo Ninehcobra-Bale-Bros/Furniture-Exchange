@@ -292,7 +292,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
             </div>
 
             <div className='mt-2 mb-2 d-flex'>
-              <div className='body-s px-3 py-2 sample-chat d-inline-block'>Mặt hàng này còn không ạ?</div>
+              <div className='body-s px-3 py-2 sample-chat d-inline-block'>Tôi muốn mua mặt hàng này?</div>
               <div className='body-s px-3 py-2 sample-chat d-inline-block ms-2'>Bạn có đó không?</div>
             </div>
           </div>

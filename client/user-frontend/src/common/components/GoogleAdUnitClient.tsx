@@ -21,7 +21,7 @@ const GoogleAdUnitClient: React.FC<GoogleAdUnitProps> = ({ children }) => {
   const searchParams = useSearchParams()
   React.useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+      const ok = (window.adsbygoogle = window.adsbygoogle || []).push({})
     } catch (err) {
       console.error(err)
     }

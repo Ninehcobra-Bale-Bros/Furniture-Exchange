@@ -4,6 +4,8 @@ import { AppstoreOutlined, HomeOutlined, UserOutlined, ShoppingOutlined } from '
 import Link from 'next/link'
 import './_landing-page.scss'
 import { useRouter } from 'next/navigation'
+import GoogleAdUnitClient from 'nextjs13_google_adsense/dist/esm/GoogleAdUnitClient'
+import { AdBanner } from '@/common/components/AdBanner'
 const { Header, Content } = Layout
 
 export default function LandingPage(): React.ReactNode {
@@ -48,13 +50,7 @@ export default function LandingPage(): React.ReactNode {
     <Layout className='landing-page-layout'>
       <Header>
         <div className='container d-flex align-items-center h-100 w-100 justify-content-between'>
-          <Image
-            className='responsive-logo'
-            src='/images/logo.png'
-            alt='Bệnh viện Quân Y 7A'
-            height={60}
-            preview={false}
-          />
+          <Image className='responsive-logo' src='/images/logo.png' alt='ESOLD' height={60} preview={false} />
           <div className='w-75 '>
             <Menu
               className='d-flex justify-content-end border-0'
@@ -68,6 +64,9 @@ export default function LandingPage(): React.ReactNode {
       </Header>
       <Content>
         {/* Banner section */}
+        <GoogleAdUnitClient>
+          <AdBanner dataAdSlot='5832681765' dataAdFormat='auto' dataFullWidthResponsive={true} />
+        </GoogleAdUnitClient>
         <div className='h-100 w-100 banner-section overflow-hidden'>
           <div className='container'>
             <div className='row'>
