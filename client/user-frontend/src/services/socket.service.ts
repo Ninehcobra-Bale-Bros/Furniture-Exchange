@@ -1,12 +1,19 @@
 // src/services/socketService.ts
 import { enviroment } from '@/environments/environment'
 import { io, Socket } from 'socket.io-client'
+import Cookies from 'js-cookie'
 
 class SocketService {
   private socket: Socket | null = null
 
+  token = Cookies.get('access-token')
+
   connect(): void {
-    this.socket = io(enviroment.socketUrl || '')
+    this.socket = io(enviroment.socketUrl || '', {
+      extraHeaders: {
+        Authorization: `Bearer ${this.token}`
+      }
+    })
 
     this.socket.on('connect', () => {
       console.log('Connected to server via Socket.IO')

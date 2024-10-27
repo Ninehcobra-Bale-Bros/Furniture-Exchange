@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button, Input } from 'antd'
 import { SendOutlined, MessageOutlined } from '@ant-design/icons'
 import moment from 'moment'
@@ -7,7 +7,8 @@ import './FloatingChat.scss'
 import { IUser } from '@/types/user'
 import { IProduct } from '@/types/product'
 import socketService from '@/services/socket.service'
-import { useGetUserConversationsQuery } from '@/services/conversation.service'
+import { useGetUserConversationsQuery, useUseGetConversationByOtherUserIdQuery } from '@/services/conversation.service'
+import { IConversation } from '@/types/conversation'
 
 interface Message {
   sender: 'user' | 'recipient'
@@ -30,38 +31,80 @@ const FloatingChat = ({
 }): React.ReactNode => {
   const [message, setMessage] = useState<string>('')
   const [messages, setMessages] = useState<Message[]>([])
-  const [isSocketConnect, setIsSocketConnect] = useState<boolean>(false)
+  const [selectedConversation, setSelectedConversation] = useState<IConversation>()
 
-  const { data: conversations, isSuccess, isError, error } = useGetUserConversationsQuery()
+  const { data: conversations, isSuccess } = useGetUserConversationsQuery()
+  const { data: conversationMessages, isSuccess: isConversationMessagesSuccess } =
+    useUseGetConversationByOtherUserIdQuery(product.seller_id)
+
+  const chatContentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isSuccess && conversations) {
+      const conversation = conversations.conversations.find(
+        (conv: IConversation) => conv.other?.id === product.seller_id
+      )
+      if (conversation) {
+        setSelectedConversation(conversation)
+      }
+    }
+  }, [isSuccess, conversations, product.seller_id])
+
+  useEffect(() => {
+    if (isConversationMessagesSuccess && conversationMessages) {
+      const formattedMessages = conversationMessages.messages.map((msg) => ({
+        sender: msg.sender_id === user.id ? 'user' : 'recipient',
+        content: msg.content,
+        timestamp: moment(msg.created_at).locale('vi').fromNow()
+      })) as Message[]
+      setMessages(formattedMessages)
+    }
+  }, [isConversationMessagesSuccess, conversationMessages, user.id])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (chatContentRef.current) {
+        chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight
+      }
+    }, 1)
+  }, [isVisible])
 
   useEffect(() => {
     socketService.connect()
 
     if (conversations?.conversation_name) {
-      socketService.listen(conversations.conversation_name, (data) => {
+      socketService.listen(conversations.conversation_name, (data: { other_id: string; content: string }) => {
         console.log(data)
+        const newMessage: Message = {
+          sender: data.other_id === user.id ? 'user' : 'recipient',
+          content: data.content,
+          timestamp: moment().locale('vi').fromNow()
+        }
+        setMessages((prevMessages) => [...prevMessages, newMessage])
       })
     }
 
     return (): void => {
       socketService.disconnect()
     }
-  }, [isSuccess, conversations?.conversation_name])
+  }, [isSuccess, conversations?.conversation_name, user.id])
+
+  useEffect(() => {
+    if (chatContentRef.current) {
+      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight
+    }
+  }, [messages])
 
   const handleSendMessage = (): void => {
     if (message.trim()) {
       const newMessage: Message = { sender: 'user', content: message, timestamp: moment().locale('vi').fromNow() }
+      socketService.sendMessage({
+        content: message,
+        other_id: product.seller_id,
+        product: product.id
+      })
       setMessages([...messages, newMessage])
       setMessage('')
-      // Simulate a response from the recipient
-      setTimeout(() => {
-        const responseMessage: Message = {
-          sender: 'recipient',
-          content: 'This is a response.',
-          timestamp: moment().locale('vi').fromNow()
-        }
-        setMessages((prevMessages) => [...prevMessages, responseMessage])
-      }, 1000)
     }
   }
 
@@ -73,12 +116,12 @@ const FloatingChat = ({
       {isVisible && (
         <div className='chat-window'>
           <div className='chat-header'>
-            <span>Tin nhắn</span>
+            <span>Tin nhắn với người bán</span>
             <Button type='text' onClick={toggleChat}>
               <i style={{ fontSize: '24px' }} className='fa-regular fa-circle-xmark text-error-2'></i>
             </Button>
           </div>
-          <div className='chat-content'>
+          <div className='chat-content' ref={chatContentRef}>
             {messages.map((msg, index) => (
               <div key={index} className={`chat-message ${msg.sender}`}>
                 <div className='message-content'>{msg.content}</div>

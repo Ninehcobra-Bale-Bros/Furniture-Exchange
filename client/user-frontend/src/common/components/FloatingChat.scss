@@ -67,14 +67,22 @@
         background-color: #f0f0f0;
         align-self: flex-start;
         text-align: left;
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        img {
+          margin-right: 12px;
+        }
       }
 
       .message-content {
         margin-bottom: 4px;
+        font-size: 0.85em;
+        font-weight: 400;
       }
 
       .message-timestamp {
-        font-size: 0.8em;
+        font-size: 0.6em;
         color: #888;
       }
     }
