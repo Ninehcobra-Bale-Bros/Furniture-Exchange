@@ -19,7 +19,7 @@ RUN npm install -g @angular/cli
 COPY . .
 
 # Build the Angular application
-RUN npm run build --prod
+RUN ng build --configuration production
 
 # Stage 2: Copy build files to Nginx
 FROM nginx:alpine
@@ -28,7 +28,7 @@ FROM nginx:alpine
 # COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Copy build files to Nginx html directory
-COPY --from=build /app/dist/Modernize /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Expose the necessary port for Nginx
 EXPOSE 80
