@@ -17,7 +17,10 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import * as TablerIcons from 'angular-tabler-icons/icons';
 
 //Chat
-import { AppChatComponent } from './chat/chat.component';
+import {
+  AppChatComponent,
+  ShipmentDialogContentComponent,
+} from './chat/chat.component';
 //Contact
 import { AppContactDialogContentComponent } from './contact/contact.component';
 import { AppContactComponent } from './contact/contact.component';
@@ -75,7 +78,6 @@ import { AddedDialogComponent } from './invoice/add-invoice/added-dialog/added-d
 import { AppBlogsComponent } from './blogs/blogs.component';
 import { AppBlogDetailsComponent } from './blogs/details/details.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
@@ -131,6 +133,7 @@ import { AppBlogDetailsComponent } from './blogs/details/details.component';
     OkDialogComponent,
     AppBlogsComponent,
     AppBlogDetailsComponent,
+    ShipmentDialogContentComponent,
   ],
   providers: [DatePipe],
 })
