@@ -20,6 +20,7 @@ import { Roles } from 'src/common/decorators/role.decorator';
 import { RoleEnum } from 'src/common/enums/role.enum';
 import { FindAllDeliveryQuery } from './dto/find-all-delivery.query';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { FindAllDeliverySellerQuery } from './dto/find-all-delivery-seller';
 
 @Controller('delivery')
 @ApiTags('delivery')
@@ -60,11 +61,14 @@ export class DeliveryController {
 
   @Get('seller')
   @ApiOperation({
-    summary: '[SELLER] Get all shipments of the user',
+    summary: '[SELLER] Get all shipments of the seller',
   })
   @Roles(RoleEnum.SELLER)
-  async getSellerShipments(@Req() req: Request) {
-    return await this.deliveryService.getSellerShipments(req.user);
+  async getSellerShipments(
+    @Query() query: FindAllDeliverySellerQuery,
+    @Req() req: Request,
+  ) {
+    return await this.deliveryService.getSellerShipments(query, req.user);
   }
 
   @Patch('user/confirm/:id')

@@ -26,6 +26,8 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Delivery } from './entities/delivery.entity';
+import { FindAllDeliverySellerQuery } from './dto/find-all-delivery-seller';
 
 @Injectable()
 export class DeliveryService {
@@ -101,28 +103,35 @@ export class DeliveryService {
     return shipments;
   }
 
-  async getSellerShipments(user: User) {
-    const shipments = await this.deliveryRepository
-      .findAll({
-        where: { user_id: user.id },
-        relations: ['product'],
-      })
-      .then((deliveries) =>
-        deliveries.map((delivery) => {
-          // You can manipulate the product or return it as is
-          const shipment = DeliveryDto.fromEntity(delivery) as any;
-          shipment.product = plainToClass(ProductDto, delivery.product); // Assign product
+  async getSellerShipments(queries: FindAllDeliverySellerQuery, user: User) {
+    const sellerShipments = await this.deliveryRepository.getShipmentsOfSeller(
+      queries,
+      user.id,
+    );
 
-          delete shipment.discount_amount;
-          delete shipment.discount_percent;
-          delete shipment.total_discount;
-          delete shipment.total_after_discount;
+    const [data, totalRecords] = sellerShipments;
 
-          return shipment;
-        }),
-      );
+    const transformData = data.map((delivery) => {
+      delivery.product = plainToClass(ProductDto, delivery.product) as any;
 
-    return shipments;
+      delete delivery.discount_amount;
+      delete delivery.discount_percent;
+      delete delivery.total_discount;
+      delete delivery.total_after_discount;
+
+      return plainToClass(DeliveryDto, delivery);
+    });
+
+    const url = `/api/v1/delivery/seller`;
+
+    const paginationResult = PaginationHelper.generatePagination(
+      queries,
+      url,
+      transformData,
+      totalRecords,
+    );
+
+    return paginationResult;
   }
 
   async getShipmentsByDate(queries: GetRevenueChartDto, sellerId: string) {
