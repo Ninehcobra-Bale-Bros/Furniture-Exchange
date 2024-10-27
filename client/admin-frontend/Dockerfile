@@ -1,4 +1,4 @@
-# Dockerfile
+# Dockerfile for fe-admin
 
 # Stage 1: Build the Angular application
 FROM node:18-alpine AS build
@@ -18,8 +18,19 @@ RUN npm install -g @angular/cli
 # Copy the rest of the application source code
 COPY . .
 
-# Expose the necessary port
-EXPOSE 4200
+# Build the Angular application
+RUN npm run build --prod
 
-# Serve Angular app, binding to all network interfaces
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200"]
+# Stage 2: Copy build files to Nginx
+FROM nginx:alpine
+
+# Copy the custom nginx.conf to the Nginx configuration directory
+# COPY ./nginx.conf /etc/nginx/nginx.conf
+
+# Copy build files to Nginx html directory
+COPY --from=build /app/dist/Modernize /usr/share/nginx/html
+
+# Expose the necessary port for Nginx
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
