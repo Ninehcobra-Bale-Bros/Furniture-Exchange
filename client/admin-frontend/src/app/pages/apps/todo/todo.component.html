@@ -122,13 +122,21 @@
             class="todo-item p-y-12 p-x-8 b-b-1"
           >
             <div class="d-flex align-items-center w-100">
-              <div class="flex-shrink-0">
-                <span style="margin-left: 42px" class="f-s-16 f-w-500">{{
-                  shipment.product.name
-                }}</span>
-                <p class="m-t-0 f-s-14 m-l-24 p-l-20">
-                  {{ shipment.created_at | date }}
-                </p>
+              <div class="d-flex align-items-center">
+                <img
+                  style="height: 55px; width: 55px"
+                  class="rounded-circle"
+                  src="{{ shipment.product.image_urls[0] }}"
+                  alt="anh"
+                />
+                <div class="flex-shrink-0 m-l-12 m-t-12">
+                  <span class="f-s-16 f-w-500">{{
+                    shipment.product.name
+                  }}</span>
+                  <p class="m-t-0 f-s-14">
+                    {{ shipment.created_at | date }}
+                  </p>
+                </div>
               </div>
               <div class="w-100">
                 <div class="d-flex align-items-start">

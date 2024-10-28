@@ -63,8 +63,8 @@ export class AppTodoComponent implements OnInit {
 
   getShipments(): void {
     this.deliveryService.getAllShipperShipment().subscribe((shipments) => {
-      this.shipments = shipments;
-      this.filteredShipments = shipments;
+      this.shipments = shipments.reverse(); // Reverse the shipments array
+      this.filteredShipments = this.shipments; // Ensure filteredShipments is also reversed
       this.all = shipments.length;
       this.pending = shipments.filter(
         (shipment) => shipment.status === 'pending'
