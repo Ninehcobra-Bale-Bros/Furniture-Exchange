@@ -2,16 +2,22 @@
   <mat-card-content>
     <div class="row justify-content-between">
       <div class="col-sm-4">
-        <mat-form-field appearance="outline" class="w-100 hide-hint">
-          <input
-            matInput
-            placeholder="Tìm kiếm đơn"
-            (keyup)="filter($any($event.target).value)"
-          />
-          <mat-icon matSuffix>
-            <i-tabler name="search" class="icon-20"></i-tabler>
-          </mat-icon>
-        </mat-form-field>
+        <div *ngIf="(user | async)?.role === 'admin'">
+          <mat-form-field appearance="fill">
+            <mat-label>Trạng thái đơn hàng</mat-label>
+            <mat-select
+              [(value)]="selectedStatus"
+              (selectionChange)="getInvoiceList()"
+            >
+              <mat-option
+                *ngFor="let status of statusOptions"
+                [value]="status.value"
+              >
+                {{ status.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
     </div>
   </mat-card-content>

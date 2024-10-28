@@ -15,7 +15,6 @@ const adminNavItems: NavItem[] = [
   },
   { displayName: 'Đơn hàng', iconName: 'file-invoice', route: 'apps/invoice' },
   { displayName: 'Tin nhắn', iconName: 'message-2', route: 'apps/chat' },
-  { displayName: 'Quản lý giao hàng', iconName: 'truck', route: 'apps/todo' },
 ];
 
 const sellerNavItems: NavItem[] = [
