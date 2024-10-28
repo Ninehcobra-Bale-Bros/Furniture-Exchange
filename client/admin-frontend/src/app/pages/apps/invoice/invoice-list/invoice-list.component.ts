@@ -6,6 +6,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { DeliveryService } from 'src/app/services/delivery.service';
 import { IShipment } from 'src/app/models/delivery.model';
+import { ToastService } from 'src/app/services/toast.service';
+import { E } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-invoice-list',
@@ -17,7 +19,6 @@ export class AppInvoiceListComponent implements AfterViewInit, OnInit {
   invoiceList = new MatTableDataSource<IShipment>([]);
   displayedColumns: string[] = [
     'id',
-
     'other_id',
     'product_name',
     'total_after_delivery',
@@ -30,20 +31,36 @@ export class AppInvoiceListComponent implements AfterViewInit, OnInit {
 
   constructor(
     private invoiceService: ServiceinvoiceService,
-    private deliveryService: DeliveryService
-  ) {
-    const invoiceListData = this.invoiceService.getInvoiceList();
-  }
+    private deliveryService: DeliveryService,
+    private toastService: ToastService
+  ) {}
   ngOnInit(): void {
     this.getInvoiceList();
   }
 
+  receiveInvoice(id: string) {
+    this.deliveryService.updateShipperDelivery(id).subscribe(
+      (res) => {
+        this.deliveryService
+          .updateShipmentStatus({
+            id: id,
+            status: 'delivering',
+          })
+          .subscribe((res) => {
+            this.getInvoiceList();
+            this.toastService.showSuccess('Nhận đơn hàng thành công');
+          });
+      },
+      (e) => {
+        this.toastService.showError('Nhận đơn hàng thất bại');
+      }
+    );
+  }
+
   getInvoiceList() {
-    this.deliveryService
-      .getAllShipperShipment()
-      .subscribe((res: IShipment[]) => {
-        this.invoiceList.data = res;
-      });
+    this.deliveryService.getAllShipmentByStatus('pending').subscribe((res) => {
+      this.invoiceList.data = res.data;
+    });
   }
 
   ngAfterViewInit(): void {

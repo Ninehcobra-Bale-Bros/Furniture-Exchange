@@ -8,9 +8,6 @@
         }"
         style="min-height: 80vh"
       >
-        <!-- --------------------------------------------------------------------------- -->
-        <!-- Sidebar -->
-        <!-- --------------------------------------------------------------------------- -->
         <mat-sidenav
           #chatnav
           right
@@ -41,46 +38,63 @@
                 <div class="m-l-auto">
                   <span
                     class="icon-27 bg-primary text-white rounded d-flex align-items-center justify-content-center"
-                    >{{ todos.length }}</span
+                    >{{ all }}</span
                   >
                 </div>
               </div>
             </mat-list-item>
             <mat-list-item
-              [class.bg-light-primary]="selectedCategory === 'uncomplete'"
-              class="incomplete font-normal"
-              (click)="selectionlblClick('uncomplete')"
+              [class.bg-light-primary]="selectedCategory === 'delivering'"
+              class="delivering font-normal"
+              (click)="selectionlblClick('delivering')"
             >
               <div class="d-flex align-items-center">
                 <span class="mat-subtitle-2">Đang giao</span>
                 <div class="m-l-auto">
                   <span
-                    class="icon-27 bg-error text-white rounded d-flex align-items-center justify-content-center"
-                    >{{ remainingList() }}</span
+                    class="icon-27 bg-warning text-white rounded d-flex align-items-center justify-content-center"
                   >
+                    <!-- {{ shipments.filter(s => s.status === 'delivering').length }} -->
+                    {{ delivering }}
+                  </span>
                 </div>
               </div>
             </mat-list-item>
             <mat-list-item
-              [class.bg-light-primary]="selectedCategory === 'complete'"
-              class="complete font-normal"
-              (click)="selectionlblClick('complete')"
+              [class.bg-light-primary]="selectedCategory === 'delivered'"
+              class="delivered font-normal"
+              (click)="selectionlblClick('delivered')"
             >
               <div class="d-flex align-items-center">
                 <span class="mat-subtitle-2">Đã giao</span>
                 <div class="m-l-auto">
                   <span
                     class="icon-27 bg-success text-white rounded d-flex align-items-center justify-content-center"
-                    >{{ todos.length - remainingList() }}</span
+                    >{{ delivered }}
+                    <!-- {{ shipments.filter(s => s.status === 'delivered').length }} -->
+                  </span>
+                </div>
+              </div>
+            </mat-list-item>
+            <mat-list-item
+              [class.bg-light-primary]="selectedCategory === 'returned'"
+              class="returned font-normal"
+              (click)="selectionlblClick('returned')"
+            >
+              <div class="d-flex align-items-center">
+                <span class="mat-subtitle-2">Đã trả lại</span>
+                <div class="m-l-auto">
+                  <span
+                    class="icon-27 bg-error text-white rounded d-flex align-items-center justify-content-center"
+                  >
+                    <!-- {{ shipments.filter(s => s.status === 'returned').length }} -->
+                    {{ returned }}</span
                   >
                 </div>
               </div>
             </mat-list-item>
           </mat-nav-list>
         </mat-sidenav>
-        <!-- --------------------------------------------------------------------------- -->
-        <!-- Detail View -->
-        <!-- --------------------------------------------------------------------------- -->
         <mat-toolbar class="bg-white">
           <div class="d-flex align-items-center w-100">
             <div class="d-flex align-items-center">
@@ -91,125 +105,52 @@
               >
                 <i-tabler name="align-left" class="icon-20"></i-tabler>
               </button>
-              <mat-checkbox (change)="allTodos()" color="primary"
-                >Đánh dấu tất cả
-              </mat-checkbox>
             </div>
-            <!-- <label for="all">Mark All</label> -->
             <div class="m-l-auto">
               <span class="bg-primary text-white p-8 rounded f-s-14"
-                >Còn {{ remainingList() }} đơn nữa</span
+                >Còn
+                <!-- {{ shipments.filter(s => s.status === 'delivering').length }} -->
+                {{ delivering }} đơn đang giao</span
               >
             </div>
           </div>
         </mat-toolbar>
         <mat-divider></mat-divider>
-        <div class="p-16 bg-white">
-          <form [formGroup]="inputFg">
-            <div class="row justify-content-between align-items-center">
-              <div class="col-sm-6 col-lg-5">
-                <mat-form-field appearance="outline" class="w-100 hide-hint">
-                  <input
-                    matInput
-                    #inputData
-                    [(ngModel)]="searchText"
-                    formControlName="mess"
-                    (keyup.enter)="addTodo(inputData.value)"
-                    placeholder="Thêm đơn hàng"
-                  />
-                </mat-form-field>
-              </div>
-              <div class="col-sm-3 col-lg-2">
-                <button
-                  mat-flat-button
-                  color="primary"
-                  [disabled]="!searchText"
-                  class="w-100"
-                  id="btnAddTodo"
-                  (click)="addTodo(inputData.value)"
-                >
-                  Thêm đơn
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <mat-divider></mat-divider>
         <mat-card-content class="p-x-0" style="min-height: 70vh">
-          @for(todo of copyTodos; track todo.message; let i = $index) {
-          <div class="todo-item p-y-12 p-x-8 b-b-1">
+          <div
+            *ngFor="let shipment of filteredShipments"
+            class="todo-item p-y-12 p-x-8 b-b-1"
+          >
             <div class="d-flex align-items-center w-100">
               <div class="flex-shrink-0">
-                <mat-checkbox
-                  class="mat-subheading-1 m-b-0"
-                  [(ngModel)]="todo.completionStatus"
-                  color="primary"
-                  ><span class="f-s-16 f-w-500">{{
-                    todo.message
-                  }}</span></mat-checkbox
-                >
+                <span style="margin-left: 42px" class="f-s-16 f-w-500">{{
+                  shipment.product.name
+                }}</span>
                 <p class="m-t-0 f-s-14 m-l-24 p-l-20">
-                  {{ todo.date | date }}
+                  {{ shipment.created_at | date }}
                 </p>
               </div>
               <div class="w-100">
-                @if(!todo.edit) {
-                <div
-                  class="d-flex align-items-start"
-                  (click)="editTodo(todo.id, '')"
-                >
+                <div class="d-flex align-items-start">
                   <div class="m-l-auto px-3 mr-2 d-flex">
-                    <a
-                      mat-icon-button
-                      class="d-flex justify-content-center"
-                      href="javascript: void(0);"
-                      (click)="editTodo(todo.id, 'edit')"
+                    <span
+                      [ngClass]="getStatusColor(shipment.status)"
+                      class="badge p-t-4 p-b-4 p-l-8 p-r-8 rounded"
+                      >{{ getStatusTranslation(shipment.status) }}</span
                     >
-                      <i-tabler name="pencil" class="icon-18 d-flex"></i-tabler>
-                    </a>
-                    <a
-                      mat-icon-button
-                      class="d-flex justify-content-center"
-                      href="javascript: void(0);"
-                      (click)="deleteTodo(i)"
+                    <button
+                      *ngIf="shipment.status === 'delivering'"
+                      mat-button
+                      class="bg-primary text-white m-l-12"
+                      (click)="confirmDelivery(shipment)"
                     >
-                      <i-tabler name="trash" class="icon-18 d-flex"></i-tabler>
-                    </a>
+                      Xác nhận giao hàng thành công
+                    </button>
                   </div>
                 </div>
-                }
-
-                <!-- Edit View -->
-                @if(todo.edit) {
-                <div class="d-flex align-items-center edit-view">
-                  <mat-form-field appearance="outline" class="hide-hint">
-                    <input matInput [(ngModel)]="todo.message" />
-                  </mat-form-field>
-
-                  <div class="m-l-auto d-flex align-items-center">
-                    <a
-                      mat-icon-button
-                      class="d-flex"
-                      href="javascript: void(0);"
-                      (click)="editTodo(todo.id, 'save')"
-                    >
-                      <i-tabler name="checks" class="icon-18 d-flex"></i-tabler>
-                    </a>
-                    <a
-                      mat-icon-button
-                      class="d-flex"
-                      href="javascript: void(0);"
-                      (click)="deleteTodo(i)"
-                    >
-                      <i-tabler name="trash" class="icon-18 d-flex"></i-tabler>
-                    </a>
-                  </div>
-                </div>
-                }
               </div>
             </div>
           </div>
-          }
         </mat-card-content>
       </mat-sidenav-container>
     </mat-card>
