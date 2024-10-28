@@ -47,17 +47,17 @@ services:
   #   expose:
   #     - 3001
 
-  # fe-user:
-  #   container_name: "furniture-fe-user"
-  #   build:
-  #     context: ./client/user-frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   expose:
-  #     - 3000
-  #   depends_on:
-  #     - backend
+  fe-user:
+    container_name: "furniture-fe-user"
+    build:
+      context: ./client/user-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+    # depends_on:
+    #   - backend
 
   fe-admin:
     container_name: furniture-fe-admin
@@ -65,7 +65,7 @@ services:
       context: ./client/admin-frontend
       dockerfile: Dockerfile
     ports:
-      - "4000:80" # Map 4000 to the host
+      - "4000:80"
     expose:
       - 80
 
