@@ -16,10 +16,10 @@ export const deliveryApi = createApi({
     }),
     confirmUserShipment: builder.mutation<void, { id: string }>({
       query: ({ id }) => ({
-        url: `/delivery/confirm/${id}`,
+        url: `/delivery/user/confirm/${id}`,
         method: 'PATCH'
       })
     })
   })
 })
-export const { useGetAllUserShipmentQuery } = deliveryApi
+export const { useGetAllUserShipmentQuery, useConfirmUserShipmentMutation } = deliveryApi

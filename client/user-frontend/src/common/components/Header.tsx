@@ -10,6 +10,7 @@ import { ReactNode, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Dropdown, Menu } from 'antd'
 import { removeCookieFromClient } from '@/types/cookie'
+import { handleApiError } from '../../../utils/api-error-handler'
 
 export default function Header(): ReactNode {
   const [cookies] = useCookies(['access-token'])
@@ -33,6 +34,7 @@ export default function Header(): ReactNode {
   useEffect(() => {
     if (isUserProfileError) {
       console.log('userProfileError', userProfileError)
+      handleApiError(userProfileError)
     }
   }, [isUserProfileError])
 
@@ -132,10 +134,12 @@ export default function Header(): ReactNode {
                   <div className='pe-3 recommend-product'>Iphone 15</div>
                 </div>
               </div>
-              <i
-                style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
-                className='fa-solid fa-cart-flatbed ms-4'
-              ></i>
+              <Link href={'/user/order'}>
+                <i
+                  style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
+                  className='fa-solid fa-cart-flatbed ms-4'
+                ></i>
+              </Link>
             </div>
           </div>
         </div>

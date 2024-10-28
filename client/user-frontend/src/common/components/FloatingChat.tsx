@@ -10,6 +10,7 @@ import { IProduct } from '@/types/product'
 import socketService from '@/services/socket.service'
 import { useGetUserConversationsQuery, useUseGetConversationByOtherUserIdQuery } from '@/services/conversation.service'
 import { IConversation } from '@/types/conversation'
+import { handleApiError } from '../../../utils/api-error-handler'
 
 interface Message {
   sender: 'user' | 'recipient'
@@ -38,9 +39,13 @@ const FloatingChat = ({
   const [messages, setMessages] = useState<Message[]>([])
   const [selectedConversation, setSelectedConversation] = useState<IConversation>()
 
-  const { data: conversations, isSuccess } = useGetUserConversationsQuery()
-  const { data: conversationMessages, isSuccess: isConversationMessagesSuccess } =
-    useUseGetConversationByOtherUserIdQuery(product.seller_id)
+  const { data: conversations, isSuccess, isError: isGetError, error: error1 } = useGetUserConversationsQuery()
+  const {
+    data: conversationMessages,
+    isSuccess: isConversationMessagesSuccess,
+    isError,
+    error
+  } = useUseGetConversationByOtherUserIdQuery(product.seller_id)
 
   const chatContentRef = useRef<HTMLDivElement>(null)
 
@@ -52,8 +57,11 @@ const FloatingChat = ({
       if (conversation) {
         setSelectedConversation(conversation)
       }
+      if (isGetError) {
+        handleApiError(error)
+      }
     }
-  }, [isSuccess, conversations, product.seller_id])
+  }, [isSuccess, conversations, product.seller_id, isError])
 
   useEffect(() => {
     if (isConversationMessagesSuccess && conversationMessages) {

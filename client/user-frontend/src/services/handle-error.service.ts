@@ -3,6 +3,7 @@
 import { IErrorResponse } from '@/types/error'
 import { ToastService } from './toast.service'
 import { useRouter } from 'next/navigation'
+import { removeCookieFromClient } from '@/types/cookie'
 
 export class HandleErrorService {
   constructor(
@@ -11,11 +12,13 @@ export class HandleErrorService {
   ) {}
 
   handleHttpError(error: IErrorResponse): void {
+    console.log('vo ne')
     switch (error.statusCode) {
       case 400:
         this.toastService.error(error.message)
         break
       case 401:
+        removeCookieFromClient('access-token')
         this.toastService.error(error.message)
         this.router.push('/sign-in')
         break
