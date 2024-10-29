@@ -19,14 +19,18 @@ export class Gateway {
 
     const token = authHeader.split(' ')[1];
 
-    const payload = utils.verifyToken(token);
+    try {
+      const payload = utils.verifyToken(token);
 
-    if (!payload) {
+      if (!payload) {
+        return null;
+      }
+
+      const user = await this.usersService.findOneByEmail(payload['email']);
+
+      return user;
+    } catch (error) {
       return null;
     }
-
-    const user = await this.usersService.findOneByEmail(payload['email']);
-
-    return user;
   }
 }
