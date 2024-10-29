@@ -190,9 +190,15 @@ export class AppChatComponent implements OnInit, AfterViewInit {
         },
       },
     });
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(result);
       if (result) {
-        if (result.action === 'Add') {
+        if (result.event === 'Add') {
+          await this.socketIoService.sendAlert({
+            content: 'hi',
+            other_id: result.data.other_id,
+            product: result.data.product_id,
+          });
         } else if (result.action === 'Update') {
         } else if (result.action === 'Delete') {
         }
@@ -396,7 +402,7 @@ export class ShipmentDialogContentComponent implements OnInit {
         .subscribe(
           (response) => {
             console.log('Server response:', response);
-            this.dialogRef.close({ event: 'Add', data: response });
+            this.dialogRef.close({ event: 'Add', data: { ...shipmentData } });
             this.toastService.showSuccess('Tạo đơn thành công');
             this.router.navigate([this.router.url]);
           },
