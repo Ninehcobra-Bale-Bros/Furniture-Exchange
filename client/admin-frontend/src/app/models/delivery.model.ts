@@ -30,7 +30,13 @@ export interface ICreateShipmentResponse {
   expired_at: string;
 }
 
-export type IGetUserAllShipmentResponse = IShipment[];
+export type IGetUserAllShipmentResponse = {
+  data: IShipment[];
+  total: number;
+  page: number;
+  limit: number;
+  total_page: number;
+};
 
 export type IGetShipperAllShipmentResponse = IShipment[];
 

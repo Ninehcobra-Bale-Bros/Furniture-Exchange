@@ -12,7 +12,12 @@ export class SocketioService {
   constructor() {}
 
   connect(): void {
-    this.socket = io(environment.SOCKET_URL);
+    this.socket = io(environment.SOCKET_URL, {
+      extraHeaders: {
+        Authorization:
+          'Bearer ' + localStorage.getItem('access_token')?.replace(/\"/g, ''),
+      },
+    });
 
     this.socket.on('connect', () => {
       console.log('Connected to server via Socket.IO');

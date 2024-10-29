@@ -18,6 +18,14 @@ export class DeliveryService extends BaseService {
     return this.post<ICreateShipmentResponse>(this.url, payload);
   }
 
+  getAllShipmentByStatus(
+    status: 'pending' | 'delivering' | 'delivered' | 'returned'
+  ) {
+    return this.get<IGetUserAllShipmentResponse>(
+      `${this.url}/?status=${status}&offset=1&limit=100`
+    );
+  }
+
   getAllUserShipment() {
     return this.get<IGetUserAllShipmentResponse>(`${this.url}/user`);
   }
@@ -31,11 +39,14 @@ export class DeliveryService extends BaseService {
   }
 
   updateShipmentStatus(payload: IUpdateShipmentStatusPayload) {
-    return this.patch(`${this.url}/status/${payload.id}`, { payload });
+    return this.patch(
+      `${this.url}/status/${payload.id}?status=${payload.status}`,
+      {}
+    );
   }
 
   updateShipperDelivery(id: string) {
-    return this.patch(`${this.url}/delivery/${id}`, {});
+    return this.patch(`${this.url}/deliver/${id}`, {});
   }
 
   cancelShipment(id: string) {
