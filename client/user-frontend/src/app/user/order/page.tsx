@@ -2,10 +2,15 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Table, Button, Spin } from 'antd'
-import { useConfirmUserShipmentMutation, useGetAllUserShipmentQuery } from '@/services/delivery.service'
+import {
+  useCancelUserShipmentMutation,
+  useConfirmUserShipmentMutation,
+  useGetAllUserShipmentQuery
+} from '@/services/delivery.service'
 import { IShipment } from '@/types/delivery'
 import { ToastService } from '@/services/toast.service'
 import { handleApiError } from '../../../../utils/api-error-handler'
+import { useRouter } from 'next/navigation'
 
 export default function Page(): React.ReactNode {
   const { data: shipments, isLoading, isError, refetch } = useGetAllUserShipmentQuery()
@@ -19,6 +24,7 @@ export default function Page(): React.ReactNode {
   }, [])
 
   const [confirmShipment, { isSuccess: isConfirmSuccess, isError: isConfirmError }] = useConfirmUserShipmentMutation()
+  const [cancelShipment, { isSuccess: isCancelSuccess, isError: isCancelError }] = useCancelUserShipmentMutation()
 
   useEffect(() => {
     if (isConfirmSuccess) {
@@ -29,6 +35,16 @@ export default function Page(): React.ReactNode {
       handleApiError(isConfirmError)
     }
   }, [isConfirmSuccess, isConfirmError])
+
+  useEffect(() => {
+    if (isCancelSuccess) {
+      refetch()
+      toastService.success('Hủy thành công')
+    }
+    if (isCancelError) {
+      handleApiError(isCancelError)
+    }
+  }, [isCancelSuccess, isCancelError])
 
   const getStatusStyle = (status: string): React.CSSProperties => {
     switch (status) {
@@ -94,6 +110,13 @@ export default function Page(): React.ReactNode {
       render: (_: any, record: IShipment): React.ReactNode => (
         <span>
           <Button
+            className='me-2'
+            disabled={record.other_confirmed}
+            onClick={() => cancelShipment({ id: record.id.toString() })}
+          >
+            Hủy
+          </Button>
+          <Button
             disabled={record.other_confirmed}
             type='primary'
             onClick={() => confirmShipment({ id: record.id.toString() })}
@@ -105,13 +128,18 @@ export default function Page(): React.ReactNode {
     }
   ]
 
+  const router = useRouter()
+
   if (isLoading)
     return (
       <div className='vh-100 w-100 d-flex align-items-center justify-content-center'>
         <Spin size='large'></Spin>
       </div>
     )
-  if (isError) return <div>Error loading shipments</div>
+  if (isError) {
+    router.push('/sign-in')
+    return null
+  }
 
   return (
     <div className={`container pt-2`}>

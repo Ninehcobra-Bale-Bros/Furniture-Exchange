@@ -200,12 +200,6 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
       />
       <div className='row g-2'>
         <div className='col-8 position-relative '>
-          <button className='btn btn-link position-absolute top-0 end-0 d-flex align-items-center justify-content-center m-2 mt-1'>
-            <i className='fa-solid fa-share'></i>
-          </button>
-          <button className='btn btn-link position-absolute top-0 end-0 d-flex align-items-center justify-content-center m-2 mt-1 me-5'>
-            <i className='fa-regular fa-heart'></i>
-          </button>
           <Carousel
             ref={carouselRef}
             arrows={true}
@@ -315,10 +309,10 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
               </div>
             </div>
             <div className='d-flex mt-2 align-items-center flex-column'>
-              <div className='w-100 py-2 text-center btn-contact fw-bold'>
+              {/* <div className='w-100 py-2 text-center btn-contact fw-bold'>
                 <i className='fa-solid fa-phone me-2'></i>
                 Gọi điện
-              </div>
+              </div> */}
               <div
                 onClick={() => {
                   if (!accessToken || accessToken === '') {
@@ -379,9 +373,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
                     <span className='position-absolute top-0 end-0 badge state-badge  m-2'>
                       {product.state === 'new' ? 'Mới' : 'Đã qua sử dụng'}
                     </span>
-                    <button className='btn d-flex align-items-center justify-content-center btn-link position-absolute text-center bottom-0 end-0 p-2 m-1'>
-                      <i className='fa-regular fa-heart body-m'></i>
-                    </button>
+
                     {product.image_urls && product.image_urls.length > 0 && (
                       <img
                         src={product.image_urls[0] ? product.image_urls[0] : 'https://via.placeholder.com/150'}

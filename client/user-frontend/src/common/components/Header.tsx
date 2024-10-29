@@ -5,16 +5,19 @@ import './header.scss'
 import Link from 'next/link'
 
 import { useGetUserProfileQuery } from '@/services/user.service'
+import { useGetUserConversationsQuery } from '@/services/conversation.service'
 import { useCookies } from 'react-cookie'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Dropdown, Menu } from 'antd'
+import { Dropdown, Menu, Badge } from 'antd'
 import { removeCookieFromClient } from '@/types/cookie'
 import { handleApiError } from '../../../utils/api-error-handler'
+import socketService from '@/services/socket.service'
 
 export default function Header(): ReactNode {
   const [cookies] = useCookies(['access-token'])
   const accessToken = cookies['access-token']
+  const [hasShipmentAlert, setHasShipmentAlert] = useState<boolean>(false)
 
   const router = useRouter()
 
@@ -31,12 +34,34 @@ export default function Header(): ReactNode {
     skip: !accessToken
   })
 
+  const { data: conversations, isSuccess: isConversationsSuccess } = useGetUserConversationsQuery(undefined, {
+    skip: !accessToken
+  })
+
   useEffect(() => {
     if (isUserProfileError) {
       console.log('userProfileError', userProfileError)
       handleApiError(userProfileError)
     }
   }, [isUserProfileError])
+
+  useEffect(() => {
+    if (isUserProfileSuccess && isConversationsSuccess && conversations) {
+      const conversationName = conversations.conversation_name
+      socketService.connect()
+
+      socketService.listen(conversationName, (data: { type: string }) => {
+        console.log('data', data)
+        if (data.type === 'shipmentAlert') {
+          setHasShipmentAlert(true)
+        }
+      })
+
+      return (): void => {
+        socketService.disconnect()
+      }
+    }
+  }, [isUserProfileSuccess, isConversationsSuccess, conversations])
 
   if (userProfileLoading) {
     return <div>Loading...</div>
@@ -56,6 +81,32 @@ export default function Header(): ReactNode {
       <Menu.Item key='2' onClick={handleLogout}>
         Đăng xuất
       </Menu.Item>
+    </Menu>
+  )
+
+  const conversationMenu = (
+    <Menu>
+      <div className='mb-2 ms-2' style={{ fontWeight: 500, fontSize: 16 }}>
+        Tin nhắn gần đây
+      </div>
+      {conversations?.conversations.map((conversation) => (
+        <Menu.Item key={conversation.other.id}>
+          <div className='d-flex align-items-center'>
+            <img
+              src={conversation.other.image_url}
+              alt='avatar'
+              width={30}
+              height={30}
+              className='rounded-circle me-2'
+              style={{ objectFit: 'cover' }}
+            />
+            <div>
+              <div>{`${conversation.other.first_name} ${conversation.other.last_name}`}</div>
+              <div className='text-muted'>{conversation.last_message.content}</div>
+            </div>
+          </div>
+        </Menu.Item>
+      ))}
     </Menu>
   )
 
@@ -125,21 +176,37 @@ export default function Header(): ReactNode {
                     <i className='fa-solid fa-search text-neutral-light-5'></i>
                   </button>
                 </div>
-                <div className='mt-2 body-xs text-neutral-light-5 d-flex align-items-center'>
+                {/* <div className='mt-2 body-xs text-neutral-light-5 d-flex align-items-center'>
                   <div className='pe-3 recommend-product'>Tai nghe Bose QuietComfort Ultra</div>
                   <div className='pe-3 recommend-product'>Tecno Pova 5</div>
                   <div className='pe-3 recommend-product'>Bàn phím cơ Yuki</div>
                   <div className='pe-3 recommend-product'>Mặt nạ anh bưởi</div>
                   <div className='pe-3 recommend-product'>Moondrop</div>
                   <div className='pe-3 recommend-product'>Iphone 15</div>
-                </div>
+                </div> */}
               </div>
-              <Link href={'/user/order'}>
-                <i
-                  style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
-                  className='fa-solid fa-cart-flatbed ms-4'
-                ></i>
-              </Link>
+              {userProfile && isUserProfileSuccess ? (
+                <>
+                  <Dropdown overlay={conversationMenu} placement='bottomRight' trigger={['click']}>
+                    <Badge dot={hasShipmentAlert}>
+                      <i
+                        style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
+                        className='fa-solid fa-comments ms-4'
+                      ></i>
+                    </Badge>
+                  </Dropdown>
+                  <Link href={'/user/order'}>
+                    <Badge size='default' dot={hasShipmentAlert}>
+                      <i
+                        style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
+                        className='fa-solid fa-cart-flatbed ms-4'
+                      ></i>
+                    </Badge>
+                  </Link>
+                </>
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>
