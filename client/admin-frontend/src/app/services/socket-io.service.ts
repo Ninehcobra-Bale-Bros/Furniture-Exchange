@@ -28,6 +28,10 @@ export class SocketioService {
     });
   }
 
+  sendAlert(msg: any): void {
+    this.socket.emit('shipmentAlert', msg);
+  }
+
   sendMessage(msg: any): void {
     this.socket.emit('newMessage', msg);
   }

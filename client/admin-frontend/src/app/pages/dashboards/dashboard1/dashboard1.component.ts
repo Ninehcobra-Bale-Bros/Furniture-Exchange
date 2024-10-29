@@ -39,6 +39,7 @@ import {
 } from 'ng-apexcharts';
 import { AppGredientChartComponent } from '../../charts/gredient/gredient.component';
 import { MaterialModule } from 'src/app/material.module';
+import { CalculateYearlyTotalPipe } from 'src/app/pipe/total.pipe';
 
 @Component({
   selector: 'app-dashboard1',
@@ -61,6 +62,7 @@ import { MaterialModule } from 'src/app/material.module';
     AppGredientChartComponent,
     NgApexchartsModule,
     MaterialModule,
+    CalculateYearlyTotalPipe,
   ],
   templateUrl: './dashboard1.component.html',
 })

@@ -5,7 +5,9 @@
   <mat-card-content>
     <div class="row m-t-24">
       <div class="col-7">
-        <h4 class="mat-headline-5">19,520,320,513</h4>
+        <h4 class="mat-headline-5">
+          {{ yearlyRevenue?.toLocaleString() + " VNĐ" }}
+        </h4>
         <div class="d-flex align-items-center m-t-16">
           <button
             mat-mini-fab
