@@ -85,22 +85,22 @@ export default function Header(): ReactNode {
   )
 
   const conversationMenu = (
-    <Menu>
+    <Menu className='mt-3' style={{ width: 350 }}>
       <div className='mb-2 ms-2' style={{ fontWeight: 500, fontSize: 16 }}>
         Tin nhắn gần đây
       </div>
       {conversations?.conversations.map((conversation) => (
-        <Menu.Item key={conversation.other.id}>
+        <Menu.Item className='mb-2' key={conversation.other.id}>
           <div className='d-flex align-items-center'>
             <img
               src={conversation.other.image_url}
               alt='avatar'
-              width={30}
-              height={30}
+              width={45}
+              height={45}
               className='rounded-circle me-2'
               style={{ objectFit: 'cover' }}
             />
-            <div>
+            <div className='ms-1'>
               <div>{`${conversation.other.first_name} ${conversation.other.last_name}`}</div>
               <div className='text-muted'>{conversation.last_message.content}</div>
             </div>
@@ -137,7 +137,7 @@ export default function Header(): ReactNode {
 
               <div>
                 {userProfile ? (
-                  <Dropdown overlay={menu} placement='bottomRight' trigger={['click']}>
+                  <Dropdown overlay={menu} placement='bottomLeft' trigger={['click']}>
                     <div className='body-xs d-flex align-items-center header-btn'>
                       <div className='rounded-circle overflow-hidden me-2' style={{ width: '20px', height: '20px' }}>
                         <img
@@ -188,15 +188,13 @@ export default function Header(): ReactNode {
               {userProfile && isUserProfileSuccess ? (
                 <>
                   <Dropdown overlay={conversationMenu} placement='bottomRight' trigger={['click']}>
-                    <Badge dot={hasShipmentAlert}>
-                      <i
-                        style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
-                        className='fa-solid fa-comments ms-4'
-                      ></i>
-                    </Badge>
+                    <i
+                      style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
+                      className='fa-solid fa-comments ms-4'
+                    ></i>
                   </Dropdown>
                   <Link href={'/user/order'}>
-                    <Badge size='default' dot={hasShipmentAlert}>
+                    <Badge color='red' size='default' dot={hasShipmentAlert}>
                       <i
                         style={{ fontSize: 24, color: 'white', cursor: 'pointer' }}
                         className='fa-solid fa-cart-flatbed ms-4'
