@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 'use client'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 export type GoogleAdUnitProps = {
@@ -21,12 +21,16 @@ const GoogleAdUnitClient: React.FC<GoogleAdUnitProps> = ({ children }) => {
   const searchParams = useSearchParams()
   React.useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+      const ok = (window.adsbygoogle = window.adsbygoogle || []).push({})
     } catch (err) {
       console.error(err)
     }
   }, [pathname, searchParams])
-  return <React.Fragment>{children}</React.Fragment>
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <React.Fragment>{children}</React.Fragment>{' '}
+    </Suspense>
+  )
 }
 
 export default GoogleAdUnitClient

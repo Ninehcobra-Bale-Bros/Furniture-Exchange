@@ -7,6 +7,7 @@ import CategoryBanner from './components/category-banner'
 import ProductList from './components/ProductList'
 import { useGetProductsQuery } from '@/services/product.service'
 import { Spin } from 'antd'
+import FloatingChat from '@/common/components/FloatingChat'
 export default function Home(): React.ReactNode {
   const { data, isLoading } = useGetProductsQuery()
 
@@ -30,7 +31,7 @@ export default function Home(): React.ReactNode {
         ) : (
           ''
         )}
-      </div>
+      </div>{' '}
       <Footer />
     </div>
   )

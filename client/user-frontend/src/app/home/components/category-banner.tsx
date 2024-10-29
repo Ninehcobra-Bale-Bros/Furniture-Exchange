@@ -11,7 +11,7 @@ export default function CategoryBanner(): React.ReactNode {
   if (error) return <div>Error loading categories</div>
 
   // Skip the first 6 categories and take the next 6
-  const displayCategories = categories?.slice(6, 12) || []
+  const displayCategories = categories?.slice(6, 18) || []
 
   return (
     <div className='container w-100 category-banner mt-3'>
