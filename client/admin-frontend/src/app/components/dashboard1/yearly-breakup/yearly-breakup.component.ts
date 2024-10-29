@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import {
   ApexChart,
   ChartComponent,
@@ -32,6 +32,7 @@ export interface yearlyChart {
   templateUrl: './yearly-breakup.component.html',
 })
 export class AppYearlyBreakupComponent {
+  @Input() yearlyRevenue: number = 0;
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
   public yearlyChart!: Partial<yearlyChart> | any;
 

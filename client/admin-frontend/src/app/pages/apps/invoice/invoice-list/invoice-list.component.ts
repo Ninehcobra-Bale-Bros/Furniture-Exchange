@@ -53,6 +53,7 @@ export class AppInvoiceListComponent implements AfterViewInit, OnInit {
         this.user = this.userService.user$;
         // Update displayed columns based on user role
         if (user.role === 'admin') {
+          this.selectedStatus = 'delivered';
           this.displayedColumns = this.displayedColumns.filter(
             (col) => col !== 'action'
           );
