@@ -81,9 +81,8 @@ services:
       - "80:80"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
-      # - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      # - fe-user
+      - fe-user
       - fe-admin
       - backend
 
