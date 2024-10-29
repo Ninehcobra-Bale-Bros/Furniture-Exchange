@@ -21,6 +21,8 @@ services:
       POSTGRES_DB: FurnitureExchange
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    expose:
+      - 5432
 
   backend:
     container_name: furniture-backend
