@@ -117,24 +117,12 @@ export default function Header(): ReactNode {
         <div className='row align-items-center pt-1'>
           <div className='col-md-6'>
             <div className='d-flex'>
-              <div className='body-xs header-text-btn me-3'>Kênh Người bán</div>
+              {/* <div className='body-xs header-text-btn me-3'>Kênh Người bán</div> */}
               <div className='body-xs header-text-btn me-3'>Trở thành Người bán ESOLD</div>
-              <div className='body-xs header-text-btn'>
-                Kết nối
-                <i className='fa-brands fa-facebook ps-1'></i>
-                <i className='fa-brands fa-square-instagram ps-1'></i>
-              </div>
             </div>
           </div>
           <div className='col-md-6 text-neutral-light-5'>
             <div className='d-flex justify-content-end align-items-center'>
-              <div className='body-xs me-3 header-btn'>
-                <i className='fa-regular fa-bell me-1'></i>Thông báo
-              </div>
-              <div className='body-xs me-3 header-btn'>
-                <i className='fa-regular fa-circle-question me-1'></i>Hỗ trợ
-              </div>
-
               <div>
                 {userProfile ? (
                   <Dropdown overlay={menu} placement='bottomLeft' trigger={['click']}>
