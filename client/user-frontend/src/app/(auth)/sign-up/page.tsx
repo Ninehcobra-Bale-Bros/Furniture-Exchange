@@ -13,9 +13,9 @@ export default function SignUp(): React.ReactNode {
   const [registerPayload, setRegisterPayload] = useState<IRegisterPayload>({
     email: '',
     password: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
     sex: ''
   })
   const [payloadErrors, setPayloadErrors] = useState<Partial<IRegisterPayload>>({})
@@ -52,14 +52,14 @@ export default function SignUp(): React.ReactNode {
       if (payload.password.length < 8) {
         errors.password = 'Mật khẩu phải có ít nhất 8 ký tự.'
       }
-      if (!payload.firstName.trim()) {
-        errors.firstName = 'Vui lòng nhập họ'
+      if (!payload.first_name.trim()) {
+        errors.first_name = 'Vui lòng nhập họ'
       }
-      if (!payload.lastName.trim()) {
-        errors.lastName = 'Vui lòng nhập tên'
+      if (!payload.last_name.trim()) {
+        errors.last_name = 'Vui lòng nhập tên'
       }
-      if (!/^\d{10}$/.test(payload.phoneNumber)) {
-        errors.phoneNumber = 'Vui lòng nhập số điện thoại hợp lệ'
+      if (!/^\d{10}$/.test(payload.phone_number)) {
+        errors.phone_number = 'Vui lòng nhập số điện thoại hợp lệ'
       }
       if (!payload.sex) {
         errors.sex = 'Vui lòng chọn giới tính'
@@ -150,48 +150,48 @@ export default function SignUp(): React.ReactNode {
           </div>
 
           <div className='mb-3'>
-            <label htmlFor='firstName' className='form-label body-s fw-bold'>
+            <label htmlFor='first_name' className='form-label body-s fw-bold'>
               Họ
             </label>
             <input
               type='text'
-              className={`form-control py-3 body-m ${payloadErrors.firstName ? 'is-invalid' : ''}`}
-              id='firstName'
-              value={registerPayload.firstName}
-              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'firstName')}
+              className={`form-control py-3 body-m ${payloadErrors.first_name ? 'is-invalid' : ''}`}
+              id='first_name'
+              value={registerPayload.first_name}
+              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'first_name')}
               placeholder='Vui lòng nhập họ'
             />
-            {payloadErrors.firstName && <div className='invalid-feedback'>{payloadErrors.firstName}</div>}
+            {payloadErrors.first_name && <div className='invalid-feedback'>{payloadErrors.first_name}</div>}
           </div>
 
           <div className='mb-3'>
-            <label htmlFor='lastName' className='form-label body-s fw-bold'>
+            <label htmlFor='last_name' className='form-label body-s fw-bold'>
               Tên
             </label>
             <input
               type='text'
-              className={`form-control py-3 body-m ${payloadErrors.lastName ? 'is-invalid' : ''}`}
-              id='lastName'
-              value={registerPayload.lastName}
-              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'lastName')}
+              className={`form-control py-3 body-m ${payloadErrors.last_name ? 'is-invalid' : ''}`}
+              id='last_name'
+              value={registerPayload.last_name}
+              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'last_name')}
               placeholder='Vui lòng nhập tên'
             />
-            {payloadErrors.lastName && <div className='invalid-feedback'>{payloadErrors.lastName}</div>}
+            {payloadErrors.last_name && <div className='invalid-feedback'>{payloadErrors.last_name}</div>}
           </div>
 
           <div className='mb-3'>
-            <label htmlFor='phoneNumber' className='form-label body-s fw-bold'>
+            <label htmlFor='phone_number' className='form-label body-s fw-bold'>
               Số điện thoại
             </label>
             <input
               type='tel'
-              className={`form-control py-3 body-m ${payloadErrors.phoneNumber ? 'is-invalid' : ''}`}
-              id='phoneNumber'
-              value={registerPayload.phoneNumber}
-              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'phoneNumber')}
+              className={`form-control py-3 body-m ${payloadErrors.phone_number ? 'is-invalid' : ''}`}
+              id='phone_number'
+              value={registerPayload.phone_number}
+              onChange={(e) => handleOnChangeRegisterPayload(e.target.value, 'phone_number')}
               placeholder='Vui lòng nhập số điện thoại'
             />
-            {payloadErrors.phoneNumber && <div className='invalid-feedback'>{payloadErrors.phoneNumber}</div>}
+            {payloadErrors.phone_number && <div className='invalid-feedback'>{payloadErrors.phone_number}</div>}
           </div>
 
           <div className='mb-3'>

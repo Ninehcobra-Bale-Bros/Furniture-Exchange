@@ -97,7 +97,7 @@ export default function SignIn(): React.ReactNode {
         <h4 className='fw-bold fs-4 mb-0'>Chào mừng bạn đã đến ESOLD</h4>
         <span className='d-block mb-4 body-s mt-1'>Đăng nhập để sử dụng dịch vụ của chúng tôi</span>
 
-        <div className='row mt-4'>
+        {/* <div className='row mt-4'>
           <div className='col-12 col-sm-6 mb-3'>
             <button className='btn btn-outline-secondary w-100 body-s'>
               <Image src='/icon/google.png' alt='google' width={16} height={16} className='me-2' />
@@ -110,7 +110,7 @@ export default function SignIn(): React.ReactNode {
               Đăng nhập với Facebook
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className='text-center my-4 or-border'>Hoặc đăng nhập với</div>
 
