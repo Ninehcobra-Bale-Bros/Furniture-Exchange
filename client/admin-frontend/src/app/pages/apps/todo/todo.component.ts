@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ToDo } from './todo';
 import { TodoService } from './todo.service';
+import { DeliveryService } from 'src/app/services/delivery.service';
+import { IShipment } from 'src/app/models/delivery.model';
+import { DatePipe } from '@angular/common';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-todo',
@@ -12,88 +15,112 @@ export class AppTodoComponent implements OnInit {
   sidePanelOpened = true;
   public showSidebar = false;
   inputFg: UntypedFormGroup = Object.create(null);
-  todoId = 6;
-  copyTodos: ToDo[];
+  shipments: IShipment[] = [];
+  filteredShipments: IShipment[] = [];
   selectedCategory = 'all';
   searchText: string | null = null;
-  editSave = 'Edit';
 
-  todos: ToDo[] = this.todoService.getTodos();
+  all: number = 0;
+  pending: number = 0;
+  delivering: number = 0;
+  delivered: number = 0;
+  returned: number = 0;
 
-  constructor(public fb: UntypedFormBuilder, public todoService: TodoService) {
-    this.copyTodos = this.todos;
-  }
+  constructor(
+    public fb: UntypedFormBuilder,
+    private deliveryService: DeliveryService,
+    private datePipe: DatePipe,
+    private toastService: ToastService
+  ) {}
 
   isOver(): boolean {
     return window.matchMedia(`(max-width: 960px)`).matches;
-  }
-
-  mobileSidebar(): void {
-    this.showSidebar = !this.showSidebar;
   }
 
   ngOnInit(): void {
     this.inputFg = this.fb.group({
       mess: [],
     });
+    this.getShipments();
   }
 
-  addTodo(value: string): void {
-    if (this.inputFg?.get('mess')?.value.trim().length === 0) {
-      return;
+  formatDateToVietnamese(date: string | Date): string {
+    return this.datePipe.transform(date, 'fullDate', '', 'vi') || '';
+  }
+
+  getStatusTranslation(status: string): string {
+    switch (status) {
+      case 'delivering':
+        return 'Đang giao';
+      case 'delivered':
+        return 'Đã giao';
+      case 'returned':
+        return 'Đã trả lại';
+      default:
+        return status;
     }
-    this.todos.splice(0, 0, {
-      id: this.todoId,
-      message: this.inputFg?.get('mess')?.value,
-      completionStatus: false,
-      edit: false,
-      date: new Date(),
-    });
-    this.copyTodos = this.todos;
-    this.todoId++;
-    this.inputFg.patchValue({
-      mess: '',
+  }
+
+  getShipments(): void {
+    this.deliveryService.getAllShipperShipment().subscribe((shipments) => {
+      this.shipments = shipments.reverse(); // Reverse the shipments array
+      this.filteredShipments = this.shipments; // Ensure filteredShipments is also reversed
+      this.all = shipments.length;
+      this.pending = shipments.filter(
+        (shipment) => shipment.status === 'pending'
+      ).length;
+      this.delivering = shipments.filter(
+        (shipment) => shipment.status === 'delivering'
+      ).length;
+      this.delivered = shipments.filter(
+        (shipment) => shipment.status === 'delivered'
+      ).length;
+      this.returned = shipments.filter(
+        (shipment) => shipment.status === 'returned'
+      ).length;
     });
   }
 
-  allTodos(): void {
-    // tslint:disable-next-line - Disables all
-    this.todos.forEach(
-      (todo) => (todo.completionStatus = (<HTMLInputElement>event!.target).checked),
-    );
+  confirmDelivery(shipment: IShipment): void {
+    // Implement the logic to confirm delivery
+    // For example, you might update the shipment status to 'delivered'
+    this.deliveryService
+      .updateShipmentStatus({ id: shipment.id.toString(), status: 'delivered' })
+      .subscribe(
+        () => {
+          // Update the local shipment status
+          shipment.status = 'delivered';
+          this.toastService.showSuccess('Giao hàng thành công');
+          this.getShipments();
+        },
+        (error) => {
+          console.error('Error confirming delivery:', error);
+        }
+      );
   }
 
   selectionlblClick(val: string): void {
     if (val === 'all') {
-      this.copyTodos = this.todos;
+      this.filteredShipments = this.shipments;
       this.selectedCategory = 'all';
-    } else if (val === 'uncomplete') {
-      this.copyTodos = this.todos.filter((todo) => !todo.completionStatus);
-      this.selectedCategory = 'uncomplete';
-    } else if (val === 'complete') {
-      this.copyTodos = this.todos.filter((x) => x.completionStatus);
-      this.selectedCategory = 'complete';
+    } else {
+      this.filteredShipments = this.shipments.filter(
+        (shipment) => shipment.status === val
+      );
+      this.selectedCategory = val;
     }
   }
 
-  editTodo(i: number, str: string): void {
-    if (this.copyTodos) {
-      if (str === 'edit') {
-        // tslint:disable-next-line - Disables all
-        this.copyTodos.find((x) => x.id === i)!.edit = true;
-      } else {
-        // tslint:disable-next-line - Disables all
-        this.copyTodos.find((x) => x.id === i)!.edit = false;
-      }
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'delivering':
+        return 'bg-warning';
+      case 'delivered':
+        return 'bg-success';
+      case 'returned':
+        return 'bg-error';
+      default:
+        return '';
     }
-  }
-
-  deleteTodo(id: number): void {
-    console.log(id);
-    this.todos.splice(id, 1);
-  }
-
-  remainingList(): number {
-    return this.todos.filter((todo) => !todo.completionStatus).length;
   }
 }

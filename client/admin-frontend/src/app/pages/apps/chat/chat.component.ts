@@ -17,7 +17,12 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { LocalStorageUtil } from 'src/app/utils/local-storage.util';
@@ -30,6 +35,11 @@ import {
 } from 'src/app/models/conversation';
 import { DateUtils } from 'src/app/utils/date-format.util';
 import { SocketioService } from 'src/app/services/socket-io.service';
+import { Router } from '@angular/router';
+import { DeliveryService } from 'src/app/services/delivery.service';
+import { ICreateShipmenPayload } from 'src/app/models/delivery.model';
+import { IProduct } from 'src/app/models/product.model';
+import { ProductService } from 'src/app/services/product.service';
 
 @Component({
   selector: 'app-chat',
@@ -170,6 +180,32 @@ export class AppChatComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openShipmentDialog(action: string): void {
+    const dialogRef = this.dialog.open(ShipmentDialogContentComponent, {
+      data: {
+        action,
+        data: {
+          buyer: this.selectedConversation.info?.user,
+          user: this.user,
+        },
+      },
+    });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(result);
+      if (result) {
+        if (result.event === 'Add') {
+          await this.socketIoService.sendAlert({
+            content: 'hi',
+            other_id: result.data.other_id,
+            product: result.data.product_id,
+          });
+        } else if (result.action === 'Update') {
+        } else if (result.action === 'Delete') {
+        }
+      }
+    });
+  }
+
   // tslint:disable-next-line - Disables all
   onSelect(conversation: IConversation): void {
     this.getConversationMessage(conversation);
@@ -264,6 +300,121 @@ export class ChatbotDialogContentComponent {
       this.dialogRef.close({ event: this.action, data: this.local_data });
     }
   }
+  closeDialog(): void {
+    this.dialogRef.close({ event: 'Cancel' });
+  }
+}
+
+@Component({
+  selector: 'app-shipment-dialog-content',
+  templateUrl: 'shipment-dialog-content.html',
+  styleUrls: ['shipment-dialog-content.scss'],
+})
+export class ShipmentDialogContentComponent implements OnInit {
+  shipmentForm: FormGroup;
+  maxQuantity: number = 0;
+  products: IProduct[];
+  selectedProduct: IProduct | null = null;
+
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<ShipmentDialogContentComponent>,
+    private toastService: ToastService,
+    private router: Router,
+    private deliveryService: DeliveryService,
+    private productService: ProductService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.shipmentForm = this.fb.group({
+      other_id: ['', Validators.required],
+      product_id: ['', Validators.required],
+      other_fullname: ['', Validators.required],
+      other_phone: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{10}$/)],
+      ],
+      quantity: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(this.maxQuantity),
+        ],
+      ],
+      pickup_address: ['', Validators.required],
+      delivery_address: ['', Validators.required],
+    });
+  }
+
+  ngOnInit(): void {
+    if (this.data.data && this.data.data.buyer && this.data.data.buyer.id) {
+      this.shipmentForm.patchValue({
+        other_id: this.data.data.buyer.id,
+        other_fullname:
+          this.data.data.buyer.first_name +
+          ' ' +
+          this.data.data.buyer.last_name,
+      });
+    }
+
+    if (this.data.data && this.data.data.user.role === 'seller') {
+      this.fetchSellerProducts();
+    }
+    this.shipmentForm.get('product_id')?.valueChanges.subscribe((productId) => {
+      this.selectedProduct =
+        this.products.find((product) => product.id === productId) || null;
+      this.maxQuantity = this.selectedProduct
+        ? this.selectedProduct.quantity
+        : 0;
+      this.shipmentForm
+        .get('quantity')
+        ?.setValidators([
+          Validators.required,
+          Validators.min(1),
+          Validators.max(this.maxQuantity),
+        ]);
+      this.shipmentForm.get('quantity')?.updateValueAndValidity();
+    });
+  }
+
+  fetchSellerProducts(): void {
+    this.productService.getSellerProducts().subscribe(
+      (products: IProduct[]) => {
+        this.products = products;
+        console.log(products);
+      },
+      (error) => {
+        this.toastService.showError('Failed to fetch products');
+      }
+    );
+  }
+
+  doAction(): void {
+    if (this.shipmentForm.valid) {
+      const shipmentData: ICreateShipmenPayload = this.shipmentForm.value;
+
+      console.log(shipmentData);
+      this.deliveryService
+        .createShipment({
+          ...shipmentData,
+          product_id: shipmentData.product_id,
+        })
+        .subscribe(
+          (response) => {
+            console.log('Server response:', response);
+            this.dialogRef.close({ event: 'Add', data: { ...shipmentData } });
+            this.toastService.showSuccess('Tạo đơn thành công');
+            this.router.navigate([this.router.url]);
+          },
+          (error) => {
+            this.toastService.showError('Lỗi tạo đơn');
+          }
+        );
+    } else {
+      this.toastService.showError('Hãy điền đầy đủ thông tin trước khi tạo');
+    }
+  }
+
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
   }

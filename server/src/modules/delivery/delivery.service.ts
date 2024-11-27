@@ -26,6 +26,8 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Delivery } from './entities/delivery.entity';
+import { FindAllDeliverySellerQuery } from './dto/find-all-delivery-seller';
 
 @Injectable()
 export class DeliveryService {
@@ -99,6 +101,37 @@ export class DeliveryService {
       );
 
     return shipments;
+  }
+
+  async getSellerShipments(queries: FindAllDeliverySellerQuery, user: User) {
+    const sellerShipments = await this.deliveryRepository.getShipmentsOfSeller(
+      queries,
+      user.id,
+    );
+
+    const [data, totalRecords] = sellerShipments;
+
+    const transformData = data.map((delivery) => {
+      delivery.product = plainToClass(ProductDto, delivery.product) as any;
+
+      delete delivery.discount_amount;
+      delete delivery.discount_percent;
+      delete delivery.total_discount;
+      delete delivery.total_after_discount;
+
+      return plainToClass(DeliveryDto, delivery);
+    });
+
+    const url = `/api/v1/delivery/seller`;
+
+    const paginationResult = PaginationHelper.generatePagination(
+      queries,
+      url,
+      transformData,
+      totalRecords,
+    );
+
+    return paginationResult;
   }
 
   async getShipmentsByDate(queries: GetRevenueChartDto, sellerId: string) {

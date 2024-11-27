@@ -13,9 +13,13 @@ import { useRouter } from 'next/navigation'
 import { useGetCategoriesQuery, useGetProductByCategorySlugQuery } from '@/services/category.service'
 import { IProduct } from '@/types/product'
 import { ICategory } from '@/types/category'
-import Image from 'next/image'
+
 import moment from 'moment'
-import GoogleAdUnit from 'nextjs13_google_adsense'
+
+import FloatingChat from '@/common/components/FloatingChat'
+import { useCookies } from 'react-cookie'
+import { useGetUserProfileQuery } from '@/services/user.service'
+import { ToastService } from '@/services/toast.service'
 
 export default function Page({ params }: { params: { slug: string } }): React.ReactNode {
   const [activeSlide, setActiveSlide] = useState<number>(0)
@@ -24,6 +28,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
   const [startIndex, setStartIndex] = useState<number>(0)
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
+  const [instanceMsg, setInstanceMsg] = useState<string>('')
   const descriptionRef = useRef<HTMLDivElement>(null)
   const visibleImages: number = 8
   const maxLines: number = 6
@@ -31,6 +36,33 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
   const router = useRouter()
   const { data: categories } = useGetCategoriesQuery()
   const { data: product, isLoading, error } = useGetProductBySlugQuery(params.slug)
+
+  const toastService = useMemo<ToastService>(() => new ToastService(), [])
+
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const handleToggleChat = (): void => {
+    setIsVisible(!isVisible)
+  }
+
+  const [cookies] = useCookies(['access-token'])
+  const accessToken = cookies['access-token']
+
+  const {
+    data: userProfile,
+    isSuccess: isUserProfileSuccess,
+    error: userProfileError,
+    isLoading: userProfileLoading,
+    isError: isUserProfileError,
+    refetch: refetchUserProfile
+  } = useGetUserProfileQuery(undefined, {
+    skip: !accessToken
+  })
+
+  useEffect(() => {
+    if (isUserProfileError) {
+      console.log('userProfileError', userProfileError)
+    }
+  }, [isUserProfileError])
 
   const categoryName: string = useMemo<string>(() => {
     if (product && categories) {
@@ -145,6 +177,8 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
     }
   }
 
+  // Chat
+
   return (
     <div className='detail-container container mb-3'>
       {/* <GoogleAdUnit>
@@ -166,12 +200,6 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
       />
       <div className='row g-2'>
         <div className='col-8 position-relative '>
-          <button className='btn btn-link position-absolute top-0 end-0 d-flex align-items-center justify-content-center m-2 mt-1'>
-            <i className='fa-solid fa-share'></i>
-          </button>
-          <button className='btn btn-link position-absolute top-0 end-0 d-flex align-items-center justify-content-center m-2 mt-1 me-5'>
-            <i className='fa-regular fa-heart'></i>
-          </button>
           <Carousel
             ref={carouselRef}
             arrows={true}
@@ -276,24 +304,47 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
                 width={40}
               />
               <div>
-                <div className='body-m fw-bold'>Seller Name</div>
+                <div className='body-m fw-bold'>{product.seller.first_name + ' ' + product.seller.last_name}</div>
                 <div className='body-s  body-xs pb-1'>Hoạt động gần đây</div>
               </div>
             </div>
             <div className='d-flex mt-2 align-items-center flex-column'>
-              <div className='w-100 py-2 text-center btn-contact fw-bold'>
+              {/* <div className='w-100 py-2 text-center btn-contact fw-bold'>
                 <i className='fa-solid fa-phone me-2'></i>
                 Gọi điện
-              </div>
-              <div className='w-100 py-2 text-center btn-contact fw-bold mt-2'>
+              </div> */}
+              <div
+                onClick={() => {
+                  if (!accessToken || accessToken === '') {
+                    toastService.warning('Bạn cần đăng nhập để có thể chat với người bán')
+                  } else setIsVisible(true)
+                }}
+                className='w-100 py-2 text-center btn-contact fw-bold mt-2'
+              >
                 <i className='fa-solid fa-message me-2'></i>
                 Chat
               </div>
             </div>
 
             <div className='mt-2 mb-2 d-flex'>
-              <div className='body-s px-3 py-2 sample-chat d-inline-block'>Mặt hàng này còn không ạ?</div>
-              <div className='body-s px-3 py-2 sample-chat d-inline-block ms-2'>Bạn có đó không?</div>
+              <div
+                onClick={() => {
+                  setInstanceMsg('Tôi muốn mua mặt hàng này?')
+                  setIsVisible(true)
+                }}
+                className='body-s px-3 py-2 sample-chat d-inline-block'
+              >
+                Tôi muốn mua mặt hàng này?
+              </div>
+              <div
+                onClick={() => {
+                  setInstanceMsg('  Bạn có đó không?')
+                  setIsVisible(true)
+                }}
+                className='body-s px-3 py-2 sample-chat d-inline-block ms-2'
+              >
+                Bạn có đó không?
+              </div>
             </div>
           </div>
           <img
@@ -322,9 +373,7 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
                     <span className='position-absolute top-0 end-0 badge state-badge  m-2'>
                       {product.state === 'new' ? 'Mới' : 'Đã qua sử dụng'}
                     </span>
-                    <button className='btn d-flex align-items-center justify-content-center btn-link position-absolute text-center bottom-0 end-0 p-2 m-1'>
-                      <i className='fa-regular fa-heart body-m'></i>
-                    </button>
+
                     {product.image_urls && product.image_urls.length > 0 && (
                       <img
                         src={product.image_urls[0] ? product.image_urls[0] : 'https://via.placeholder.com/150'}
@@ -354,6 +403,18 @@ export default function Page({ params }: { params: { slug: string } }): React.Re
         style={{ objectFit: 'cover', border: '1px solid #e0e0e0' }}
         alt='banner-ads-1'
       />
+
+      {accessToken && userProfile && (
+        <FloatingChat
+          setInstanceMsg={setInstanceMsg}
+          instanceMsg={instanceMsg}
+          accessToken={accessToken}
+          product={product}
+          user={userProfile}
+          isVisible={isVisible}
+          toggleChat={handleToggleChat}
+        />
+      )}
     </div>
   )
 }

@@ -12,7 +12,12 @@ export class SocketioService {
   constructor() {}
 
   connect(): void {
-    this.socket = io(environment.SOCKET_URL);
+    this.socket = io(environment.SOCKET_URL, {
+      extraHeaders: {
+        Authorization:
+          'Bearer ' + localStorage.getItem('access_token')?.replace(/\"/g, ''),
+      },
+    });
 
     this.socket.on('connect', () => {
       console.log('Connected to server via Socket.IO');
@@ -21,6 +26,10 @@ export class SocketioService {
     this.socket.on('newMessage', (data: any) => {
       console.log('Message from server:', data);
     });
+  }
+
+  sendAlert(msg: any): void {
+    this.socket.emit('shipmentAlert', msg);
   }
 
   sendMessage(msg: any): void {

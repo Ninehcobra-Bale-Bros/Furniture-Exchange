@@ -119,7 +119,7 @@
     <div formArrayName="image_urls">
       <div *ngFor="let url of imageUrls.controls; let i = index">
         <mat-form-field appearance="fill">
-          <mat-label>Image URL {{i + 1}}</mat-label>
+          <mat-label>Link ảnh thứ {{i + 1}}</mat-label>
           <input matInput [formControlName]="i" placeholder="Enter image URL" />
         </mat-form-field>
         <button mat-icon-button color="warn" (click)="removeImageUrl(i)">
@@ -133,7 +133,7 @@
       </div>
     </div>
     <button mat-raised-button color="primary" (click)="addImageUrl()">
-      Add Image URL
+      Thêm link ảnh
     </button>
   </form>
 </mat-dialog-content>

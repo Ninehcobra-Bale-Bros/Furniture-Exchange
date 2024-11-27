@@ -65,25 +65,30 @@
                 *matCellDef="let product"
                 class="d-flex align-items-center"
               >
-                <img
-                  class="chatbot-thumbnail"
-                  [src]="product.image_urls[0]"
-                  alt="Chatbot thumbnail"
-                />
+                <div class="image-container d-flex align-items-center">
+                  <img
+                    class="chatbot-thumbnail"
+                    [src]="product.image_urls[0]"
+                    alt="Chatbot thumbnail"
+                  />
+                  <div *ngIf="product.quantity <= 0" class="overlay m-l-12">
+                    <span class="out-of-stock-text">Hết hàng</span>
+                  </div>
+                </div>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="action">
               <th mat-header-cell *matHeaderCellDef>Thao tác</th>
               <td mat-cell *matCellDef="let product">
-                <button mat-icon-button color="primary">
-                  <mat-icon>edit</mat-icon>
-                </button>
                 <button
+                  (click)="openShipmentDialog('Add', product)"
                   mat-icon-button
-                  color="warn"
-                  (click)="openDialog('Delete', product)"
+                  color="primary"
                 >
+                  <mat-icon>note</mat-icon>
+                </button>
+                <button mat-icon-button color="warn">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>

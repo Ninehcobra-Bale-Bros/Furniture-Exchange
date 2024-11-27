@@ -24,4 +24,9 @@ export const navItems: NavItem[] = [
     iconName: 'point',
     route: 'apps/todo',
   },
+  {
+    displayName: 'Đơn hàng',
+    iconName: 'point',
+    route: 'apps/invoice',
+  },
 ];

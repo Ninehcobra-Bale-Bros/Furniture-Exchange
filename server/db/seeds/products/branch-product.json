@@ -18,7 +18,7 @@
     "district": "Quận 3",
     "province": "Quận 3",
     "status": "approved",
-    "state": "new",
+    "state": "used",
     "is_sold": false,
     "updated_at": "2024-10-01T23:00:00.000Z",
     "expired_at": "2024-10-22T23:00:00.000Z"
@@ -42,7 +42,7 @@
     "district": "Quận 6",
     "province": "Quận 6",
     "status": "approved",
-    "state": "new",
+    "state": "used",
     "is_sold": false,
     "updated_at": "2024-10-02T00:00:00.000Z",
     "expired_at": "2024-10-23T00:00:00.000Z"

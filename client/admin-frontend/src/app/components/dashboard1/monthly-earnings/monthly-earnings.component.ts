@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import {
   ApexChart,
   ChartComponent,
@@ -28,10 +28,11 @@ export interface monthlyChart {
 @Component({
   selector: 'app-monthly-earnings',
   standalone: true,
-  imports:[NgApexchartsModule, MaterialModule, TablerIconsModule],
+  imports: [NgApexchartsModule, MaterialModule, TablerIconsModule],
   templateUrl: './monthly-earnings.component.html',
 })
 export class AppMonthlyEarningsComponent {
+  @Input() currentMonthRevenue: number = 0;
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
   public monthlyChart!: Partial<monthlyChart> | any;
 

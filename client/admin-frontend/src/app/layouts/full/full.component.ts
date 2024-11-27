@@ -6,13 +6,12 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, of, Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { CoreService } from 'src/app/services/core.service';
 import { AppSettings } from 'src/app/app.config';
-import { filter } from 'rxjs/operators';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
-import { navItems } from './vertical/sidebar/sidebar-data';
 import { NavService } from '../../services/nav.service';
 import { AppNavItemComponent } from './vertical/sidebar/nav-item/nav-item.component';
 import { RouterModule } from '@angular/router';
@@ -32,6 +31,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { IUser } from 'src/app/models/user.model';
 import { LocalStorageUtil } from 'src/app/utils/local-storage.util';
 import { UserService } from 'src/app/services/user.service';
+import { getNavItemsByRole } from './vertical/sidebar/sidebar-data';
+import { NavItem } from './vertical/sidebar/nav-item/nav-item';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -76,12 +77,10 @@ interface quicklinks {
   encapsulation: ViewEncapsulation.None,
 })
 export class FullComponent implements OnInit, OnDestroy {
-  user: Observable<IUser | null>;
+  user: IUser | null = null; // Ensure this is typed as IUser | null
 
   bannerData: any;
   private bannerSubscription: Subscription;
-
-  navItems = navItems;
 
   @ViewChild('leftsidenav')
   public sidenav: MatSidenav;
@@ -94,6 +93,10 @@ export class FullComponent implements OnInit, OnDestroy {
   private isContentWidthFixed = true;
   private isCollapsedWidthFixed = false;
   private htmlElement!: HTMLHtmlElement;
+
+  navItems: NavItem[] = [];
+  private userSubscription: Subscription = Subscription.EMPTY;
+  isLoading = true; // Loading state
 
   get isOver(): boolean {
     return this.isMobileScreen;
@@ -228,12 +231,7 @@ export class FullComponent implements OnInit, OnDestroy {
         }
         this.isContentWidthFixed = state.breakpoints[MONITOR_VIEW];
         this.resView = state.breakpoints[BELOWMONITOR];
-
-        this.user = this.userService.user$;
-      });
-
-    // Initialize project theme with options
-    this.receiveOptions(this.options);
+      }); // Initialize project theme with options    this.receiveOptions(this.options);
 
     // This is for scroll to top
     this.router.events
@@ -247,12 +245,29 @@ export class FullComponent implements OnInit, OnDestroy {
     this.bannerSubscription = this.bannerService.banner$.subscribe((data) => {
       this.bannerData = data;
     });
+    this.userSubscription = this.userService.user$
+      .pipe(
+        switchMap((user: IUser | null) => {
+          this.user = user;
+          this.navItems = user?.role ? getNavItemsByRole(user.role) : [];
+          return of(user);
+        }),
+        catchError((error) => {
+          console.error('Error fetching user data:', error);
+          this.navItems = [];
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
     if (this.bannerSubscription) {
       this.bannerSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
     }
   }
 

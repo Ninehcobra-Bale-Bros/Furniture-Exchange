@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Delivery } from 'src/modules/delivery/entities/delivery.entity';
 import { FindAllDeliveryQuery } from '../dto/find-all-delivery.query';
 import { DeliveryStatusEnum } from 'src/common/enums/delivery.enum';
+import { FindAllDeliverySellerQuery } from '../dto/find-all-delivery-seller';
 
 @Injectable()
 export class DeliveryRepository extends GenericRepository<Delivery> {
@@ -44,6 +45,38 @@ export class DeliveryRepository extends GenericRepository<Delivery> {
         'user.id',
         'user.address_line1',
         'user.address_line2',
+      ]);
+
+    if (query.status) {
+      QueryBuilder = QueryBuilder.andWhere(
+        'delivery.status = :status AND delivery.other_confirmed = :other_confirmed',
+        {
+          status: query.status,
+          other_confirmed: true,
+        },
+      );
+    }
+
+    const [data, totalRecords] = await this.buildQuery(QueryBuilder, query);
+
+    return [data, totalRecords];
+  }
+
+  async getShipmentsOfSeller(
+    query: FindAllDeliverySellerQuery,
+    seller_id: string,
+  ): Promise<[Delivery[], number]> {
+    let QueryBuilder = this.deliveryRepository
+      .createQueryBuilder('delivery')
+      .leftJoin('delivery.product', 'product')
+      .where('delivery.user_id = :seller_id', { seller_id })
+      .addSelect([
+        'product.name', // Select only the 'name' field
+        'product.price', // Example: selecting 'price' field
+        'product.image_urls', // Example: selecting 'image_urls' field
+        'product.id', // Example: selecting 'id' field
+        'product.kilogram',
+        'product.quantity',
       ]);
 
     if (query.status) {

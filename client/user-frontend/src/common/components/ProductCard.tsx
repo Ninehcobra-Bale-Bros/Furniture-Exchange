@@ -33,12 +33,22 @@ export default function ProductCard({ product }: { product: IProduct }): React.R
     >
       <div className='position-relative'>
         <img src={product.image_urls[0]} className='card-img-top' alt={product.name} />
+        {product.quantity === 0 && (
+          <div
+            className='position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center'
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              color: 'white',
+              fontSize: '1.2rem',
+              fontWeight: 'bold'
+            }}
+          >
+            Hết hàng
+          </div>
+        )}
         <span className='position-absolute top-0 end-0 badge state-badge  m-2'>
           {product.state === 'new' ? 'Mới' : 'Đã qua sử dụng'}
         </span>
-        <button className='btn btn-link position-absolute bottom-0 end-0 p-2'>
-          <i className='fa-regular fa-heart'></i>
-        </button>
       </div>
       <div className='card-body d-flex flex-column p-2'>
         <div className='card-title body-s m-0'>{truncateName(product.name, 20)}</div>

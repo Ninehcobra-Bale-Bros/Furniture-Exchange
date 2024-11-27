@@ -42,6 +42,7 @@ export default function RootLayout({
           strategy='lazyOnload'
         />
       </head>
+
       <Provider store={store}>
         <AntdRegistry>
           <ConfigProvider theme={theme}>

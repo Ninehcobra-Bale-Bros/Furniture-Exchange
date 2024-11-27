@@ -37,31 +37,6 @@ export class BaseService {
       );
   }
 
-  getURL<T = {}>(url: string, options?: any) {
-    return this.http
-      .get(`${url}`, {
-        ...this.customHeaders,
-        ...options,
-        responseType: 'json',
-      })
-      .pipe(
-        map((response) => response as T),
-        catchError(this.handleError)
-      );
-  }
-
-  getJSON<T = {}>(url: string, options?: any) {
-    return this.http
-      .get(`${url}`, {
-        ...this.customHeaders,
-        ...options,
-      })
-      .pipe(
-        map((response) => response as T),
-        catchError(this.handleError)
-      );
-  }
-
   post<T = {}>(url: string, body: any, options?: any) {
     return this.http
       .post<T>(`${this.dynamicURL}/${url}`, body, {
@@ -75,11 +50,15 @@ export class BaseService {
       );
   }
 
-  getT<T = {}>(url: string): Observable<T> {
+  // New method for handling multipart/form-data
+  postFormData<T = {}>(
+    url: string,
+    formData: FormData,
+    options?: any
+  ): Observable<T> {
     return this.http
-      .get(`${this.dynamicURL}/${url}`, {
-        ...this.customHeaders,
-        responseType: 'json',
+      .post<T>(`${this.dynamicURL}/${url}`, formData, {
+        ...options, // Do not include customHeaders to avoid setting Content-Type
       })
       .pipe(
         map((response) => response as T),

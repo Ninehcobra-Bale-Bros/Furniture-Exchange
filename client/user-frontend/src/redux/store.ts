@@ -1,6 +1,8 @@
 import { authApi } from '@/services/auth.service'
 import { categoryApi } from '@/services/category.service'
 import { chatApi } from '@/services/chat.service'
+import { conversationApi } from '@/services/conversation.service'
+import { deliveryApi } from '@/services/delivery.service'
 import { mailApi } from '@/services/mail.service'
 import { productApi } from '@/services/product.service'
 import { userApi } from '@/services/user.service'
@@ -13,7 +15,9 @@ export const store = configureStore({
     [productApi.reducerPath]: productApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
     [chatApi.reducerPath]: chatApi.reducer,
-    [userApi.reducerPath]: userApi.reducer
+    [userApi.reducerPath]: userApi.reducer,
+    [conversationApi.reducerPath]: conversationApi.reducer,
+    [deliveryApi.reducerPath]: deliveryApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -22,7 +26,9 @@ export const store = configureStore({
       productApi.middleware,
       categoryApi.middleware,
       chatApi.middleware,
-      userApi.middleware
+      userApi.middleware,
+      conversationApi.middleware,
+      deliveryApi.middleware
     )
 })
 

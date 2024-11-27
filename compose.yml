@@ -21,6 +21,8 @@ services:
       POSTGRES_DB: FurnitureExchange
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    expose:
+      - 5432
 
   backend:
     container_name: furniture-backend
@@ -44,6 +46,9 @@ services:
     depends_on:
       - redis
       - postgres
+    expose:
+      - 3001
+      - 3002
 
   fe-user:
     container_name: "furniture-fe-user"
@@ -54,6 +59,20 @@ services:
       - "3000:3000"
     expose:
       - 3000
+    depends_on:
+      - backend
+
+  fe-admin:
+    container_name: furniture-fe-admin
+    build:
+      context: ./client/admin-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:80"
+    expose:
+      - 80
+    depends_on:
+      - backend
 
   nginx:
     container_name: furniture-nginx
@@ -61,10 +80,11 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf
     depends_on:
-      - backend
       - fe-user
+      - fe-admin
+      - backend
 
 volumes:
   redis-data:

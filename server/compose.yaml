@@ -19,8 +19,8 @@ services:
       POSTGRES_USER: bale
       POSTGRES_PASSWORD: bale
       POSTGRES_DB: FurnitureExchange
-    # volumes:
-    # - postgres-data:/var/lib/postgresql/data
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   backend:
     build:
@@ -48,5 +48,5 @@ services:
 volumes:
   redis-data:
     driver: local
-#   postgres-data:
-#     driver: local
+  postgres-data:
+    driver: local
